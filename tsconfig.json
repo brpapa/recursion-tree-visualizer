@@ -1,0 +1,30 @@
+{
+  "include": [
+    "./src/*",
+    "./src/styles/styled.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ],
+  "compilerOptions": {
+    "target": "es5",
+    "strict": true,
+    "noEmit": true,
+    "sourceMap": true,
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "jsx": "react",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  }
+}
