@@ -1,33 +1,32 @@
 // a partir de uma adjList, determina a melhores coordenadas (x,y) de cada nó
-import { Point, Nullable, TreeNode, AdjList } from '../types'
+import { Point, TreeNode, AdjList } from '../types'
 
-export function computeCoords(adjList: AdjList, rootId: number) {
-  const rawCoords: Point[] = Array(adjList.length).fill([-1,-1])
+export function computeCoords(adjList: AdjList, rootId = 0) {
+  const rawCoords: Point[] = Array(adjList.length).fill([-1, -1])
   const rawTopLeft: Point = [0, 0]
   const rawBottomRight: Point = [0, 0]
 
-  const root: Nullable<TreeNode> =
-    adjList.length === 0
-      ? null
-      : {
-          id: rootId,
-          parent: null,
-          children: [],
-          x: 0,
-          y: 0,
-          mod: 0,
-        }
+  if (adjList.length > 0) {
+    const root: TreeNode = {
+      id: rootId,
+      parent: null,
+      children: [],
+      x: 0,
+      y: 0,
+      mod: 0,
+    }
 
-  if (root) {
-    init(root, rootId)
-    firstTraversal(root)
-    lastTraversal(root)
+    initNodes(root) // constroi o objeto root a partir da adjList
+    firstTraversal(root) // post-order traversal
+    lastTraversal(root) // pre-order traversal
   }
 
   return { rawCoords, rawTopLeft, rawBottomRight }
 
-  // constroi o objeto root a partir da adjList
-  function init(node: TreeNode, nodeId: number, nodeDepth = 0) {
+  /**/
+
+  function initNodes(node: TreeNode, nodeId = rootId, nodeDepth = 0) {
+    // for each child of node
     for (const { v: childId } of adjList[nodeId]) {
       const child = {
         id: childId,
@@ -38,7 +37,7 @@ export function computeCoords(adjList: AdjList, rootId: number) {
         children: [],
       }
       node.children.push(child)
-      init(child, childId, nodeDepth + 1)
+      initNodes(child, childId, nodeDepth + 1)
     }
   }
 
@@ -49,21 +48,21 @@ export function computeCoords(adjList: AdjList, rootId: number) {
       return node
     }
 
-    let prev_x: number | null = null
+    let prevX: number | null = null
 
-    // para cada par left e right de subárvores filhas
+    // para cada par de subárvores filhas left e right
     for (let i = 1; i < node.children.length; i++) {
       const left = firstTraversal(node.children[i - 1])
       const right = firstTraversal(node.children[i])
       // post-order traversal below
 
-      if (prev_x !== null) left.x = prev_x
+      if (prevX !== null) left.x = prevX
 
       // console.log('before shift:', left.id, right.id, left.x, right.x)
-      shiftSubtree(left, right)
+      shiftRightSubtree(left, right)
       // console.log('after shift:', left.id, right.id, left.x, right.x)
 
-      prev_x = right.x
+      prevX = right.x
     }
 
     // centraliza node entre seus filhos
@@ -78,13 +77,12 @@ export function computeCoords(adjList: AdjList, rootId: number) {
     return node
   }
 
-  // final pre-order traversal - atualiza o x real dos nós e constroi o retorno
+  // atualiza o x real dos nós e constroi o retorno
   function lastTraversal(node: TreeNode, accMod = 0) {
     node.x += accMod
+    // console.log(node.id, node.x, node.y)
 
     rawCoords[node.id] = [node.x, node.y]
-    rawTopLeft[0] = Math.min(rawTopLeft[0], node.x) // = 0
-    rawTopLeft[1] = Math.min(rawTopLeft[1], node.y) // = 0
     rawBottomRight[0] = Math.max(rawBottomRight[0], node.x)
     rawBottomRight[1] = Math.max(rawBottomRight[1], node.y)
 
@@ -93,7 +91,7 @@ export function computeCoords(adjList: AdjList, rootId: number) {
 }
 
 // desloca toda a subárvore enraizada por right para o mais próximo possível da subárvora enraizada por left de forma que não haja conflitos
-function shiftSubtree(left: TreeNode, right: TreeNode) {
+function shiftRightSubtree(left: TreeNode, right: TreeNode) {
   let { li, ri, lo, ro, offset, loffset, roffset } = contour(left, right)
 
   right.x += offset

@@ -21,6 +21,7 @@ export const light = {
     text: '#000',
     textPlaceholder: '#aaa',
     primary: '#185EE0',
+    error: '#e11d62',
   },
 }
 /*

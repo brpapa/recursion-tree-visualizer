@@ -28,7 +28,7 @@ export function pointOnLine(P: Point, Q: Point, d: number): Point {
 }
 
 // retorna o ponto central entre P e Q
-export function centerPoint(P: Point, Q: Point): Point {
+export function centralPoint(P: Point, Q: Point): Point {
   return [(P[0]+Q[0])/2, (P[1]+Q[1])/2]
 }
 

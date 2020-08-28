@@ -1,28 +1,24 @@
 import React from 'react'
 import { Group, Line, Circle, Text } from './styles'
-import { pointOnLine, centerPoint } from './utils'
+import { pointOnLine, centralPoint } from './utils'
+import { VERTEX_RADIUS } from './../constants'
 import { Point } from '../../../types'
 
-// renderiza uma aresta direcionada de "P+d" à "Q-d"
-const DirectedEdge: React.FC<{
-  P: Point
-  Q: Point
-  d: number
-  label?: number
-  color?: string
+type Props = {
+  start: Point
+  end: Point
+  label?: string
   visited?: boolean
-}> = (props) => {
-  // default values
-  const color = props.color || 'black'
-  const label = props.label
-  const visited = props.visited || false
+}
 
-  const P = pointOnLine(props.Q, props.P, props.d)
-  const Q = pointOnLine(props.P, props.Q, props.d + 10) // FIXME: hardcode
-  const C = centerPoint(P, Q)
+const DirectedEdge = ({ start, end, label, visited = false }: Props) => {
+  // renderiza uma aresta direcionada de P à Q
+  const [P] = React.useState(() => pointOnLine(end, start, VERTEX_RADIUS))
+  const [Q] = React.useState(() => pointOnLine(start, end, VERTEX_RADIUS + 10)) //! hardcode
+  const [C] = React.useState(() => centralPoint(P, Q))
 
   return (
-    <Group color={color}>
+    <Group color={'black'}>
       {/* FIXME: defs é renderizado várias vezes desnecessariamente, teria outra forma de fazer a arrowhead? */}
       <defs>
         <marker

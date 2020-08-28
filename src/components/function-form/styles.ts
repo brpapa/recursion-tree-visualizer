@@ -64,6 +64,14 @@ export const Divider = styled.hr`
   border: ${({ theme }) => theme.border};
   margin: 15px 50px;
 `
+export const Error = styled.p`
+  border-radius: 5px;
+  margin-top: 15px;
+  padding: 2px;
+  text-align: center;
+  background-color: ${({ theme }) => theme.colors.error};
+  color: white;
+`
 /**/
 export const FunctionContainer = styled.div`
   position: relative;

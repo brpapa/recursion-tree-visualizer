@@ -1,9 +1,14 @@
-import { FunctionData } from './../../types'
+import { FunctionData, Variable } from './../../types'
 
-export const codeValidate = (code: string) =>
-  /^(function\s+fn\(.*\)\s+\{\n).*(\})$/s.test(code)
+export const codeValidate = (s: string) =>
+  /^(function\s+fn\(.*\)\s+\{\n).*(\})$/s.test(s)
 
-export const callValidate = (code: string) => /^(fn\(.*\))$/.test(code)
+export const callValidate = (s: string) => /^(fn\(.*\))$/.test(s)
+
+const betweenParentesis = (s: string) => {
+  const content = s.substring(s.indexOf('(') + 1, s.indexOf(')'))
+  return content === '' ? [] : content.split(',')
+}
 
 // fnData -> fnCode, fnCall, vars
 export const ungroup = (fnData: FunctionData) => {
@@ -29,7 +34,7 @@ export const ungroup = (fnData: FunctionData) => {
 export const group = (
   fnCode: string,
   fnCall: string,
-  vars: { name: string; value: string }[]
+  vars: Variable[]
 ): FunctionData => {
   const paramsNames = betweenParentesis(fnCode)
   const paramsValues = betweenParentesis(fnCall)
@@ -51,6 +56,3 @@ export const group = (
 
   return { params, body, variables }
 }
-
-const betweenParentesis = (str: string) =>
-  str.substring(str.indexOf('(') + 1, str.indexOf(')')).split(',')

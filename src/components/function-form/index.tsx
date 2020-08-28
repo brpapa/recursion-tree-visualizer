@@ -1,7 +1,3 @@
-// TODO: experimentar https://react-hook-form.com/
-// TODO: https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
-// TODO: não permitir selecionar parte do textarea 'bloqueada'
-// TODO: apresentar erros de validação do form ao usuário
 import React from 'react'
 import {
   Divider,
@@ -14,25 +10,26 @@ import {
   FormContainer,
   Label,
   Button,
+  Error,
 } from './styles'
 import { group, ungroup, codeValidate, callValidate } from './utils'
 import templates from './templates'
 import useFormInput from './../../hooks/use-form-input'
-import { FunctionData, TemplateKeys } from '../../types'
+import { buildTree } from '../../core/build-tree'
+import { TemplateKeys, AdjList, Variable } from '../../types'
 
 type Props = {
-  onSubmit: (fnData: FunctionData) => void
+  onSubmit: (adjList: AdjList, args: any[][]) => void
 }
 
 const FunctionForm = (props: Props) => {
   const [fnCode, setFnCode] = useFormInput('function fn() {\n\n}', codeValidate)
   const [fnCall, setFnCall] = useFormInput('fn()', callValidate)
-
-  //! fixado em 2 vars
-  const [vars, setVars] = React.useState([
+  const [vars, setVars] = React.useState<Variable[]>([
     { name: '', value: '' },
     { name: '', value: '' },
-  ])
+  ]) //! fixado em 2 vars por enquanto
+  const [error, setError] = React.useState('')
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === 'custom') return
@@ -48,8 +45,16 @@ const FunctionForm = (props: Props) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const fnData = group(fnCode.value, fnCall.value, vars)
-    props.onSubmit(fnData)
+    try {
+      const fnData = group(fnCode.value, fnCall.value, vars)
+      const { adjList, args } = buildTree(fnData)
+
+      setError('')
+      props.onSubmit(adjList, args)
+    } catch (error) {
+      console.error(error.name, error.message)
+      setError(error.message)
+    }
   }
 
   return (
@@ -59,9 +64,11 @@ const FunctionForm = (props: Props) => {
         <Select defaultValue='custom' onChange={handleSelectChange}>
           <option value='fibonacci'>Fibonacci</option>
           <option value='knapsack'>Knapsack</option>
+          <option value='coinChange'>Coin Change</option>
+          <option value='fastPower'>Fast Power</option>
           <option value='custom'>Custom</option>
         </Select>
-        <Textarea {...fnCode} rows={10} cols={50} />
+        <Textarea {...fnCode} rows={10} cols={50} wrap='off' />
       </FunctionContainer>
 
       <Label>Global variables:</Label>
@@ -101,6 +108,8 @@ const FunctionForm = (props: Props) => {
         <TextInput {...fnCall} />
         <Button type='submit'>run</Button>
       </RunContainer>
+
+      {error !== '' && <Error>{error}</Error>}
     </FormContainer>
   )
 }

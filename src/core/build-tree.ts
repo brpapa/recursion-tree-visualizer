@@ -1,28 +1,26 @@
 import { FunctionData, AdjList } from './../types'
 
+const MAX_V = 1000
+
 // dado uma função recursiva, retorna a lista de adjacências da árvore de recursão
 export function buildTree(this: any, fnData: FunctionData) {
   var fn: Function, userFn: Function, _: Function
   const self = this
 
-  // evaluate the fnData into userFn
-  try {
-    const paramsNames = fnData.params.map((param) => param.name).join(', ')
-    const variables = fnData.variables
-      ?.map((param) => `${param.name} = ${param.value}`)
-      .join(', ')
+  // evaluate the fnData into userFn (can throw error)
+  const paramsNames = fnData.params.map((param) => param.name).join(', ')
+  const variables = fnData.variables
+    ?.map((param) => `${param.name} = ${param.value}`)
+    .join(', ')
 
-    const fnDeclaration = `_ = function (${paramsNames}) {
-      ${variables? `const ${variables};`: ``}
-      ${fnData.body}
-    }`
-    // console.log(fnDeclaration)
-    userFn = eval(fnDeclaration)
-  } catch (error) {
-    throw new Error(
-      `The user function contains the following ${error.name}: ${error.message}`
-    )
-  }
+  const fnDeclaration = `_ = function (${paramsNames}) {
+    ${variables? `const ${variables};`: ``}
+    ${fnData.body}
+  }`
+  // console.log(fnDeclaration)
+  userFn = eval(fnDeclaration)
+
+  /**/
 
   let V = 0 // curr qty of vertices
   let args: any[][] = [] // args[u]: array of params values of vertex u
@@ -32,7 +30,7 @@ export function buildTree(this: any, fnData: FunctionData) {
   // wrapper para a fn, a qual é chamada recursivamente
   function fnWrapper(...allArgs: any[]) {
     let v = V // v = current vertex id
-    if (V++ > 1000) throw new Error('Too many recursive calls')
+    if (V++ > MAX_V) throw new Error('Too many recursive calls')
 
     args.push(allArgs) // args[v] = allArgs
     adjList.push([]) // adjList[v] = []
@@ -54,7 +52,8 @@ export function buildTree(this: any, fnData: FunctionData) {
   fn = fnWrapper // here's the biggest trick
 
   const paramsValues = fnData.params.map((param) => eval(param.value))
-  fn(...paramsValues)
+  if (paramsValues.length > 0)
+    fn(...paramsValues)
 
   return { adjList, args }
 }

@@ -14,23 +14,52 @@ const templates: Record<TemplateKeys, FunctionData> = {
   knapsack: {
     params: [
       { name: 'i', value: '3' },
-      { name: 'w', value: '12' },
+      { name: 's', value: '12' },
     ],
     body: unify([
-      'if (w == 0 || i < 0)',
-      '  return 0',
-      'if (a2[i] > w)',
-      '  return fn(i-1, w)',
+      '// i-th item, remaining capacity s',
+      '',
+      'if (s < 0) return -Infinity',
+      'if (i < 0) return 0',
       '',
       'return Math.max(',
-      '  a1[i] + fn(i-1, w-a2[i]),',
-      '  fn(i-1, w)',
+      "  fn(i-1, s),            // don't choose i",
+      '  v[i] + fn(i-1, s-w[i]) // choose i',
       ')',
     ]),
     variables: [
-      { name: 'a1', value: '[100, 70, 50, 10, 20]' },
-      { name: 'a2', value: '[10, 4, 6, 12, 20]' },
+      { name: 'v', value: '[100, 70, 50, 10]' },
+      { name: 'w', value: '[10, 4, 6, 12]' },
     ],
+  },
+  coinChange: {
+    // params: [{ name: 'v', value: '7' }],
+    params: [{ name: 'v', value: '5' }],
+    body: unify([
+      '// remaining v cents',
+      '',
+      'if (v === 0) return 0',
+      'if (v < 0) return Infinity',
+      '',
+      'let min = Infinity',
+      'for (const coin of coins)',
+      '  min = Math.min(min, 1 + fn(v - coin))',
+      'return min',
+    ]),
+    variables: [{ name: 'coins', value: '[1,3,4,5]' }],
+  },
+  fastPower: {
+    params: [
+      { name: 'a', value: '2' },
+      { name: 'n', value: '5' },
+    ],
+    body: unify([
+      'if (n == 0)',
+      '  return 1',
+      'if (n % 2 == 0)',
+      '  return fn(a*a, n/2)',
+      'return a * fn(a*a, (n-1)/2)',
+    ]),
   },
 }
 
