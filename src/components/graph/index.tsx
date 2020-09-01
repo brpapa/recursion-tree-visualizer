@@ -1,34 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Svg } from './styles'
 import DirectedEdge from './directed-edge'
 import Vertex from './vertex'
 import { computeCoords } from '../../core/compute-coords'
+import { objectMap } from './../../utils'
 import { Point, AdjList, EdgeList } from '../../types'
 
 type Props = {
   adjList: AdjList
-  labels?: string[] // labels[u]: string label of vertex u
+  labels: Record<number, string> // labels[u]: string label of vertex u
 }
 
 const Graph = ({ adjList, labels }: Props) => {
-  const [edgeList, setEdgeList] = React.useState<EdgeList>([])
-  const [verticesCoord, setVerticesCoord] = React.useState<Point[]>([])
-  const [bottomRight, setBottomRight] = React.useState<Point>([0, 0])
+  const [edgeList, setEdgeList] = useState<EdgeList>([])
+  const [verticesCoord, setVerticesCoord] = useState<Record<number, Point>>({})
+  const [bottomRight, setBottomRight] = useState<Point>([0, 0])
 
+  // se labels for undefined, esse effect é disparado infinitamente. mas WHY?
   React.useEffect(() => {
-    setEdgeList(() => {
-      const res = []
-      for (let u = 0; u < adjList.length; u++)
-        for (let { v, w } of adjList[u]) res.push({ u, v, w })
-      return res
-    })
-
+    console.log('Re-computing the coords')
     const { rawCoords, rawBottomRight } = computeCoords(adjList)
 
-    setVerticesCoord(() =>
-      rawCoords.map((coord) => [coord[0] * 90 + 50, coord[1] * 150 + 50])
+    setEdgeList(() =>
+      Object.keys(adjList).reduce<EdgeList>((acc, key) => {
+        const u = Number(key)
+        return [...acc, ...adjList[u].map(({ v, w }) => ({ u, v, w }))]
+      }, [])
     )
+
+    setVerticesCoord(() =>
+      objectMap(rawCoords, (c) => [c[0] * 90 + 50, c[1] * 150 + 50])
+    )
+
     setBottomRight(() => [
       rawBottomRight[0] * 90 + 100,
       rawBottomRight[1] * 150 + 100,
@@ -37,20 +41,24 @@ const Graph = ({ adjList, labels }: Props) => {
 
   return (
     <Svg viewBox={`0 0 ${bottomRight[0]} ${bottomRight[1]}`}>
-      {edgeList.map((edge, e) => (
-        <DirectedEdge
-          key={e}
-          start={verticesCoord[edge.u]}
-          end={verticesCoord[edge.v]}
-          label={labeled(edge.w)}
-          // visited
-        />
-      ))}
-      {verticesCoord.map((coord, v) => (
+      {edgeList.map(
+        (edge, e) =>
+          verticesCoord[edge.u] &&
+          verticesCoord[edge.v] && (
+            <DirectedEdge
+              key={e}
+              start={verticesCoord[edge.u]}
+              end={verticesCoord[edge.v]}
+              label={labeled(edge.w)}
+              // visited
+            />
+          )
+      )}
+      {Object.entries(verticesCoord).map(([v, coord]) => (
         <Vertex
           key={v}
           center={coord}
-          label={labels ? labels[v] : `${v}`}
+          label={labels[Number(v)] || `${v}`}
           // visited
         />
       ))}

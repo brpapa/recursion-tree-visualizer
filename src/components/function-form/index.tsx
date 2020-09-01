@@ -19,7 +19,7 @@ import { buildTree } from '../../core/build-tree'
 import { TemplateKeys, AdjList, Variable } from '../../types'
 
 type Props = {
-  onSubmit: (adjList: AdjList, args: any[][]) => void
+  onSubmit: (adjList: AdjList, labels: Record<number, string>) => void
 }
 
 const FunctionForm = (props: Props) => {
@@ -47,10 +47,11 @@ const FunctionForm = (props: Props) => {
 
     try {
       const fnData = group(fnCode.value, fnCall.value, vars)
-      const { adjList, args } = buildTree(fnData)
+      const { adjList, labels } = buildTree(fnData)
 
       setError('')
-      props.onSubmit(adjList, args)
+      props.onSubmit(adjList, labels)
+
     } catch (error) {
       console.error(error.name, error.message)
       setError(error.message)

@@ -2,11 +2,12 @@
 import { Point, TreeNode, AdjList } from '../types'
 
 export function computeCoords(adjList: AdjList, rootId = 0) {
-  const rawCoords: Point[] = Array(adjList.length).fill([-1, -1])
+  const rawCoords: Record<number, Point> = {} // rawCoords[u]: coordenada do vértice u
   const rawTopLeft: Point = [0, 0]
   const rawBottomRight: Point = [0, 0]
 
-  if (adjList.length > 0) {
+  // se adjList não é {}
+  if (Object.keys(adjList).length > 0) {
     const root: TreeNode = {
       id: rootId,
       parent: null,
@@ -26,6 +27,8 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
   /**/
 
   function initNodes(node: TreeNode, nodeId = rootId, nodeDepth = 0) {
+    if (adjList[nodeId] === undefined) return
+
     // for each child of node
     for (const { v: childId } of adjList[nodeId]) {
       const child = {
@@ -50,21 +53,23 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
 
     let prevX: number | null = null
 
-    // para cada par de subárvores filhas left e right
+    // para cada par de sub-árvores filhas left e right
     for (let i = 1; i < node.children.length; i++) {
-      const left = firstTraversal(node.children[i - 1])
+      const left = firstTraversal(node.children[i-1])
       const right = firstTraversal(node.children[i])
       // post-order traversal below
 
       if (prevX !== null) left.x = prevX
 
       // console.log('before shift:', left.id, right.id, left.x, right.x)
+      // FIXME: transformar em função pura
       shiftRightSubtree(left, right)
       // console.log('after shift:', left.id, right.id, left.x, right.x)
 
       prevX = right.x
     }
-
+    
+    // FIXME: transformar em função pura
     // centraliza node entre seus filhos
     const qtyChilds = node.children.length
     const leftMostX = node.children[0].x
@@ -80,7 +85,7 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
   // atualiza o x real dos nós e constroi o retorno
   function lastTraversal(node: TreeNode, accMod = 0) {
     node.x += accMod
-    // console.log(node.id, node.x, node.y)
+    // console.log(`${node.id}: [${node.x}, ${node.y}]`)
 
     rawCoords[node.id] = [node.x, node.y]
     rawBottomRight[0] = Math.max(rawBottomRight[0], node.x)
@@ -90,22 +95,22 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
   }
 }
 
-// desloca toda a subárvore enraizada por right para o mais próximo possível da subárvora enraizada por left de forma que não haja conflitos
+// desloca toda a subárvore enraizada por right para o mais próximo possível da sub-árvore enraizada por left de forma que não haja nenhum conflito
 function shiftRightSubtree(left: TreeNode, right: TreeNode) {
-  let { li, ri, lo, ro, offset, loffset, roffset } = contour(left, right)
+  let { li, ri, lo, ro, offset, leftOffset, rightOffset } = contour(left, right)
 
   right.x += offset
   right.mod += offset
 
-  if (right.children.length > 0) roffset += offset
+  if (right.children.length > 0) rightOffset += offset
 
   // se as subárvores left e right tem alturas diferentes, linka a thread
   if (ri && !li) {
     lo.thread = ri
-    lo.mod = roffset - loffset
+    lo.mod = rightOffset - leftOffset
   } else if (li && !ri) {
     ro.thread = li
-    ro.mod = loffset - roffset
+    ro.mod = leftOffset - rightOffset
   }
 }
 
@@ -114,8 +119,8 @@ function contour(
   left: TreeNode,
   right: TreeNode,
   maxOffset?: number,
-  loffset = 0,
-  roffset = 0,
+  leftOffset = 0,
+  rightOffset = 0,
   leftOuter?: TreeNode,
   rightOuter?: TreeNode
 ): {
@@ -124,10 +129,10 @@ function contour(
   lo: TreeNode
   ro: TreeNode
   offset: number
-  loffset: number
-  roffset: number
+  leftOffset: number
+  rightOffset: number
 } {
-  const delta = left.x + loffset - (right.x + roffset) + 1
+  const delta = left.x + leftOffset - (right.x + rightOffset) + 1
   maxOffset = Math.max(maxOffset || delta, delta)
 
   if (!leftOuter) leftOuter = left
@@ -139,9 +144,9 @@ function contour(
   const ro = nextRight(rightOuter) // right outer
 
   if (li && ri) {
-    loffset += left.mod
-    roffset += right.mod
-    return contour(li, ri, maxOffset, loffset, roffset, lo, ro)
+    leftOffset += left.mod
+    rightOffset += right.mod
+    return contour(li, ri, maxOffset, leftOffset, rightOffset, lo, ro)
   }
 
   return {
@@ -150,8 +155,8 @@ function contour(
     lo: leftOuter,
     ro: rightOuter,
     offset: maxOffset,
-    loffset,
-    roffset,
+    leftOffset,
+    rightOffset,
   }
 }
 

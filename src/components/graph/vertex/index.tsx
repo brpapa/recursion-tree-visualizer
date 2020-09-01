@@ -33,7 +33,7 @@ const Vertex = ({ center: P, label, visited = false }: Props) => {
     // return () => {
     //   if (current) current.style.transform = `scale(1)`
     // }
-  }, [label])
+  }, [P, label])
 
   return (
     <Group {...{ backgroundColor: 'white', foregroundColor: 'black', visited }}>

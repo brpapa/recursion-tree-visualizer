@@ -23,8 +23,8 @@ export function buildTree(this: any, fnData: FunctionData) {
   /**/
 
   let V = 0 // curr qty of vertices
-  let args: any[][] = [] // args[u]: array of params values of vertex u
-  let adjList: AdjList = [] // let w as the result of fn(...args[v])
+  let labels: Record<number, string> = {} // labels[u]: label (params values) of vertex u
+  let adjList: AdjList = {} // let w as the result of fn(...args[v])
   let recursionStack: number[] = [] // o vértice do topo é o pai do atual
 
   // wrapper para a fn, a qual é chamada recursivamente
@@ -32,8 +32,8 @@ export function buildTree(this: any, fnData: FunctionData) {
     let v = V // v = current vertex id
     if (V++ > MAX_V) throw new Error('Too many recursive calls')
 
-    args.push(allArgs) // args[v] = allArgs
-    adjList.push([]) // adjList[v] = []
+    labels[v] = allArgs.join(',')
+    adjList[v] = []
 
     const adj: { v: number; w?: number } = { v }
     if (recursionStack.length > 0) {
@@ -55,5 +55,5 @@ export function buildTree(this: any, fnData: FunctionData) {
   if (paramsValues.length > 0)
     fn(...paramsValues)
 
-  return { adjList, args }
+  return { adjList, labels }
 }

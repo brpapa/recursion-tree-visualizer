@@ -13,9 +13,9 @@ type Props = {
 
 const DirectedEdge = ({ start, end, label, visited = false }: Props) => {
   // renderiza uma aresta direcionada de P à Q
-  const [P] = React.useState(() => pointOnLine(end, start, VERTEX_RADIUS))
-  const [Q] = React.useState(() => pointOnLine(start, end, VERTEX_RADIUS + 10)) //! hardcode
-  const [C] = React.useState(() => centralPoint(P, Q))
+  const P = pointOnLine(end, start, VERTEX_RADIUS)
+  const Q = pointOnLine(start, end, VERTEX_RADIUS + 10) //! hardcode
+  const C = centralPoint(P, Q)
 
   return (
     <Group color={'black'}>

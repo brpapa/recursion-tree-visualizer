@@ -1,7 +1,7 @@
 {
   "include": [
     "./src/*",
-    "./src/styles/styled.d.ts"
+    "./src/styles/styled.d.ts", "src/utils/index.ts"
   ],
   "exclude": [
     "node_modules",
@@ -14,7 +14,7 @@
     "sourceMap": true,
     "lib": [
       "dom",
-      "es2015"
+      "es2019"
     ],
     "jsx": "react",
     "esModuleInterop": true,

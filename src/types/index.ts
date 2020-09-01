@@ -10,7 +10,7 @@ export type FunctionData = {
 }
 
 // adjList[u]: [{v, w}, ...], sendo u -w-> v
-export type AdjList = { v: number; w?: number }[][]
+export type AdjList = Record<number, { v: number; w?: number }[]>
 export type EdgeList = { u: number; v: number; w?: number }[]
 
 export type TreeNode = {
