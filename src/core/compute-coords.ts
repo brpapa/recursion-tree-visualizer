@@ -52,43 +52,23 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
       return node
     }
 
-    // console.log(`Start - Children of ${node.id}`)
-
     // para cada par de sub-árvores filhas leftChild e rightChild
     const [firstChild, ...children] = node.children
     let leftChild = firstTraversal(firstChild)
-    // console.log(leftChild.id, leftChild.x, leftChild.mod)
+
     for (const child of children) {
       const rightChild = firstTraversal(child)
 
       // post-order traversal below
-
-      // console.log('before shift:', leftChild.id, rightChild.id, leftChild.x, rightChild.x)
       shiftRightSubtree(leftChild, rightChild)
-      // console.log('after shift:', leftChild.id, rightChild.id, leftChild.x, rightChild.x)
-
-      // console.log(
-      //   leftChild.id,
-      //   '-',
-      //   rightChild.id,
-      //   rightChild.x,
-      //   rightChild.mod
-      // )
-      // if (leftChild.id === 1 && rightChild.id === 2) {
-      //   rightChild.x += 1
-      //   rightChild.mod += 1
-      // }
-
-
       leftChild = rightChild
     }
-    // console.log(`End - Children of ${node.id}`)
 
     node.x = centralX(node.children)
     return node
   }
 
-  // atualiza o x real dos nós e constroi o retorno
+  // atualiza o x real dos nós
   function lastTraversal(node: TreeNode, accMod = 0) {
     // console.log(node.id, node.x, node.mod)
     node.x += accMod
@@ -100,79 +80,72 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
 
     for (const child of node.children) lastTraversal(child, accMod + node.mod)
   }
-}
 
-// TODO: transformar em função pura
-// desloca toda a sub-árvore enraizada por right para o mais próximo possível da sub-árvore enraizada por left de forma que não haja nenhum conflito
-function shiftRightSubtree(left: TreeNode, right: TreeNode) {
-  let { li, ri, lo, ro, offset, leftOffset, rightOffset } = contour(left, right)
+  // desloca toda a sub-árvore enraizada por right para o mais próximo possível da sub-árvore enraizada por left de forma que não haja nenhum conflito
+  function shiftRightSubtree(left: TreeNode, right: TreeNode) {
+    let { li, ri, lo, ro, diff, leftOffset, rightOffset } = contour(left, right)
 
-  // if (left.id == 1 && right.id == 2) {
-  // if (left.id == 2 && right.id == 3) {
-    // console.log({ li, ri, lo, ro, offset, leftOffset, rightOffset })
-  // }
+    // desloca right
+    right.x += diff
+    right.mod += diff
 
-  // desloca right
-  right.x += offset
-  right.mod += offset
+    if (right.children.length > 0) rightOffset += diff
 
-  if (right.children.length > 0) rightOffset += offset
-
-  // se as subárvores left e right tem alturas diferentes, define uma nova thread
-  if (ri && !li) {
-    lo.thread = ri
-    lo.mod = rightOffset - leftOffset
-  } else if (li && !ri) {
-    ro.thread = li
-    ro.mod = leftOffset - rightOffset
-  }
-}
-
-type CountourReturn = {
-  li: TreeNode
-  ri: TreeNode
-  lo: TreeNode
-  ro: TreeNode
-  offset: number
-  leftOffset: number
-  rightOffset: number
-}
-
-// retorna os contornos das sub-árvores left e tree
-function contour(
-  left: TreeNode,
-  right: TreeNode,
-  // PRINT = false, // FIXME: remover
-  leftOuter?: TreeNode,
-  rightOuter?: TreeNode,
-  maxOffset?: number,
-  leftOffset = 0,
-  rightOffset = 0,
-): CountourReturn {
-  // if (PRINT) console.log(arguments)
-  
-  const currOffset = left.x + leftOffset - (right.x + rightOffset) + 1
-  maxOffset = Math.max(maxOffset || currOffset, currOffset)
-
-  const li = nextRight(left) // left inner
-  const ri = nextLeft(right) // right inner
-  const lo = nextLeft(leftOuter || left) // left outer
-  const ro = nextRight(rightOuter || right) // right outer
-
-  if (li && ri) {
-    leftOffset += left.mod
-    rightOffset += right.mod
-    return contour(li, ri, lo, ro, maxOffset, leftOffset, rightOffset) 
+    // se as subárvores left e right tem alturas diferentes
+    if (ri && !li) {
+      lo.thread = ri // define a thread lo -> ri
+      lo.mod = rightOffset - leftOffset
+      lo.mod += ri.parent?.mod || 0 // preserva o mod que ri tinha de seu pai para o agora mod de lo
+    } else if (li && !ri) {
+      ro.thread = li // define a thread ro -> li
+      ro.mod = leftOffset - rightOffset
+      ro.mod += li.parent?.mod || 0 // preserva o mod que li tinha de seu pai para o agora mod de ro
+    }
   }
 
-  return {
-    li,
-    ri,
-    lo: leftOuter || left,
-    ro: rightOuter || right,
-    offset: maxOffset,
-    leftOffset,
-    rightOffset,
+  type CountourReturn = {
+    li: TreeNode
+    ri: TreeNode
+    lo: TreeNode
+    ro: TreeNode
+    diff: number
+    leftOffset: number
+    rightOffset: number
+  }
+
+  // retorna os contornos das sub-árvores left e tree
+  function contour(
+    left: TreeNode,
+    right: TreeNode,
+    leftOuter?: TreeNode,
+    rightOuter?: TreeNode,
+    maxDiff?: number,
+    leftOffset = 0,
+    rightOffset = 0
+  ): CountourReturn {
+    let currDiff = left.x + leftOffset - (right.x + rightOffset) + 1
+    maxDiff = Math.max(maxDiff || currDiff, currDiff)
+
+    const li = nextRight(left) // left inner
+    const ri = nextLeft(right) // right inner
+    const lo = nextLeft(leftOuter || left) // left outer
+    const ro = nextRight(rightOuter || right) // right outer
+
+    if (li && ri) {
+      leftOffset += left.mod
+      rightOffset += right.mod
+      return contour(li, ri, lo, ro, maxDiff, leftOffset, rightOffset)
+    }
+
+    return {
+      li,
+      ri,
+      lo: leftOuter || left,
+      ro: rightOuter || right,
+      diff: maxDiff,
+      leftOffset,
+      rightOffset,
+    }
   }
 }
 
