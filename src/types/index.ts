@@ -20,6 +20,6 @@ export type TreeNode = {
 
   x: number
   y: number
-  mod: number // modifier, valor pendente para ser incrementado no x de todos os filhos do nó atual, o que não inclui ele mesmo
-  thread?: TreeNode // aponta para o próximo nó do contour
+  mod: number
+  thread?: TreeNode
 }

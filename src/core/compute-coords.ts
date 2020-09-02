@@ -14,7 +14,8 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
       children: [],
       x: 0,
       y: 0,
-      mod: 0,
+      mod: 0, // modifier, valor pendente para ser incrementado no x de todos os filhos do nó atual, o que não inclui ele mesmo
+      thread: undefined, // aponta para o próximo nó do contour
     }
 
     initNodes(root) // constroi o objeto root a partir da adjList
@@ -51,39 +52,45 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
       return node
     }
 
-    let prevX: number | null = null
+    // console.log(`Start - Children of ${node.id}`)
 
-    // para cada par de sub-árvores filhas left e right
-    for (let i = 1; i < node.children.length; i++) {
-      const left = firstTraversal(node.children[i-1])
-      const right = firstTraversal(node.children[i])
+    // para cada par de sub-árvores filhas leftChild e rightChild
+    const [firstChild, ...children] = node.children
+    let leftChild = firstTraversal(firstChild)
+    // console.log(leftChild.id, leftChild.x, leftChild.mod)
+    for (const child of children) {
+      const rightChild = firstTraversal(child)
+
       // post-order traversal below
 
-      if (prevX !== null) left.x = prevX
+      // console.log('before shift:', leftChild.id, rightChild.id, leftChild.x, rightChild.x)
+      shiftRightSubtree(leftChild, rightChild)
+      // console.log('after shift:', leftChild.id, rightChild.id, leftChild.x, rightChild.x)
 
-      // console.log('before shift:', left.id, right.id, left.x, right.x)
-      // FIXME: transformar em função pura
-      shiftRightSubtree(left, right)
-      // console.log('after shift:', left.id, right.id, left.x, right.x)
+      // console.log(
+      //   leftChild.id,
+      //   '-',
+      //   rightChild.id,
+      //   rightChild.x,
+      //   rightChild.mod
+      // )
+      // if (leftChild.id === 1 && rightChild.id === 2) {
+      //   rightChild.x += 1
+      //   rightChild.mod += 1
+      // }
 
-      prevX = right.x
+
+      leftChild = rightChild
     }
-    
-    // FIXME: transformar em função pura
-    // centraliza node entre seus filhos
-    const qtyChilds = node.children.length
-    const leftMostX = node.children[0].x
-    const rightMostX = node.children[qtyChilds - 1].x
-    node.x =
-      qtyChilds % 2 === 0
-        ? (leftMostX + rightMostX) / 2
-        : node.children[(qtyChilds - 1) / 2].x
+    // console.log(`End - Children of ${node.id}`)
 
+    node.x = centralX(node.children)
     return node
   }
 
   // atualiza o x real dos nós e constroi o retorno
   function lastTraversal(node: TreeNode, accMod = 0) {
+    // console.log(node.id, node.x, node.mod)
     node.x += accMod
     // console.log(`${node.id}: [${node.x}, ${node.y}]`)
 
@@ -95,16 +102,23 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
   }
 }
 
-// desloca toda a subárvore enraizada por right para o mais próximo possível da sub-árvore enraizada por left de forma que não haja nenhum conflito
+// TODO: transformar em função pura
+// desloca toda a sub-árvore enraizada por right para o mais próximo possível da sub-árvore enraizada por left de forma que não haja nenhum conflito
 function shiftRightSubtree(left: TreeNode, right: TreeNode) {
   let { li, ri, lo, ro, offset, leftOffset, rightOffset } = contour(left, right)
 
+  // if (left.id == 1 && right.id == 2) {
+  // if (left.id == 2 && right.id == 3) {
+    // console.log({ li, ri, lo, ro, offset, leftOffset, rightOffset })
+  // }
+
+  // desloca right
   right.x += offset
   right.mod += offset
 
   if (right.children.length > 0) rightOffset += offset
 
-  // se as subárvores left e right tem alturas diferentes, linka a thread
+  // se as subárvores left e right tem alturas diferentes, define uma nova thread
   if (ri && !li) {
     lo.thread = ri
     lo.mod = rightOffset - leftOffset
@@ -114,16 +128,7 @@ function shiftRightSubtree(left: TreeNode, right: TreeNode) {
   }
 }
 
-// retorna os contornos das sub-árvores left e tree
-function contour(
-  left: TreeNode,
-  right: TreeNode,
-  maxOffset?: number,
-  leftOffset = 0,
-  rightOffset = 0,
-  leftOuter?: TreeNode,
-  rightOuter?: TreeNode
-): {
+type CountourReturn = {
   li: TreeNode
   ri: TreeNode
   lo: TreeNode
@@ -131,29 +136,40 @@ function contour(
   offset: number
   leftOffset: number
   rightOffset: number
-} {
-  const delta = left.x + leftOffset - (right.x + rightOffset) + 1
-  maxOffset = Math.max(maxOffset || delta, delta)
+}
 
-  if (!leftOuter) leftOuter = left
-  if (!rightOuter) rightOuter = right
+// retorna os contornos das sub-árvores left e tree
+function contour(
+  left: TreeNode,
+  right: TreeNode,
+  // PRINT = false, // FIXME: remover
+  leftOuter?: TreeNode,
+  rightOuter?: TreeNode,
+  maxOffset?: number,
+  leftOffset = 0,
+  rightOffset = 0,
+): CountourReturn {
+  // if (PRINT) console.log(arguments)
+  
+  const currOffset = left.x + leftOffset - (right.x + rightOffset) + 1
+  maxOffset = Math.max(maxOffset || currOffset, currOffset)
 
-  const lo = nextLeft(leftOuter) // left outer
-  const li = nextRight(left) // left inner?
-  const ri = nextLeft(right) // right inner?
-  const ro = nextRight(rightOuter) // right outer
+  const li = nextRight(left) // left inner
+  const ri = nextLeft(right) // right inner
+  const lo = nextLeft(leftOuter || left) // left outer
+  const ro = nextRight(rightOuter || right) // right outer
 
   if (li && ri) {
     leftOffset += left.mod
     rightOffset += right.mod
-    return contour(li, ri, maxOffset, leftOffset, rightOffset, lo, ro)
+    return contour(li, ri, lo, ro, maxOffset, leftOffset, rightOffset) 
   }
 
   return {
     li,
     ri,
-    lo: leftOuter,
-    ro: rightOuter,
+    lo: leftOuter || left,
+    ro: rightOuter || right,
     offset: maxOffset,
     leftOffset,
     rightOffset,
@@ -166,4 +182,13 @@ function nextRight(node: TreeNode) {
 }
 function nextLeft(node: TreeNode) {
   return node.thread || node.children[0] || null
+}
+
+// retorna o x central de nodes
+function centralX(nodes: TreeNode[]) {
+  const { length } = nodes
+
+  return length % 2 === 0
+    ? (nodes[0].x + nodes[length - 1].x) / 2
+    : nodes[(length - 1) / 2].x
 }

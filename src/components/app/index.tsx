@@ -31,8 +31,8 @@ const App = () => {
           setLabels(labels)
         }}
       />
-      {/* <Graph adjList={fakeAdjList} labels={{}} /> */}
-      <Graph adjList={adjList} labels={labels} />
+      <Graph adjList={fakeAdjList} labels={{}} />
+      {/* <Graph adjList={adjList} labels={labels} /> */}
     </AppContainer>
   )
 }
