@@ -23,7 +23,7 @@ const templates: Record<TemplateKeys, FunctionData> = {
       'if (i < 0) return 0',
       '',
       'return Math.max(',
-      "  fn(i-1, s),            // don't choose i",
+      "  fn(i-1, s), // don't choose i",
       '  v[i] + fn(i-1, s-w[i]) // choose i',
       ')',
     ]),

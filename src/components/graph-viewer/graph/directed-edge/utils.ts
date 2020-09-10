@@ -1,4 +1,4 @@
-import { Point } from '../../../types'
+import { Point } from '../../../../types'
 
 // retorna o ponto em relação à origem que representa o vetor PQ
 function vector(P: Point, Q: Point): Point {

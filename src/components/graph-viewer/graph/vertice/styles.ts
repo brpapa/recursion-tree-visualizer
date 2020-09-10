@@ -1,5 +1,6 @@
 import styled, { keyframes } from 'styled-components'
 
+
 export const Circle = styled.circle`
   stroke-width: 5px;
 `
@@ -11,34 +12,31 @@ export const Text = styled.text`
   alignment-baseline: central;
   user-select: none;
 `
-type GroupProps = {
-  backgroundColor?: string
-  foregroundColor?: string
-  visited?: boolean
-}
-export const Group = styled.g<GroupProps>`
+
+const backgroundColor = 'white'
+const foregroundColor = 'black'
+
+export const Container = styled.g<{ highlight: boolean }>`
   ${Circle} {
-    fill: ${(props) =>
-      props.visited ? props.foregroundColor : props.backgroundColor};
-    stroke: ${(props) => props.foregroundColor};
+    fill: ${({ highlight }) => (highlight ? 'black' : backgroundColor)};
+    stroke: ${({ highlight }) => (highlight ? 'black' : foregroundColor)};
   }
 
   ${Text} {
-    fill: ${(props) =>
-      props.visited ? props.backgroundColor : props.foregroundColor};
+    fill: ${({ highlight }) => (highlight ? backgroundColor : foregroundColor)};
   }
 
   &:hover {
     ${Circle} {
-      fill: ${({theme}) => theme.colors.primary};
-      stroke: ${({theme}) => theme.colors.primary};
+      fill: ${({ theme }) => theme.colors.primary};
+      stroke: ${({ theme }) => theme.colors.primary};
     }
     ${Text} {
       fill: white;
     }
   }
 
-  ${Circle}, ${Text} {
+  /* ${Circle}, ${Text} {
     animation-name: ${keyframes`
       from {
         r: 0;
@@ -46,8 +44,8 @@ export const Group = styled.g<GroupProps>`
       }
     `};
     animation-duration: 0.6s;
-    /* essa curva de bezier está perfeita :) */
+    animation-duration: 0.2s;
     animation-timing-function: cubic-bezier(0.65, 0, 0.265, 1.55);
     animation-delay: both;
-  }
+  } */
 `

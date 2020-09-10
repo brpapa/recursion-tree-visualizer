@@ -24,15 +24,17 @@ export const FormContainer = styled.form`
 `
 export const Select = styled.select`
   ${withFormItemBase}
+  font-size: 13px;
   position: absolute;
   top: 5px;
   right: 5px;
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: black; /* FIXME */
   color: white;
   border-radius: 6px;
 `
 export const Textarea = styled.textarea`
   ${withFormItemBase}
+  font-size: 14px;
   font-family: Menlo, monospace;
   resize: none;
   display: block;
@@ -52,7 +54,7 @@ export const TextInput = styled.input.attrs({ type: 'text' })`
 export const Button = styled.button`
   ${withFormItemBase}
   padding: 4px 8px; /* !height equal */
-  background-color: black;
+  background-color: black; /* FIXME */
   border: 0;
   color: white;
   font-weight: bold;

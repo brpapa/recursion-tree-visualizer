@@ -1,28 +1,28 @@
 import React from 'react'
-import { Group, Line, Circle, Text } from './styles'
+import { Container, Line, Text } from './styles'
 import { pointOnLine, centralPoint } from './utils'
-import { VERTEX_RADIUS } from './../constants'
-import { Point } from '../../../types'
+import { VERTEX_RADIUS } from '../constants'
+import { Point } from '../../../../types'
 
 type Props = {
   start: Point
   end: Point
   label?: string
-  visited?: boolean
+  highlight?: boolean
 }
 
-const DirectedEdge = ({ start, end, label, visited = false }: Props) => {
+const DirectedEdge = ({ start, end, label, highlight = false }: Props) => {
   // renderiza uma aresta direcionada de P à Q
   const P = pointOnLine(end, start, VERTEX_RADIUS)
   const Q = pointOnLine(start, end, VERTEX_RADIUS + 10) //! hardcode
   const C = centralPoint(P, Q)
 
   return (
-    <Group color={'black'}>
+    <Container highlight={highlight}>
       {/* FIXME: defs é renderizado várias vezes desnecessariamente, teria outra forma de fazer a arrowhead? */}
       <defs>
         <marker
-          id='marker-arrowhead'
+          id={`arrowhead-${start}${end}`}
           markerWidth='6'
           markerHeight='4'
           refX='5'
@@ -39,7 +39,7 @@ const DirectedEdge = ({ start, end, label, visited = false }: Props) => {
         y1={P[1]}
         x2={Q[0]}
         y2={Q[1]}
-        markerEnd='url(#marker-arrowhead)'
+        markerEnd={`url(#arrowhead-${start}${end})`}
       >
         <animate
           attributeName='x2'
@@ -57,15 +57,10 @@ const DirectedEdge = ({ start, end, label, visited = false }: Props) => {
         />
       </Line>
 
-      {label !== undefined && (
-        <>
-          <Circle cx={C[0]} cy={C[1]} r={15} />
-          <Text x={C[0]} y={C[1]}>
-            {label}
-          </Text>
-        </>
-      )}
-    </Group>
+      <Text x={C[0]} y={C[1]}>
+        {label}
+      </Text>
+    </Container>
   )
 }
 

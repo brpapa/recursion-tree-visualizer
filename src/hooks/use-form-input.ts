@@ -1,4 +1,4 @@
-import React from 'react'
+import useLocalStorage from './use-local-storage'
 
 type HTMLELements = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement
 type Event = React.ChangeEvent<HTMLELements>
@@ -8,11 +8,13 @@ type Return = [
   React.Dispatch<React.SetStateAction<string>>
 ]
 
-const useFormInput = (
-  init: string,
+// with useLocalStorage built-in
+export default function useFormInput(
+  localStorageKey: string,
+  initialValue: string,
   validate?: (value: string) => boolean
-): Return => {
-  const [value, setValue] = React.useState(init)
+): Return {
+  const [value, setValue] = useLocalStorage(localStorageKey, initialValue)
 
   function handleChange(e: Event) {
     if (validate && !validate(e.target.value)) return
@@ -27,5 +29,3 @@ const useFormInput = (
     setValue,
   ]
 }
-
-export default useFormInput

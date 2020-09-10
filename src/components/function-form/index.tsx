@@ -15,17 +15,22 @@ import {
 import { group, ungroup, codeValidate, callValidate } from './utils'
 import templates from './templates'
 import useFormInput from './../../hooks/use-form-input'
-import { buildTree } from '../../core/build-tree'
-import { TemplateKeys, AdjList, Variable } from '../../types'
+import useLocalStorage from './../../hooks/use-local-storage'
+import getTree from '../../core/get-tree'
+import { TemplateKeys, AdjList, Args, Variable } from '../../types'
 
 type Props = {
-  onSubmit: (adjList: AdjList, labels: Record<number, string>) => void
+  onSubmit: (adjList: AdjList, args: Args, result: number) => void
 }
 
 const FunctionForm = (props: Props) => {
-  const [fnCode, setFnCode] = useFormInput('function fn() {\n\n}', codeValidate)
-  const [fnCall, setFnCall] = useFormInput('fn()', callValidate)
-  const [vars, setVars] = React.useState<Variable[]>([
+  const [fnCode, setFnCode] = useFormInput(
+    'fn-code',
+    'function fn() {\n\n}',
+    codeValidate
+  )
+  const [fnCall, setFnCall] = useFormInput('fn-call', 'fn()', callValidate)
+  const [fnVars, setFnVars] = useLocalStorage<Variable[]>('fn-vars', [
     { name: '', value: '' },
     { name: '', value: '' },
   ]) //! fixado em 2 vars por enquanto
@@ -39,19 +44,18 @@ const FunctionForm = (props: Props) => {
 
     setFnCode(res.fnCode)
     setFnCall(res.fnCall)
-    setVars(res.vars)
+    setFnVars(res.fnVars)
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      const fnData = group(fnCode.value, fnCall.value, vars)
-      const { adjList, labels } = buildTree(fnData)
+      const fnData = group(fnCode.value, fnCall.value, fnVars)
+      const { adjList, args, result } = getTree(fnData)
 
       setError('')
-      props.onSubmit(adjList, labels)
-
+      props.onSubmit(adjList, args, result)
     } catch (error) {
       console.error(error.name, error.message)
       setError(error.message)
@@ -69,11 +73,11 @@ const FunctionForm = (props: Props) => {
           <option value='fastPower'>Fast Power</option>
           <option value='custom'>Custom</option>
         </Select>
-        <Textarea {...fnCode} rows={10} cols={50} wrap='off' />
+        <Textarea {...fnCode} rows={10} cols={50} />
       </FunctionContainer>
 
-      <Label>Global variables:</Label>
-      {vars.map(({ name, value }, i) => (
+      <Label>Global read-only variables:</Label>
+      {fnVars.map(({ name, value }, i) => (
         <VariableContainer key={i}>
           <TextInput
             placeholder='name'
@@ -81,7 +85,7 @@ const FunctionForm = (props: Props) => {
             onChange={(e) => {
               const varName = e.target.value
 
-              setVars((v) => {
+              setFnVars((v) => {
                 if (v[i]) v[i].name = varName
                 return [...v]
               })
@@ -94,7 +98,7 @@ const FunctionForm = (props: Props) => {
             onChange={(e) => {
               const varValue = e.target.value
 
-              setVars((v) => {
+              setFnVars((v) => {
                 if (v[i]) v[i].value = varValue
                 return [...v]
               })
@@ -111,6 +115,10 @@ const FunctionForm = (props: Props) => {
       </RunContainer>
 
       {error !== '' && <Error>{error}</Error>}
+
+      <footer>
+        Made with ❤️ by <a href="https://github.com/brpapa" target="__blank">Bruno Papa</a>.
+      </footer>
     </FormContainer>
   )
 }

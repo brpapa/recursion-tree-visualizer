@@ -1,7 +1,7 @@
 {
   "include": [
     "./src/*",
-    "./src/styles/styled.d.ts", "src/utils/index.ts"
+    "./src/styles/styled.d.ts",
   ],
   "exclude": [
     "node_modules",

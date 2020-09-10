@@ -2,17 +2,17 @@ import React from 'react'
 import { render } from 'react-dom'
 import { ThemeProvider } from 'styled-components'
 
-import Layout from './components/app'
+import App from './components/app'
 import GlobalStyle from './styles/global'
 import { light } from './styles/themes'
 
-const App = () => {
+const Root = () => {
   return (
     <ThemeProvider theme={light}>
       <GlobalStyle />
-      <Layout />
+      <App />
     </ThemeProvider>
   )
 }
 
-render(<App />, document.getElementById('root'))
+render(<Root />, document.getElementById('root'))

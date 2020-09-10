@@ -1,7 +1,8 @@
 // a partir de uma adjList, determina a melhores coordenadas (x,y) de cada nó
-import { Point, TreeNode, AdjList } from '../types'
+import { Point, TreeNode, AdjList } from '../../../types'
 
-export function computeCoords(adjList: AdjList, rootId = 0) {
+// dado uma árvore, retorna as coordenadas de cada vértice no svg de uma forma esteticamente agradável
+export default function getCoords(adjList: AdjList, rootId = 0) {
   const rawCoords: Record<number, Point> = {} // rawCoords[u]: coordenada do vértice u
   const rawTopLeft: Point = [0, 0]
   const rawBottomRight: Point = [0, 0]
@@ -103,16 +104,6 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
     }
   }
 
-  type CountourReturn = {
-    li: TreeNode
-    ri: TreeNode
-    lo: TreeNode
-    ro: TreeNode
-    diff: number
-    leftOffset: number
-    rightOffset: number
-  }
-
   // retorna os contornos das sub-árvores left e tree
   function contour(
     left: TreeNode,
@@ -122,14 +113,22 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
     maxDiff?: number,
     leftOffset = 0,
     rightOffset = 0
-  ): CountourReturn {
+  ): {
+    li: TreeNode
+    ri: TreeNode
+    lo: TreeNode
+    ro: TreeNode
+    diff: number
+    leftOffset: number
+    rightOffset: number
+  } {
     let currDiff = left.x + leftOffset - (right.x + rightOffset) + 1
     maxDiff = Math.max(maxDiff || currDiff, currDiff)
 
     const li = nextRight(left) // left inner
     const ri = nextLeft(right) // right inner
-    const lo = nextLeft(leftOuter || left) // left outer
-    const ro = nextRight(rightOuter || right) // right outer
+    let lo = nextLeft(leftOuter || left) // left outer
+    let ro = nextRight(rightOuter || right) // right outer
 
     if (li && ri) {
       leftOffset += left.mod
@@ -137,15 +136,9 @@ export function computeCoords(adjList: AdjList, rootId = 0) {
       return contour(li, ri, lo, ro, maxDiff, leftOffset, rightOffset)
     }
 
-    return {
-      li,
-      ri,
-      lo: leftOuter || left,
-      ro: rightOuter || right,
-      diff: maxDiff,
-      leftOffset,
-      rightOffset,
-    }
+    lo = leftOuter || left
+    ro = rightOuter || right
+    return { li, ri, lo, ro, diff: maxDiff, leftOffset, rightOffset }
   }
 }
 

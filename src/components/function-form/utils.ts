@@ -23,7 +23,7 @@ export const ungroup = (fnData: FunctionData) => {
   return {
     fnCode: `function fn(${paramsNames}) {\n${body}\n}`,
     fnCall: `fn(${paramsValues})`,
-    vars: [
+    fnVars: [
       { name: var1?.name || '', value: var1?.value || '' },
       { name: var2?.name || '', value: var2?.value || '' },
     ],
@@ -34,7 +34,7 @@ export const ungroup = (fnData: FunctionData) => {
 export const group = (
   fnCode: string,
   fnCall: string,
-  vars: Variable[]
+  fnVars: Variable[]
 ): FunctionData => {
   const paramsNames = betweenParentesis(fnCode)
   const paramsValues = betweenParentesis(fnCall)
@@ -50,7 +50,7 @@ export const group = (
     fnCode.indexOf('{') + 1,
     fnCode.lastIndexOf('}')
   )
-  const variables = vars.filter(
+  const variables = fnVars.filter(
     ({ name, value }) => name !== '' && value !== ''
   )
 

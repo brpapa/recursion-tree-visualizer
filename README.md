@@ -1,6 +1,10 @@
 # Recursive tree visualizer
 
+Para fins didáticos.
+
 Stop drawing recursive trees by hand.
+
+You can use this as a utility tool for help you on recursive modeling.
 
 # Installation
 
@@ -17,6 +21,6 @@ In the root directory, you can run:
 > yarn build
 ```
 
-# Thanks
+# Acknowledgements
 
-- **Tree layout algorithm**: to positionate each node of the tree on 2D plane in an aesthetically pleasing way, I implemented the Reingold-Tilford's algorithm. Thanks to [this](https://llimllib.github.io/pymag-trees/#foot5) helpful webpage and [this](http://dirk.jivas.de/papers/buchheim02improving.pdf) amazing paper.
+To positionate each node of the tree on 2D plane in an aesthetically pleasing way, I implemented the Reingold-Tilford's algorithm. Thanks to [this](https://llimllib.github.io/pymag-trees/#foot5) helpful webpage and [this](http://dirk.jivas.de/papers/buchheim02improving.pdf) amazing paper.
