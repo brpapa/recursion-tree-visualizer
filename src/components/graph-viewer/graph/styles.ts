@@ -1,8 +1,7 @@
 import styled from 'styled-components'
 
 export const Svg = styled.svg`
+  flex: 1; /* aumenta o height para o máximo que couber */
   border-radius: 0 0 8px 8px;
-  height: calc(100% - 10px); /* FIXME: Height of progress bar */
-  width: 100%;
   background-color: ${({ theme }) => theme.colors.foreground};
 `

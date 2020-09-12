@@ -17,6 +17,26 @@ const DirectedEdge = ({ start, end, label, highlight = false }: Props) => {
   const Q = pointOnLine(start, end, VERTEX_RADIUS + 10) //! hardcode
   const C = centralPoint(P, Q)
 
+  const animateRef1 = React.useRef<SVGAnimateElement>(null)
+  const animateRef2 = React.useRef<SVGAnimateElement>(null)
+
+  // FIXME: gambiarra fudida
+  React.useEffect(() => {
+    if (
+      animateRef1.current === null ||
+      animateRef2.current === null
+    )
+      return
+
+    // reinicia a SMIL animation
+
+    // @ts-ignore
+    animateRef1.current.beginElement()
+    // @ts-ignore
+    animateRef2.current.beginElement()
+
+  }, [start, end])
+
   return (
     <Container highlight={highlight}>
       {/* FIXME: defs é renderizado várias vezes desnecessariamente, teria outra forma de fazer a arrowhead? */}
@@ -42,18 +62,22 @@ const DirectedEdge = ({ start, end, label, highlight = false }: Props) => {
         markerEnd={`url(#arrowhead-${start}${end})`}
       >
         <animate
+          ref={animateRef1}
           attributeName='x2'
           from={P[0]}
           to={Q[0]}
-          dur='0.6s'
+          dur='0.2s'
           repeatCount='1'
+          restart='whenNotActive'
         />
         <animate
+          ref={animateRef2}
           attributeName='y2'
           from={P[1]}
           to={Q[1]}
-          dur='0.6s'
+          dur='0.2s'
           repeatCount='1'
+          restart='whenNotActive'
         />
       </Line>
 

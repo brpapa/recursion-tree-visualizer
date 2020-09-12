@@ -1,7 +1,10 @@
 import styled, { css } from 'styled-components'
 
+const HEIGHT = 4
+
 const withFormItemBase = css`
   font-size: 15px;
+  color: ${({ theme: { colors } }) => colors.contrast};
   background-color: ${({ theme }) => theme.colors.foreground};
   border: 1px solid transparent;
   border: ${({ theme }) => theme.border};
@@ -11,25 +14,30 @@ const withFormItemBase = css`
     border: ${({ theme }) => theme.borderAccent};
   }
 `
-/**/
+
 export const Label = styled.p`
   padding-top: 10px;
   padding-bottom: 3px;
   padding-left: 5px;
 `
 export const FormContainer = styled.form`
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 500px;
   height: 100%;
   padding: 10px;
 `
+export const FormMain = styled.div``
+export const FormSubmit = styled.div`
+`
 export const Select = styled.select`
   ${withFormItemBase}
-  font-size: 13px;
-  position: absolute;
   top: 5px;
-  right: 5px;
-  background-color: black; /* FIXME */
-  color: white;
+  right: 10px;
+  background-color: ${({ theme }) => theme.colors.contrast};
+  color: ${({ theme }) => theme.colors.foreground};
   border-radius: 6px;
 `
 export const Textarea = styled.textarea`
@@ -45,7 +53,7 @@ export const Textarea = styled.textarea`
 export const TextInput = styled.input.attrs({ type: 'text' })`
   ${withFormItemBase}
   font-family: Menlo, monospace;
-  padding: 4px 5px; /* !height equal */
+  padding: ${HEIGHT}px 5px;
   margin: 3px;
   &::placeholder {
     color: ${({ theme }) => theme.colors.textPlaceholder};
@@ -53,10 +61,10 @@ export const TextInput = styled.input.attrs({ type: 'text' })`
 `
 export const Button = styled.button`
   ${withFormItemBase}
-  padding: 4px 8px; /* !height equal */
-  background-color: black; /* FIXME */
+  padding: ${HEIGHT}px 8px;
+  background-color: ${({ theme }) => theme.colors.contrast};
   border: 0;
-  color: white;
+  color: ${({ theme }) => theme.colors.foreground};
   font-weight: bold;
   &:focus {
     border: 0;
@@ -72,11 +80,7 @@ export const Error = styled.p`
   padding: 2px;
   text-align: center;
   background-color: ${({ theme }) => theme.colors.error};
-  color: white;
-`
-/**/
-export const FunctionContainer = styled.div`
-  position: relative;
+  color: ${({ theme }) => theme.colors.foreground};
 `
 export const VariableContainer = styled.div`
   display: flex;

@@ -1,8 +1,11 @@
 import React from 'react'
+import { ThemeProvider } from 'styled-components'
 
-import { Container } from './styles'
+import GlobalStyle from './../../styles/global'
+import { AppContainer, Layout, Footer } from './styles'
 import FunctionForm from '../function-form'
 import GraphViewer from '../graph-viewer'
+import { light, dark } from './../../styles/themes'
 import { AdjList, Args } from '../../types'
 
 // const fakeAdjList: AdjList = {
@@ -18,18 +21,30 @@ import { AdjList, Args } from '../../types'
 const App = () => {
   const [adjList, setAdjList] = React.useState<AdjList>({})
   const [args, setArgs] = React.useState<Args>({})
+  const [result, setResult] = React.useState<number>(NaN)
 
   return (
-    <Container>
-      <FunctionForm
-        onSubmit={(adjList, args, result) => {
-          // console.log(result) // mostrar no final da animação!
-          setAdjList(adjList)
-          setArgs(args)
-        }}
-      />
-      <GraphViewer adjList={adjList} args={args} />
-    </Container>
+    <ThemeProvider theme={light}>
+      <GlobalStyle />
+      <AppContainer>
+        <Layout>
+          <FunctionForm
+            onSubmit={(adjList, args, result) => {
+              setResult(result)
+              setAdjList(adjList)
+              setArgs(args)
+            }}
+          />
+          <GraphViewer adjList={adjList} args={args} result={result} />
+        </Layout>
+        <Footer>
+          Made with ❤️ by Bruno Papa{'  '}•{'  '}
+          <a href='https://github.com/brpapa/recursion-tree-visualizer' target='__blank'>
+            Github
+          </a>
+        </Footer>
+      </AppContainer>
+    </ThemeProvider>
   )
 }
 

@@ -1,29 +1,17 @@
 import React from 'react'
-import {
-  Divider,
-  Textarea,
-  TextInput,
-  Select,
-  FunctionContainer,
-  VariableContainer,
-  RunContainer,
-  FormContainer,
-  Label,
-  Button,
-  Error,
-} from './styles'
+import * as styles from './styles'
 import { group, ungroup, codeValidate, callValidate } from './utils'
 import templates from './templates'
 import useFormInput from './../../hooks/use-form-input'
 import useLocalStorage from './../../hooks/use-local-storage'
 import getTree from '../../core/get-tree'
-import { TemplateKeys, AdjList, Args, Variable } from '../../types'
+import { Templates, AdjList, Args, Variable } from '../../types'
 
 type Props = {
   onSubmit: (adjList: AdjList, args: Args, result: number) => void
 }
 
-const FunctionForm = (props: Props) => {
+const FunctionForm = ({ onSubmit }: Props) => {
   const [fnCode, setFnCode] = useFormInput(
     'fn-code',
     'function fn() {\n\n}',
@@ -34,12 +22,13 @@ const FunctionForm = (props: Props) => {
     { name: '', value: '' },
     { name: '', value: '' },
   ]) //! fixado em 2 vars por enquanto
+  const [memorize, setMemorize] = React.useState(false) // DOING
   const [error, setError] = React.useState('')
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === 'custom') return
 
-    const key: TemplateKeys = e.target.value as TemplateKeys
+    const key = e.target.value as Templates
     const res = ungroup(templates[key])
 
     setFnCode(res.fnCode)
@@ -52,74 +41,76 @@ const FunctionForm = (props: Props) => {
 
     try {
       const fnData = group(fnCode.value, fnCall.value, fnVars)
-      const { adjList, args, result } = getTree(fnData)
+      const { adjList, args, result } = getTree(fnData, memorize)
 
       setError('')
-      props.onSubmit(adjList, args, result)
+      onSubmit(adjList, args, result)
     } catch (error) {
-      console.error(error.name, error.message)
+      // console.error(error.name, error.message)
       setError(error.message)
     }
   }
 
   return (
-    <FormContainer onSubmit={handleSubmit}>
-      <Label>Recursive function:</Label>
-      <FunctionContainer>
-        <Select defaultValue='custom' onChange={handleSelectChange}>
-          <option value='fibonacci'>Fibonacci</option>
-          <option value='knapsack'>Knapsack</option>
-          <option value='coinChange'>Coin Change</option>
-          <option value='fastPower'>Fast Power</option>
+    <styles.FormContainer onSubmit={handleSubmit}>
+      <styles.FormMain>
+        <styles.Select defaultValue='custom' onChange={handleSelectChange}>
+          {Object.entries(templates).map(([key, template]) => (
+            <option key={key} value={key}>
+              {template.name}
+            </option>
+          ))}
           <option value='custom'>Custom</option>
-        </Select>
-        <Textarea {...fnCode} rows={10} cols={50} />
-      </FunctionContainer>
+        </styles.Select>
 
-      <Label>Global read-only variables:</Label>
-      {fnVars.map(({ name, value }, i) => (
-        <VariableContainer key={i}>
-          <TextInput
-            placeholder='name'
-            value={name}
-            onChange={(e) => {
-              const varName = e.target.value
+        <styles.Label>Recursive function:</styles.Label>
+        <styles.Textarea {...fnCode} rows={10} cols={50} />
 
-              setFnVars((v) => {
-                if (v[i]) v[i].name = varName
-                return [...v]
-              })
-            }}
-          />
-          <span>=</span>
-          <TextInput
-            placeholder='value'
-            value={value}
-            onChange={(e) => {
-              const varValue = e.target.value
+        <styles.Label>Global read-only variables:</styles.Label>
+        {fnVars.map(({ name, value }, i) => (
+          <styles.VariableContainer key={i}>
+            <styles.TextInput
+              placeholder='name'
+              value={name}
+              onChange={(e) => {
+                const varName = e.target.value
 
-              setFnVars((v) => {
-                if (v[i]) v[i].value = varValue
-                return [...v]
-              })
-            }}
-          />
-        </VariableContainer>
-      ))}
+                setFnVars((v) => {
+                  if (v[i]) v[i].name = varName
+                  return [...v]
+                })
+              }}
+            />
+            <span>=</span>
+            <styles.TextInput
+              placeholder='value'
+              value={value}
+              onChange={(e) => {
+                const varValue = e.target.value
 
-      <Divider />
+                setFnVars((v) => {
+                  if (v[i]) v[i].value = varValue
+                  return [...v]
+                })
+              }}
+            />
+          </styles.VariableContainer>
+        ))}
 
-      <RunContainer>
-        <TextInput {...fnCall} />
-        <Button type='submit'>run</Button>
-      </RunContainer>
+        <styles.Label>Options:</styles.Label>
+        <input type='checkbox' onChange={() => setMemorize((p) => !p)}/>
+        {'  '}Memorize
 
-      {error !== '' && <Error>{error}</Error>}
+        {error !== '' && <styles.Error>{error}</styles.Error>}
+      </styles.FormMain>
 
-      <footer>
-        Made with ❤️ by <a href="https://github.com/brpapa" target="__blank">Bruno Papa</a>.
-      </footer>
-    </FormContainer>
+      <styles.FormSubmit>
+        <styles.RunContainer>
+          <styles.TextInput {...fnCall} />
+          <styles.Button type='submit'>run</styles.Button>
+        </styles.RunContainer>
+      </styles.FormSubmit>
+    </styles.FormContainer>
   )
 }
 

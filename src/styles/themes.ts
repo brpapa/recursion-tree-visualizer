@@ -18,25 +18,28 @@ export const light = {
     foreground: '#fff',
     foregroundHover: '#e3e3e33f',
     foregroundAccent: '#e3e3e3',
-    text: '#000',
+    contrast: '#000',
     textPlaceholder: '#aaa',
     primary: '#185EE0',
     error: '#e11d62',
   },
 }
-/*
+
 export const dark = {
   ...base,
   border: '1px solid #474a4d',
+  borderAccent: '1px solid #505050',
   colors: {
     background: '#151616',
     foreground: '#242526',
     foregroundHover: '#484a4d4f',
     foregroundAccent: '#484a4d',
-    foregroundAccentHover: '#505050',
+    contrast: '#fff',
     text: '#dadce1',
+    textPlaceholder: '#aaa',
+    primary: '#9bf6ff',
+    error: '#ffadad',
   },
 }
-*/
 
 export type Theme = typeof light

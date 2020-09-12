@@ -6,4 +6,8 @@ export const Container = styled.div`
   border: ${({ theme }) => theme.border};
   border-radius: 8px;
   box-shadow: 10px 10px 50px rgb(120, 120, 120, 0.05);
+  background-color: ${({ theme }) => theme.colors.foreground};
+
+  display: flex;
+  flex-direction: column;
 `

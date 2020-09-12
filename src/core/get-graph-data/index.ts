@@ -5,13 +5,81 @@ import { Point, VerticesData, EdgesData, AdjList, Args } from '../../types'
 const TRANSLATED_BY: Point = [50, 50]
 const SCALED_BY: Point = [85, 150]
 
-export default function getGraphData(adjList: AdjList, args: Args, rootId = 0) {
+export default function getGraphData(
+  adjList: AdjList,
+  args: Args,
+  result: number,
+  rootId = 0
+) {
+  if (Object.keys(adjList).length === 0)
+    throw new Error('The parameter adjacency list should not be empty')
+
   const { rawCoords, rawBottomRight } = getCoords(adjList)
 
-  // initialize
+  // initializes
+  const logs: string[] = [] // logs[time]: text
+  const edgesData = initialEdgesData(adjList)
+  const verticesData = initialVerticesData(rawCoords, args)
+  const svgBottomRight: Point = [
+    rawBottomRight[0] * SCALED_BY[0] + 2 * TRANSLATED_BY[0],
+    rawBottomRight[1] * SCALED_BY[1] + 2 * TRANSLATED_BY[1],
+  ]
 
-  const verticesData: VerticesData = objectMap(rawCoords, (c, key) => {
+  /** */
+  const seen: boolean[] = []
+  let time = 0
+  eulerTour(rootId) // mutate time, logs, verticesData, edgesData
+  logs.push(
+    `fn(${verticesData[0].label}) returns ${labeledEdgeCost(result)}`
+  )
+
+  return { verticesData, edgesData, svgBottomRight, times: time, logs }
+
+  function eulerTour(u: number) {
+    if (verticesData[u] === undefined) return
+    seen[u] = true
+
+    // u
+    verticesData[u].times.push(time++)
+    logs.push(`running fn(${verticesData[u].label})`)
+
+    // para cada aresta u -w-> v
+    for (const { v } of adjList[u] || []) {
+      if (!seen[v]) {
+        // u -> v
+        edgesData[edgeKey(u, v)].timeRange[0] = time++
+        logs.push(
+          `fn(${verticesData[u].label}) calls fn(${verticesData[v].label})`
+        )
+
+        eulerTour(v)
+
+        // v -> u
+        edgesData[edgeKey(u, v)].timeRange[1] = time - 1
+        edgesData[edgeKey(v, u)].timeRange[0] = time++
+        logs.push(
+          `fn(${verticesData[v].label}) returns ${
+            edgesData[edgeKey(v, u)].label
+          } to fn(${verticesData[u].label})`
+        )
+
+        // u
+        verticesData[u].times.push(time++)
+        logs.push(`continues by running fn(${verticesData[u].label})`)
+      }
+    }
+  }
+}
+
+const edgeKey = (u: number, v: number) => JSON.stringify([u, v])
+
+const initialVerticesData = (
+  rawCoords: Record<number, Point>,
+  args: Args
+): VerticesData => {
+  return objectMap(rawCoords, (c, key) => {
     const v = Number(key)
+
     return {
       times: [],
       coord: [
@@ -21,50 +89,22 @@ export default function getGraphData(adjList: AdjList, args: Args, rootId = 0) {
       label: labeledVerticeArgs(args[v]) || `${v}`,
     }
   })
-  const edgesData = Object.keys(adjList).reduce<EdgesData>((acc, key) => {
+}
+
+const initialEdgesData = (adjList: AdjList): EdgesData => {
+  return Object.keys(adjList).reduce<EdgesData>((acc, key) => {
     const u = Number(key)
+
     // para cada aresta u -w-> v
     for (const { v, w } of adjList[u]) {
-      acc[JSON.stringify([u, v])] = {
+      acc[edgeKey(u, v)] = {
         timeRange: [-Infinity, Infinity],
       }
-      acc[JSON.stringify([v, u])] = {
+      acc[edgeKey(v, u)] = {
         label: labeledEdgeCost(w),
         timeRange: [-Infinity, Infinity],
       }
     }
     return acc
   }, {})
-  const svgBottomRight: Point = [
-    rawBottomRight[0] * SCALED_BY[0] + 2 * TRANSLATED_BY[0],
-    rawBottomRight[1] * SCALED_BY[1] + 2 * TRANSLATED_BY[1],
-  ]
-
-  // calculate times em verticesData e edgesData
-  const seen: boolean[] = []
-  let time = 0
-  eulerTour(rootId)
-
-  return { verticesData, edgesData, svgBottomRight, qtyTimes: time }
-
-  /* */
-
-  function eulerTour(u: number) {
-    seen[u] = true
-
-    verticesData[u]?.times.push(time++)
-
-    // para cada aresta u -w-> v
-    for (const { v } of adjList[u] || []) {
-      if (!seen[v]) {
-        edgesData[JSON.stringify([u, v])].timeRange[0] = time++
-
-        eulerTour(v)
-
-        edgesData[JSON.stringify([u, v])].timeRange[1] = time - 1
-        edgesData[JSON.stringify([v, u])].timeRange[0] = time++
-        verticesData[u]?.times.push(time++)
-      }
-    }
-  }
 }

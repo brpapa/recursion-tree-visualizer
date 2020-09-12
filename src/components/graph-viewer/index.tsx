@@ -3,59 +3,73 @@ import React from 'react'
 import { Container } from './styles'
 import Graph from './graph'
 import ProgressBar from './progress-bar'
+import LogBar from './log-bar'
 import getGraphData from '../../core/get-graph-data'
 import useInterval from '../../hooks/use-interval'
 import { Point, AdjList, Args, VerticesData, EdgesData } from './../../types'
 
 const DELAY_IN_MS = 200
-  
+
 type Props = {
   adjList: AdjList
   args: Args
+  result: number
 }
 
-const GraphViewer = ({ adjList, args }: Props) => {
+const GraphViewer = ({ adjList, args, result }: Props) => {
+  const [time, setTime] = React.useState(0) // 0 <= time <= times
+  const [times, setTimes] = React.useState(1)
   const [isUpdating, setIsUpdating] = React.useState(false)
-  const [currTime, setCurrTime] = React.useState(0) // 0 <= currTime < qtyTimes
-  const [qtyTimes, setQtyTimes] = React.useState(1)
 
   // graph data
   const [edgesData, setEdgesData] = React.useState<EdgesData>({})
   const [verticesData, setVerticesData] = React.useState<VerticesData>({})
   const [svgBottomRight, setSvgBottomRight] = React.useState<Point>([0, 0])
+  const [logs, setLogs] = React.useState<string[]>([])
 
   // se args for undefined, esse effect é disparado infinitamente. mas WHY?
   React.useEffect(() => {
-    setCurrTime(0)
-    setIsUpdating(true)
+    setTime(0)
+    if (Object.keys(adjList).length === 0) return
 
-    const { edgesData, verticesData, svgBottomRight, qtyTimes } = getGraphData(
-      adjList,
-      args
-    )
-    setQtyTimes(qtyTimes)
+    const res = getGraphData(adjList, args, result)
+    const { edgesData, verticesData, svgBottomRight, times, logs } = res
+
+    setIsUpdating(true)
+    setTimes(times)
     setEdgesData(edgesData)
     setVerticesData(verticesData)
     setSvgBottomRight(svgBottomRight)
-  }, [adjList, args])
+    setLogs(logs)
+  }, [adjList, args, result])
 
-  // execute the callback function while isUpdating and pendingUpdate.current !== null
   useInterval(
     () => {
-      if (currTime >= qtyTimes) setIsUpdating(false)
-      setCurrTime((prev) => prev + 1)
+      if (time >= times) setIsUpdating(false)
+      setTime((time) => Math.min(time + 1, times))
     },
     isUpdating ? DELAY_IN_MS : null
   )
 
   return (
     <Container>
-      <ProgressBar progress={currTime / qtyTimes} />
+      <ProgressBar
+        value={time / times}
+        onChange={(value) => {
+          setTime(Math.round(value * times))
+          setIsUpdating(false)
+        }}
+        onNext={() => setTime((time) => Math.min(time + 1, times))}
+        onPrevious={() => setTime((time) => Math.max(time - 1, 0))}
+        onFirst={() => setTime(0)}
+        onLast={() => setTime(times)}
+      />
+      <LogBar text={logs[time]} />
       <Graph
-        time={currTime}
-        bottomRight={svgBottomRight}
+        time={time}
         vertices={verticesData}
         edges={edgesData}
+        bottomRight={svgBottomRight}
       />
     </Container>
   )

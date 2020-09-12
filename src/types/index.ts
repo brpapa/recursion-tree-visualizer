@@ -11,10 +11,11 @@ export type TreeNode = {
 
 export type Point = [number, number] // [x,y]
 
-export type TemplateKeys = 'fibonacci' | 'knapsack' | 'coinChange' | 'fastPower'
+export type Templates = 'fibo' | 'ks' | 'cc' | 'power' | 'lcs'
 
 export type Variable = { name: string; value: string }
 export type FunctionData = {
+  name?: string
   params: Variable[]
   body: string
   variables?: Variable[] // variáveis que o escopo da função precisa conseguir acessar
@@ -25,16 +26,21 @@ export type AdjList = Record<number, { v: number; w?: number }[]>
 // args[u]: array de params values do vértice u
 export type Args = Record<number, any[]>
 
-
 // key: vértice id
-export type VerticesData = Record<number, {
-  times: number[] // times em que o vértice é o atual (em ordem crescente)
-  coord: Point
-  label?: string
-}>
-  
+export type VerticesData = Record<
+  number,
+  {
+    times: number[] // times em que o vértice é o atual (em ordem crescente)
+    coord: Point
+    label?: string
+  }
+>
+
 // key: JSON.stringify([u,v]), para a aresta u -> v
-export type EdgesData = Record<string, {
-  timeRange: [number, number] // intervalo de min/max times em que a aresta deve ser exibida
-  label?: string
-}>
+export type EdgesData = Record<
+  string,
+  {
+    timeRange: [number, number] // intervalo de min/max times em que a aresta deve ser exibida
+    label?: string
+  }
+>

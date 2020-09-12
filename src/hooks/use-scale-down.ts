@@ -17,5 +17,5 @@ export default function useScaleDown(textRef: React.RefObject<SVGTextElement>, t
     current.style.transform = `scale(${Math.min(scale, 1)})`
     current.style.transformOrigin = 'center'
     current.style.transformBox = 'fill-box'
-  }, [textInnerHtml])
+  }, [textInnerHtml, textRef])
 }

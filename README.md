@@ -4,7 +4,7 @@ Para fins didáticos.
 
 Stop drawing recursive trees by hand.
 
-You can use this as a utility tool for help you on recursive modeling.
+You can use this as a utility tool for help you on recursive function modeling.
 
 # Installation
 
