@@ -2,11 +2,12 @@ import React from 'react'
 import { ThemeProvider } from 'styled-components'
 
 import GlobalStyle from './../../styles/global'
-import { AppContainer, Layout, Footer } from './styles'
+import * as S from './styles'
 import FunctionForm from '../function-form'
 import GraphViewer from '../graph-viewer'
-import { light, dark } from './../../styles/themes'
-import { AdjList, Args } from '../../types'
+import Footer from './footer'
+import themes from './../../styles/themes'
+import { AdjList, Args, Themes } from '../../types'
 
 // const fakeAdjList: AdjList = {
 //   0: [{ v: 1 }, { v: 7 }, { v: 8 }, { v: 2 }, { v: 3 }],
@@ -19,31 +20,33 @@ import { AdjList, Args } from '../../types'
 // }
 
 const App = () => {
+  const [themeKey, setThemeKey] = React.useState<Themes>('light')
+
   const [adjList, setAdjList] = React.useState<AdjList>({})
   const [args, setArgs] = React.useState<Args>({})
   const [result, setResult] = React.useState<number>(NaN)
 
   return (
-    <ThemeProvider theme={light}>
+    <ThemeProvider theme={themes[themeKey]}>
       <GlobalStyle />
-      <AppContainer>
-        <Layout>
+      <S.App>
+        <S.Sidebar>
           <FunctionForm
             onSubmit={(adjList, args, result) => {
-              setResult(result)
               setAdjList(adjList)
               setArgs(args)
+              setResult(result)
+            }}
+            onThemeChange={(themeKey) => {
+              setThemeKey(themeKey)
             }}
           />
+        </S.Sidebar>
+        <S.Main>
           <GraphViewer adjList={adjList} args={args} result={result} />
-        </Layout>
-        <Footer>
-          Made with ❤️ by Bruno Papa{'  '}•{'  '}
-          <a href='https://github.com/brpapa/recursion-tree-visualizer' target='__blank'>
-            Github
-          </a>
-        </Footer>
-      </AppContainer>
+          <Footer link='https://github.com/brpapa/recursion-tree-visualizer' />
+        </S.Main>
+      </S.App>
     </ThemeProvider>
   )
 }

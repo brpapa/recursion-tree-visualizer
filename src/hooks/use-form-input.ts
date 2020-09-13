@@ -9,11 +9,11 @@ type Return = [
 ]
 
 // with useLocalStorage built-in
-export default function useFormInput(
+const useFormInput = (
   localStorageKey: string,
   initialValue: string,
   validate?: (value: string) => boolean
-): Return {
+): Return => {
   const [value, setValue] = useLocalStorage(localStorageKey, initialValue)
 
   function handleChange(e: Event) {
@@ -29,3 +29,5 @@ export default function useFormInput(
     setValue,
   ]
 }
+
+export default useFormInput

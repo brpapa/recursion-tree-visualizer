@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 
 const BORDER = 6
-const HEIGHT = 14
+const HEIGHT = 12
 
 export const Container = styled.div`
-  border-bottom: ${({ theme }) => theme.border};
-  flex: 0;
+  /* border-bottom: 1px solid ${({ theme }) => theme.colors.border}; */
+  flex-grow: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -13,11 +13,11 @@ export const Container = styled.div`
   padding: 7px;
 `
 export const WrapperBar = styled.div`
-  flex: 1;
+  flex-grow: 1;
   margin: 0 5px 0 5px;
   border-radius: ${BORDER}px;
   height: ${HEIGHT}px;
-  background-color: ${({ theme }) => theme.colors.foregroundAccent};
+  background-color: ${({ theme }) => theme.colors.backgroundAccent};
   cursor: pointer;
 `
 export const Bar = styled.div<{ widthPercent: number }>`

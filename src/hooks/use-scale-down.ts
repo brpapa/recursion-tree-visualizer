@@ -1,7 +1,10 @@
 import React from 'react'
 
 // scale down the <text> svg element with css transform, if need
-export default function useScaleDown(textRef: React.RefObject<SVGTextElement>, textInnerHtml?: string) {
+const useScaleDown = (
+  textRef: React.RefObject<SVGTextElement>,
+  textInnerHtml?: string
+) => {
   React.useLayoutEffect(() => {
     const { current } = textRef
     if (!current || !textInnerHtml) return
@@ -19,3 +22,5 @@ export default function useScaleDown(textRef: React.RefObject<SVGTextElement>, t
     current.style.transformBox = 'fill-box'
   }, [textInnerHtml, textRef])
 }
+
+export default useScaleDown

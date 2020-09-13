@@ -1,7 +1,7 @@
 import React from 'react'
 
 // executa callback enquanto delay não for null
-function useInterval(callback: () => void, delay: number | null) {
+const useInterval = (callback: () => void, delay: number | null) => {
   const latestCallback = React.useRef(() => {})
 
   React.useEffect(() => {

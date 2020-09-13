@@ -2,9 +2,9 @@ import { createGlobalStyle } from 'styled-components'
 
 export default createGlobalStyle`
   #root {
-    font-family: 'Inter', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    font-family: ${({ theme }) => theme.fonts.body};
+    color: ${({ theme }) => theme.colors.contrast};
     font-size: 15px;
-    color: ${({theme}) => theme.colors.contrast};
   }
 
   *,

@@ -1,17 +1,18 @@
 import React from 'react'
-import * as styles from './styles'
+import * as S from './styles'
 import { group, ungroup, codeValidate, callValidate } from './utils'
 import templates from './templates'
 import useFormInput from './../../hooks/use-form-input'
 import useLocalStorage from './../../hooks/use-local-storage'
 import getTree from '../../core/get-tree'
-import { Templates, AdjList, Args, Variable } from '../../types'
+import { Templates, AdjList, Args, Variable, Themes } from '../../types'
 
 type Props = {
   onSubmit: (adjList: AdjList, args: Args, result: number) => void
+  onThemeChange: (themeKey: Themes) => void
 }
 
-const FunctionForm = ({ onSubmit }: Props) => {
+const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   const [fnCode, setFnCode] = useFormInput(
     'fn-code',
     'function fn() {\n\n}',
@@ -22,8 +23,14 @@ const FunctionForm = ({ onSubmit }: Props) => {
     { name: '', value: '' },
     { name: '', value: '' },
   ]) //! fixado em 2 vars por enquanto
-  const [memorize, setMemorize] = React.useState(false) // DOING
+
+  const [memorize, setMemorize] = useLocalStorage('memorize', false)
+  const [dark, setDark] = useLocalStorage('dark-mode', false)
   const [error, setError] = React.useState('')
+
+  React.useEffect(() => {
+    onThemeChange(dark ? 'dark' : 'light')
+  }, [dark, onThemeChange])
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === 'custom') return
@@ -52,24 +59,25 @@ const FunctionForm = ({ onSubmit }: Props) => {
   }
 
   return (
-    <styles.FormContainer onSubmit={handleSubmit}>
-      <styles.FormMain>
-        <styles.Select defaultValue='custom' onChange={handleSelectChange}>
+    <S.Form onSubmit={handleSubmit}>
+      <S.FormContent>
+        <S.LogoIcon/>
+        {/* <S.Title>Recursion tree visualizer</S.Title> */}
+        <S.Label>Template:</S.Label>
+        <S.Select defaultValue='custom' onChange={handleSelectChange}>
           {Object.entries(templates).map(([key, template]) => (
             <option key={key} value={key}>
               {template.name}
             </option>
           ))}
           <option value='custom'>Custom</option>
-        </styles.Select>
-
-        <styles.Label>Recursive function:</styles.Label>
-        <styles.Textarea {...fnCode} rows={10} cols={50} />
-
-        <styles.Label>Global read-only variables:</styles.Label>
+        </S.Select>
+        <S.Label>Recursive function:</S.Label>
+        <S.Textarea {...fnCode} rows={10} cols={50} />
+        <S.Label>Global read-only variables:</S.Label>
         {fnVars.map(({ name, value }, i) => (
-          <styles.VariableContainer key={i}>
-            <styles.TextInput
+          <S.Variable key={i}>
+            <S.TextInput
               placeholder='name'
               value={name}
               onChange={(e) => {
@@ -82,7 +90,7 @@ const FunctionForm = ({ onSubmit }: Props) => {
               }}
             />
             <span>=</span>
-            <styles.TextInput
+            <S.TextInput
               placeholder='value'
               value={value}
               onChange={(e) => {
@@ -94,23 +102,32 @@ const FunctionForm = ({ onSubmit }: Props) => {
                 })
               }}
             />
-          </styles.VariableContainer>
+          </S.Variable>
         ))}
+        <S.Label>Options:</S.Label>
+        <input
+          type='checkbox'
+          checked={memorize}
+          onChange={() => setMemorize((p) => !p)}
+        />
+        {'  '}Memorize states
+        <br />
+        <input
+          type='checkbox'
+          checked={dark}
+          onChange={() => setDark((p) => !p)}
+        />
+        {'  '}Enable dark mode
+        {error !== '' && <S.Error>{error}</S.Error>}
+      </S.FormContent>
 
-        <styles.Label>Options:</styles.Label>
-        <input type='checkbox' onChange={() => setMemorize((p) => !p)}/>
-        {'  '}Memorize
-
-        {error !== '' && <styles.Error>{error}</styles.Error>}
-      </styles.FormMain>
-
-      <styles.FormSubmit>
-        <styles.RunContainer>
-          <styles.TextInput {...fnCall} />
-          <styles.Button type='submit'>run</styles.Button>
-        </styles.RunContainer>
-      </styles.FormSubmit>
-    </styles.FormContainer>
+      <S.FormSubmit>
+        <S.TextInput primary {...fnCall} />
+        <S.Button primary type='submit'>
+          run
+        </S.Button>
+      </S.FormSubmit>
+    </S.Form>
   )
 }
 

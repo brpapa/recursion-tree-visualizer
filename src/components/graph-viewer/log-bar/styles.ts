@@ -1,10 +1,11 @@
 import styled from 'styled-components'
 
 export const Paragraph = styled.p`
-  margin: 5px 10px;
+  margin-bottom: 0.5em;
   font-size: 14px;
-  /* font-weight: bold; */
-  flex: 0;
+  flex-grow: 0;
   text-align: center;
-  color ${({ theme: { colors } }) => colors.primary};
+  font-weight: bold;
+  font-family: ${({ theme }) => theme.fonts.mono};
+  color: ${({ theme }) => theme.colors.primary};
 `

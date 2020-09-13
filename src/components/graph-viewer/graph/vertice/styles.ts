@@ -4,7 +4,6 @@ export const Circle = styled.circle`
   stroke-width: 5px;
 `
 export const Text = styled.text`
-  fill: ${({ theme }) => theme.colors.contrast};
   font-size: 40px;
   font-weight: bold;
   text-anchor: middle;
@@ -13,23 +12,23 @@ export const Text = styled.text`
 `
 export const Container = styled.g<{ highlight: boolean }>`
   ${Circle} {
-    fill: ${({ highlight, theme: { colors } }) =>
-      highlight ? colors.primary : colors.foreground};
-    stroke: ${({ highlight, theme: { colors } }) =>
-      highlight ? colors.primary : colors.contrast};
+    fill: ${({ highlight, theme }) =>
+      highlight ? theme.colors.primary : theme.colors.foreground};
+    stroke: ${({ highlight, theme }) =>
+      highlight ? theme.colors.primary : theme.colors.contrast};
   }
   ${Text} {
-    fill: ${({ highlight, theme: { colors } }) =>
-      highlight ? colors.foreground : colors.contrast};
+    fill: ${({ highlight, theme }) =>
+      highlight ? theme.colors.foreground : theme.colors.contrast};
   }
 
   &:hover {
     ${Circle} {
-      fill: ${({ theme: { colors } }) => colors.primary};
-      stroke: ${({ theme: { colors } }) => colors.primary};
+      fill: ${({ theme }) => theme.colors.primary};
+      stroke: ${({ theme }) => theme.colors.primary};
     }
     ${Text} {
-      fill: ${({ theme: { colors } }) => colors.foreground};
+      fill: ${({ theme }) => theme.colors.foreground};
     }
   }
 

@@ -1,78 +1,77 @@
 import styled, { css } from 'styled-components'
+import { ReactComponent as Logo } from './../../assets/icons/logo.svg'
 
 const HEIGHT = 4
 
-const withFormItemBase = css`
+const commonFormItem = css`
   font-size: 15px;
-  color: ${({ theme: { colors } }) => colors.contrast};
-  background-color: ${({ theme }) => theme.colors.foreground};
+  color: ${({ theme }) => theme.colors.text};
+  background-color: ${({ theme }) => theme.colors.foregroundAccent};
   border: 1px solid transparent;
-  border: ${({ theme }) => theme.border};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 5px;
   &:focus {
     outline: none;
-    border: ${({ theme }) => theme.borderAccent};
+    border: 1px solid ${({ theme }) => theme.colors.borderAccent};
   }
 `
-
-export const Label = styled.p`
-  padding-top: 10px;
-  padding-bottom: 3px;
-  padding-left: 5px;
+export const LogoIcon = styled(Logo)`
+  width: 50px;
+  height: 50px;
+  color: ${({theme}) => theme.colors.contrast};
 `
-export const FormContainer = styled.form`
-  overflow: scroll;
+export const Form = styled.form`
+  background-color: ${({ theme }) => theme.colors.foreground};
+  border-right: 1px solid ${({ theme }) => theme.colors.border};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 500px;
   height: 100%;
-  padding: 10px;
+  padding: 0.9em;
 `
-export const FormMain = styled.div``
-export const FormSubmit = styled.div`
+export const Label = styled.p`
+  padding-top: 1.4em;
+  padding-bottom: 0.2em;
+  padding-left: 0.1em;
+`
+export const Title = styled.h1`
+  padding-bottom: 10px;
 `
 export const Select = styled.select`
-  ${withFormItemBase}
-  top: 5px;
-  right: 10px;
-  background-color: ${({ theme }) => theme.colors.contrast};
-  color: ${({ theme }) => theme.colors.foreground};
-  border-radius: 6px;
+  ${commonFormItem}
+  width: 100%;
 `
 export const Textarea = styled.textarea`
-  ${withFormItemBase}
+  ${commonFormItem}
   font-size: 14px;
-  font-family: Menlo, monospace;
+  font-family: ${({ theme }) => theme.fonts.mono};
   resize: none;
   display: block;
   height: 200px;
   width: 100%;
-  padding: 7px;
-`
-export const TextInput = styled.input.attrs({ type: 'text' })`
-  ${withFormItemBase}
-  font-family: Menlo, monospace;
   padding: ${HEIGHT}px 5px;
+`
+export const TextInput = styled.input.attrs({ type: 'text' })<{
+  primary?: boolean
+}>`
+  ${commonFormItem}
+  font-family: ${({ theme }) => theme.fonts.mono};
+  padding: ${({ primary }) => HEIGHT + (primary ? 2 : 0)}px 5px;
   margin: 3px;
   &::placeholder {
     color: ${({ theme }) => theme.colors.textPlaceholder};
   }
 `
-export const Button = styled.button`
-  ${withFormItemBase}
-  padding: ${HEIGHT}px 8px;
+export const Button = styled.button<{ primary?: boolean }>`
+  ${commonFormItem}
+  padding: ${({ primary }) => HEIGHT + (primary ? 2 : 0)}px 10px;
   background-color: ${({ theme }) => theme.colors.contrast};
-  border: 0;
   color: ${({ theme }) => theme.colors.foreground};
+  border: 0;
   font-weight: bold;
   &:focus {
     border: 0;
   }
-`
-export const Divider = styled.hr`
-  border: ${({ theme }) => theme.border};
-  margin: 15px 50px;
 `
 export const Error = styled.p`
   border-radius: 5px;
@@ -80,9 +79,9 @@ export const Error = styled.p`
   padding: 2px;
   text-align: center;
   background-color: ${({ theme }) => theme.colors.error};
-  color: ${({ theme }) => theme.colors.foreground};
+  color: white;
 `
-export const VariableContainer = styled.div`
+export const Variable = styled.div`
   display: flex;
   align-items: center;
   ${TextInput} {
@@ -93,7 +92,10 @@ export const VariableContainer = styled.div`
     }
   }
 `
-export const RunContainer = styled.div`
+export const FormContent = styled.div`
+  overflow: scroll;
+`
+export const FormSubmit = styled.div`
   display: flex;
   align-items: center;
   ${TextInput} {
