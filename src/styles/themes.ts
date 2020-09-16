@@ -8,11 +8,15 @@ const common = {
       "'Inter', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif",
     mono: 'Menlo, monospace',
   },
-  breakpoints: {
-    sm: '576px',
-    md: '768px',
-    lg: '992px',
-    xl: '1200px',
+  // breakpoints: {
+  //   sm: '576px',
+  //   md: '768px',
+  //   lg: '992px',
+  //   xl: '1200px',
+  // },
+  // usando mobile-first
+  devices: {
+    desktop: '@media only screen and (min-width: 576px)',
   },
 }
 
@@ -21,11 +25,11 @@ const light = {
   colors: {
     contrast: '#000',
     backgroundAccent: '#e3e3e3',
-    background: '#f5f5f5',
+    background: '#f0f0f0',
     foreground: '#fff',
     foregroundAccent: '#f8f8f8',
     border: '#ececec',
-    borderAccent: 'rgb(60, 60, 60, 0.15)',
+    borderAccent: 'rgb(225, 225, 225)',
     text: '#111',
     textPlaceholder: '#aaa',
     primary: '#185EE0',
@@ -42,10 +46,10 @@ const dark = {
     foreground: '#242526',
     foregroundAccent: '#383a3d',
     border: '#474a4d',
-    borderAccent: '#505050',
+    borderAccent: '#707070',
     text: '#dadce1',
     textPlaceholder: '#aaa',
-    primary: '#06d6a0',
+    primary: '#0093FA',
     error: '#ef476f',
   },
 }

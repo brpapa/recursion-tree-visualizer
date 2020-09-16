@@ -7,6 +7,7 @@ const MAX_V = 2222
 export default function getTree(this: any, fnData: FunctionData, memorize: boolean) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   var fn: Function, _: Function
+  // eslint-disable-next-line
   var userFn: Function = eval(parseFunction(fnData)) // can throw error
   const self = this
 
@@ -47,6 +48,7 @@ export default function getTree(this: any, fnData: FunctionData, memorize: boole
   fn = fnWrapper // here's the biggest trick
 
   let result = NaN
+  // eslint-disable-next-line
   const paramsValues = fnData.params.map((param) => eval(param.value))
   if (paramsValues.length > 0) result = fn(...paramsValues)
 

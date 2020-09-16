@@ -14,7 +14,7 @@ const templates: Record<Templates, FunctionData> = {
     ]),
   },
   ks: {
-    name: 'Knapsack',
+    name: '0-1 Knapsack',
     params: [
       { name: 'i', value: '0' },
       { name: 's', value: '12' },
@@ -88,6 +88,35 @@ const templates: Record<Templates, FunctionData> = {
       '  fn(i+1, j),',
       '  fn(i, j+1)',
       ')',
+    ]),
+  },
+  tsp: {
+    name: 'Traveling Salesman Problem',
+    params: [
+      { name: 'i', value: '0' },
+      { name: 'mask', value: '1' },
+    ],
+    variables: [
+      {
+        name: 'adjMat',
+        value:
+          '[[0, 20, 42, 35], [20, 0, 30, 34], [42, 30, 0, 12], [35, 34, 12, 0]]',
+      },
+    ],
+    body: unify([
+      'if (mask == (1 << 4) - 1)',
+      '  return adjMat[i][0]',
+      '',
+      'let ans = Infinity',
+      '',
+      'for (let v = 0; v < 4; v++)',
+      '  if (v != i && (mask & (1 << v)) == 0)',
+      '    ans = Math.min(',
+      '      ans,',
+      '      adjMat[i][v] + fn(v, mask | (1 << v))',
+      '    )',
+      '',
+      'return ans',
     ]),
   },
 }

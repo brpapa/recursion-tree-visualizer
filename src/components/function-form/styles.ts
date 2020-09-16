@@ -1,7 +1,9 @@
 import styled, { css } from 'styled-components'
 import { ReactComponent as Logo } from './../../assets/icons/logo.svg'
 
+// form item
 const HEIGHT = 4
+const HIGHER_HEIGHT = 6
 
 const commonFormItem = css`
   font-size: 15px;
@@ -16,26 +18,14 @@ const commonFormItem = css`
   }
 `
 export const LogoIcon = styled(Logo)`
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   color: ${({theme}) => theme.colors.contrast};
 `
-export const Form = styled.form`
-  background-color: ${({ theme }) => theme.colors.foreground};
-  border-right: 1px solid ${({ theme }) => theme.colors.border};
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  padding: 0.9em;
-`
-export const Label = styled.p`
+export const P = styled.p`
   padding-top: 1.4em;
   padding-bottom: 0.2em;
   padding-left: 0.1em;
-`
-export const Title = styled.h1`
-  padding-bottom: 10px;
 `
 export const Select = styled.select`
   ${commonFormItem}
@@ -51,23 +41,41 @@ export const Textarea = styled.textarea`
   width: 100%;
   padding: ${HEIGHT}px 5px;
 `
-export const TextInput = styled.input.attrs({ type: 'text' })<{
-  primary?: boolean
-}>`
+export const CheckBoxInput = styled.input.attrs({ type: 'checkbox' })``
+export const OptionContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0.2em 0;
+
+  ${CheckBoxInput} {
+    margin: 0.3em;
+  }
+
+  span {
+    margin-left: 0.4em;
+  }
+`
+export const TextInput = styled.input.attrs({ type: 'text' })`
   ${commonFormItem}
   font-family: ${({ theme }) => theme.fonts.mono};
-  padding: ${({ primary }) => HEIGHT + (primary ? 2 : 0)}px 5px;
+  padding: ${HEIGHT}px 5px;
   margin: 3px;
   &::placeholder {
     color: ${({ theme }) => theme.colors.textPlaceholder};
   }
 `
-export const Button = styled.button<{ primary?: boolean }>`
+export const SubmitTextInput = styled(TextInput)`
+  padding: ${HIGHER_HEIGHT}px 5px;
+`
+export const Button = styled.button`
   ${commonFormItem}
-  padding: ${({ primary }) => HEIGHT + (primary ? 2 : 0)}px 10px;
+  padding: ${HEIGHT}px 10px;
+`
+export const SubmitButton = styled(Button).attrs({ type: 'submit' })`
+  padding: ${HIGHER_HEIGHT}px 10px;
   background-color: ${({ theme }) => theme.colors.contrast};
   color: ${({ theme }) => theme.colors.foreground};
-  border: 0;
+  border: 1px solid transparent;
   font-weight: bold;
   &:focus {
     border: 0;
@@ -81,27 +89,40 @@ export const Error = styled.p`
   background-color: ${({ theme }) => theme.colors.error};
   color: white;
 `
-export const Variable = styled.div`
+export const VariableContainer = styled.div`
   display: flex;
   align-items: center;
   ${TextInput} {
-    flex-grow: 1;
+    flex: 1 1;
     &:first-child {
       width: 70px;
-      flex-grow: 0;
+      flex: 0 0;
     }
   }
 `
 export const FormContent = styled.div`
   overflow: scroll;
+  padding: 0.9em;
 `
 export const FormSubmit = styled.div`
   display: flex;
   align-items: center;
+  padding: 0.9em;
+
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+
   ${TextInput} {
     flex-grow: 1;
   }
   ${Button} {
     flex-grow: 0;
   }
+`
+export const FormContainer = styled.form`
+  background-color: ${({ theme }) => theme.colors.foreground};
+  border-right: 1px solid ${({ theme }) => theme.colors.border};
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 `

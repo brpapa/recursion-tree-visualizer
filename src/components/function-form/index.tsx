@@ -1,5 +1,5 @@
 import React from 'react'
-import * as S from './styles'
+import * as s from './styles'
 import { group, ungroup, codeValidate, callValidate } from './utils'
 import templates from './templates'
 import useFormInput from './../../hooks/use-form-input'
@@ -9,7 +9,7 @@ import { Templates, AdjList, Args, Variable, Themes } from '../../types'
 
 type Props = {
   onSubmit: (adjList: AdjList, args: Args, result: number) => void
-  onThemeChange: (themeKey: Themes) => void
+  onThemeChange: (themeName: Themes) => void
 }
 
 const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
@@ -45,6 +45,8 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const root = document.getElementById('root')
+    if (root) root.scrollIntoView()
 
     try {
       const fnData = group(fnCode.value, fnCall.value, fnVars)
@@ -59,25 +61,27 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   }
 
   return (
-    <S.Form onSubmit={handleSubmit}>
-      <S.FormContent>
-        <S.LogoIcon/>
-        {/* <S.Title>Recursion tree visualizer</S.Title> */}
-        <S.Label>Template:</S.Label>
-        <S.Select defaultValue='custom' onChange={handleSelectChange}>
+    <s.FormContainer onSubmit={handleSubmit}>
+      <s.FormContent>
+        <s.LogoIcon />
+
+        <s.P>Pre-defined template:</s.P>
+        <s.Select defaultValue='custom' onChange={handleSelectChange}>
           {Object.entries(templates).map(([key, template]) => (
             <option key={key} value={key}>
               {template.name}
             </option>
           ))}
           <option value='custom'>Custom</option>
-        </S.Select>
-        <S.Label>Recursive function:</S.Label>
-        <S.Textarea {...fnCode} rows={10} cols={50} />
-        <S.Label>Global read-only variables:</S.Label>
+        </s.Select>
+
+        <s.P>Recursive function:</s.P>
+        <s.Textarea {...fnCode} rows={10} cols={50} />
+
+        <s.P>Global read-only variables:</s.P>
         {fnVars.map(({ name, value }, i) => (
-          <S.Variable key={i}>
-            <S.TextInput
+          <s.VariableContainer key={i}>
+            <s.TextInput
               placeholder='name'
               value={name}
               onChange={(e) => {
@@ -90,7 +94,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
               }}
             />
             <span>=</span>
-            <S.TextInput
+            <s.TextInput
               placeholder='value'
               value={value}
               onChange={(e) => {
@@ -102,32 +106,32 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
                 })
               }}
             />
-          </S.Variable>
+          </s.VariableContainer>
         ))}
-        <S.Label>Options:</S.Label>
-        <input
-          type='checkbox'
-          checked={memorize}
-          onChange={() => setMemorize((p) => !p)}
-        />
-        {'  '}Memorize states
-        <br />
-        <input
-          type='checkbox'
-          checked={dark}
-          onChange={() => setDark((p) => !p)}
-        />
-        {'  '}Enable dark mode
-        {error !== '' && <S.Error>{error}</S.Error>}
-      </S.FormContent>
 
-      <S.FormSubmit>
-        <S.TextInput primary {...fnCall} />
-        <S.Button primary type='submit'>
+        <s.P>Options:</s.P>
+        <s.OptionContainer>
+          <s.CheckBoxInput
+            checked={memorize}
+            onChange={() => setMemorize((p) => !p)}
+          />
+          <span>Memorize states</span>
+        </s.OptionContainer>
+        <s.OptionContainer>
+          <s.CheckBoxInput checked={dark} onChange={() => setDark((p) => !p)} />
+          <span>Enable dark mode</span>
+        </s.OptionContainer>
+
+        {error !== '' && <s.Error>{error}</s.Error>}
+      </s.FormContent>
+
+      <s.FormSubmit>
+        <s.SubmitTextInput {...fnCall} />
+        <s.SubmitButton>
           run
-        </S.Button>
-      </S.FormSubmit>
-    </S.Form>
+        </s.SubmitButton>
+      </s.FormSubmit>
+    </s.FormContainer>
   )
 }
 
