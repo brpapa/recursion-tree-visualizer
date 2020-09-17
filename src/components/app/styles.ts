@@ -3,12 +3,10 @@ import styled from 'styled-components'
 export const App = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
   display: flex;
+  
   flex-direction: column;
-
   ${({theme}) => theme.devices.desktop} {
     flex-direction: row;
-    width: 100vw;
-    height: 100vh;
   }
 `
 export const Sidebar = styled.div`
@@ -24,6 +22,6 @@ export const Main = styled.div`
 
   display: flex;
   flex-direction: column;
-  margin: 0.8em;
-  height: calc(100vh - 1.6em);
+  padding: 0.8em;
+  height: 100vh;
 `

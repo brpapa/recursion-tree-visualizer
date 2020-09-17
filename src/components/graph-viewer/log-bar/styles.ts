@@ -6,5 +6,5 @@ export const Paragraph = styled.p`
   text-align: center;
   font-weight: bold;
   font-family: ${({ theme }) => theme.fonts.mono};
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.contrast};
 `

@@ -1,7 +1,7 @@
 // FIXME: código do usuário não pode mutar variables globais definidas por ele
 import { FunctionData, AdjList, Args } from '../../types'
 
-const MAX_V = 2222
+const MAX_V = 222
 
 // dado uma função recursiva, retorna a lista de adjacências da árvore de recursão
 export default function getTree(this: any, fnData: FunctionData, memorize: boolean) {

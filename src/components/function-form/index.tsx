@@ -63,9 +63,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   return (
     <s.FormContainer onSubmit={handleSubmit}>
       <s.FormContent>
-        <s.LogoIcon />
-
-        <s.P>Pre-defined template:</s.P>
+        <s.P>Pre-defined templates:</s.P>
         <s.Select defaultValue='custom' onChange={handleSelectChange}>
           {Object.entries(templates).map(([key, template]) => (
             <option key={key} value={key}>
@@ -77,6 +75,8 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
         <s.P>Recursive function:</s.P>
         <s.Textarea {...fnCode} rows={10} cols={50} />
+
+        {error !== '' && <s.Error>{error}</s.Error>}
 
         <s.P>Global read-only variables:</s.P>
         {fnVars.map(({ name, value }, i) => (
@@ -121,15 +121,11 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
           <s.CheckBoxInput checked={dark} onChange={() => setDark((p) => !p)} />
           <span>Enable dark mode</span>
         </s.OptionContainer>
-
-        {error !== '' && <s.Error>{error}</s.Error>}
       </s.FormContent>
 
       <s.FormSubmit>
         <s.SubmitTextInput {...fnCall} />
-        <s.SubmitButton>
-          run
-        </s.SubmitButton>
+        <s.SubmitButton>Run</s.SubmitButton>
       </s.FormSubmit>
     </s.FormContainer>
   )

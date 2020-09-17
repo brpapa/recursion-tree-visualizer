@@ -7,7 +7,6 @@ export default function getCoords(adjList: AdjList, rootId = 0) {
   const rawTopLeft: Point = [0, 0]
   const rawBottomRight: Point = [0, 0]
 
-  // se adjList não é {}
   if (Object.keys(adjList).length > 0) {
     const root: TreeNode = {
       id: rootId,
@@ -25,8 +24,6 @@ export default function getCoords(adjList: AdjList, rootId = 0) {
   }
 
   return { rawCoords, rawTopLeft, rawBottomRight }
-
-  /**/
 
   function initNodes(node: TreeNode, nodeId = rootId, nodeDepth = 0) {
     if (adjList[nodeId] === undefined) return
@@ -69,19 +66,6 @@ export default function getCoords(adjList: AdjList, rootId = 0) {
     return node
   }
 
-  // atualiza o x real dos nós
-  function lastTraversal(node: TreeNode, accMod = 0) {
-    // console.log(node.id, node.x, node.mod)
-    node.x += accMod
-    // console.log(`${node.id}: [${node.x}, ${node.y}]`)
-
-    rawCoords[node.id] = [node.x, node.y]
-    rawBottomRight[0] = Math.max(rawBottomRight[0], node.x)
-    rawBottomRight[1] = Math.max(rawBottomRight[1], node.y)
-
-    for (const child of node.children) lastTraversal(child, accMod + node.mod)
-  }
-
   // desloca toda a sub-árvore enraizada por right para o mais próximo possível da sub-árvore enraizada por left de forma que não haja nenhum conflito
   function shiftRightSubtree(left: TreeNode, right: TreeNode) {
     let { li, ri, lo, ro, diff, leftOffset, rightOffset } = contour(left, right)
@@ -96,7 +80,6 @@ export default function getCoords(adjList: AdjList, rootId = 0) {
     if (ri && !li) {
       lo.thread = ri // define a thread lo -> ri
       lo.mod = rightOffset - leftOffset
-      lo.mod += ri.parent?.mod || 0 // preserva o mod que ri tinha de seu pai para o agora mod de lo
     } else if (li && !ri) {
       ro.thread = li // define a thread ro -> li
       ro.mod = leftOffset - rightOffset
@@ -139,6 +122,19 @@ export default function getCoords(adjList: AdjList, rootId = 0) {
     lo = leftOuter || left
     ro = rightOuter || right
     return { li, ri, lo, ro, diff: maxDiff, leftOffset, rightOffset }
+  }
+
+  // atualiza o x real dos nós
+  function lastTraversal(node: TreeNode, accMod = 0) {
+    // console.log(node.id, node.x, node.mod)
+    node.x += accMod
+    // console.log(`${node.id}: [${node.x}, ${node.y}]`)
+
+    rawCoords[node.id] = [node.x, node.y]
+    rawBottomRight[0] = Math.max(rawBottomRight[0], node.x)
+    rawBottomRight[1] = Math.max(rawBottomRight[1], node.y)
+
+    for (const child of node.children) lastTraversal(child, accMod + node.mod)
   }
 }
 

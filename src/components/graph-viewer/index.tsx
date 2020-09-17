@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Container } from './styles'
+import * as s from './styles'
 import Graph from './graph'
 import ProgressBar from './progress-bar'
 import LogBar from './log-bar'
@@ -27,6 +27,8 @@ const GraphViewer = ({ adjList, args, result }: Props) => {
   const [svgBottomRight, setSvgBottomRight] = React.useState<Point>([0, 0])
   const [logs, setLogs] = React.useState<string[]>([])
 
+  const showBackground = Number.isNaN(result)
+
   // se args for undefined, esse effect é disparado infinitamente. mas WHY?
   React.useEffect(() => {
     setTime(0)
@@ -36,6 +38,7 @@ const GraphViewer = ({ adjList, args, result }: Props) => {
     const { edgesData, verticesData, svgBottomRight, times, logs } = res
 
     setIsUpdating(true)
+    setTime(times) // TODO: REMOVER
     setTimes(times)
     setEdgesData(edgesData)
     setVerticesData(verticesData)
@@ -52,7 +55,7 @@ const GraphViewer = ({ adjList, args, result }: Props) => {
   )
 
   return (
-    <Container>
+    <s.Container>
       <ProgressBar
         value={time / times}
         onChange={(value) => {
@@ -64,14 +67,18 @@ const GraphViewer = ({ adjList, args, result }: Props) => {
         onFirst={() => setTime(0)}
         onLast={() => setTime(times)}
       />
-      <LogBar text={logs[time]} />
-      <Graph
-        time={time}
-        vertices={verticesData}
-        edges={edgesData}
-        bottomRight={svgBottomRight}
-      />
-    </Container>
+      {logs[time] && <LogBar text={logs[time]} />}
+      {showBackground ? (
+        <s.LogoIcon />
+      ) : (
+        <Graph
+          time={time}
+          vertices={verticesData}
+          edges={edgesData}
+          bottomRight={svgBottomRight}
+        />
+      )}
+    </s.Container>
   )
 }
 

@@ -6,9 +6,9 @@ export const Footer = styled.footer`
   text-align: center;
   margin-top: 0.5em;
 
-  color: ${({ theme: { colors } }) => colors.contrast};
-  color: gray;
+  opacity: 0.35;
+  color: ${({ theme }) => theme.colors.contrast};
   a {
-    color: gray;
+    color: ${({ theme }) => theme.colors.contrast};
   }
 `

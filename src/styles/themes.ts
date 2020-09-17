@@ -14,9 +14,9 @@ const common = {
   //   lg: '992px',
   //   xl: '1200px',
   // },
-  // usando mobile-first
   devices: {
-    desktop: '@media only screen and (min-width: 576px)',
+    // mobile-first
+    desktop: '@media only screen and (min-width: 666px)',
   },
 }
 
