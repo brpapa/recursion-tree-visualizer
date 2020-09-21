@@ -1,7 +1,6 @@
 {
   "include": [
-    "./src/*",
-    "./src/styles/styled.d.ts",
+    "src",
   ],
   "exclude": [
     "node_modules",

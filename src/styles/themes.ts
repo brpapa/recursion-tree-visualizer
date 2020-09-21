@@ -22,14 +22,15 @@ const common = {
 
 const light = {
   ...common,
+  name: 'light',
   colors: {
     contrast: '#000',
     backgroundAccent: '#e3e3e3',
     background: '#f0f0f0',
     foreground: '#fff',
-    foregroundAccent: '#f8f8f8',
+    foregroundAccent: '#fcfcfc',
     border: '#ececec',
-    borderAccent: 'rgb(225, 225, 225)',
+    borderAccent: 'rgb(215, 215, 215)',
     text: '#111',
     textPlaceholder: '#aaa',
     primary: '#185EE0',
@@ -39,6 +40,7 @@ const light = {
 
 const dark = {
   ...common,
+  name: 'dark',
   colors: {
     contrast: '#fff',
     backgroundAccent: '#484a4d4f',

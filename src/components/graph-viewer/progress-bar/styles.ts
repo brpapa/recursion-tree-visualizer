@@ -37,7 +37,7 @@ export const Button = styled.button`
   display: flex;
   svg {
     color: ${({ theme }) => theme.colors.contrast};
-    width: ${HEIGHT + 3}px;
-    height: ${HEIGHT + 3}px;
+    width: ${HEIGHT + 4}px;
+    height: ${HEIGHT + 4}px;
   }
 `

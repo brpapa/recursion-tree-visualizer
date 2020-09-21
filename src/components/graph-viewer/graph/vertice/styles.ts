@@ -19,7 +19,7 @@ export const Container = styled.g<{ highlight: boolean }>`
   }
   ${Text} {
     fill: ${({ highlight, theme }) =>
-      highlight ? theme.colors.foreground : theme.colors.contrast};
+      highlight ? '#fff' : theme.colors.contrast};
   }
 
   &:hover {

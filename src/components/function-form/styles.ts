@@ -21,6 +21,8 @@ export const P = styled.p`
   padding-top: 1.4em;
   padding-bottom: 0.2em;
   padding-left: 0.1em;
+  font-weight: bold;
+  font-size: 1.05em;
 `
 export const Select = styled.select`
   ${commonFormItem}
@@ -37,19 +39,12 @@ export const Textarea = styled.textarea`
   width: 100%;
   padding: ${HEIGHT}px 5px;
 `
-export const CheckBoxInput = styled.input.attrs({ type: 'checkbox' })``
 export const OptionContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: 0.2em 0;
-
-  ${CheckBoxInput} {
-    margin: 0.3em;
-  }
-
-  span {
-    margin-left: 0.4em;
-  }
+  justify-content: space-between;
+  margin: 0.3em 0;
+  padding-left: 0.2em;
 `
 export const TextInput = styled.input.attrs({ type: 'text' })`
   ${commonFormItem}
@@ -106,6 +101,7 @@ export const VariableContainer = styled.div`
 export const FormContent = styled.div`
   overflow: scroll;
   padding: 0.9em;
+  padding-top: 0;
 `
 export const FormSubmit = styled.div`
   display: flex;

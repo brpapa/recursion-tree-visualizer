@@ -1,14 +1,12 @@
 import React from 'react'
 import * as S from './styles'
 
-type Props = { link: string }
-
-const Footer = ({ link }: Props) => {
+const Footer = () => {
   return (
     <S.Footer>
       Made with &#9829; by Bruno Papa{'  '}•{'  '}
       <a
-        href={link}
+        href='https://github.com/brpapa/recursion-tree-visualizer'
         target='__blank'
       >
         Github

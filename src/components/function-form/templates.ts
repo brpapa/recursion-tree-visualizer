@@ -42,29 +42,13 @@ const templates: Record<Templates, FunctionData> = {
     body: unify([
       '// remaining v cents',
       '',
-      'if (v === 0) return 0',
+      'if (v == 0) return 0',
       'if (v < 0) return Infinity',
       '',
       'let min = Infinity',
       'for (const coin of coins)',
       '  min = Math.min(min, 1 + fn(v - coin))',
       'return min',
-    ]),
-  },
-  power: {
-    name: 'Fast Power',
-    params: [
-      { name: 'a', value: '2' },
-      { name: 'n', value: '5' },
-    ],
-    body: unify([
-      'if (n == 0)',
-      '  return 1',
-      '',
-      'if (n % 2 == 0)',
-      '  return fn(a*a, n/2)',
-      '',
-      'return a * fn(a*a, (n-1)/2)',
     ]),
   },
   lcs: {
@@ -117,6 +101,22 @@ const templates: Record<Templates, FunctionData> = {
       '    )',
       '',
       'return ans',
+    ]),
+  },
+  power: {
+    name: 'Fast Power',
+    params: [
+      { name: 'a', value: '2' },
+      { name: 'n', value: '5' },
+    ],
+    body: unify([
+      'if (n == 0)',
+      '  return 1',
+      '',
+      'if (n % 2 == 0)',
+      '  return fn(a*a, n/2)',
+      '',
+      'return a * fn(a*a, (n-1)/2)',
     ]),
   },
 }
