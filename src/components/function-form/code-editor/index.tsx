@@ -40,6 +40,15 @@ const CodeEditor = ({ value, onChange, validate }: Props) => {
   })
 
   React.useEffect(() => {
+    setCode(value)
+  }, [value])
+
+  React.useEffect(() => {
+    if (!divRef?.current) return
+    divRef.current.style.resize = 'none'
+  }, [divRef])
+
+  React.useEffect(() => {
     const linkEl = document.createElement('link')
     linkEl.setAttribute('rel', 'stylesheet')
     linkEl.setAttribute('type', 'text/css')
@@ -50,15 +59,6 @@ const CodeEditor = ({ value, onChange, validate }: Props) => {
       document.head.removeChild(linkEl)
     }
   }, [theme.name])
-
-  React.useEffect(() => {
-    setCode(value)
-  }, [value])
-
-  React.useEffect(() => {
-    if (!divRef?.current) return
-    divRef.current.style.resize = 'none'
-  }, [divRef])
 
   return <s.Container ref={divRef} />
 }

@@ -1,5 +1,3 @@
-// TODO: https://coolors.co/palettes/trending
-// https://chakra-ui.com/theme
 import { Themes } from './../types'
 
 const common = {

@@ -76,12 +76,12 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
       <s.FormContent>
         <s.Title>Pre-defined templates</s.Title>
         <s.Select defaultValue='custom' onChange={handleSelectChange}>
+          <option value='custom'>Custom</option>
           {Object.entries(templates).map(([key, template]) => (
             <option key={key} value={key}>
               {template.name}
             </option>
           ))}
-          <option value='custom'>Custom</option>
         </s.Select>
 
         <s.Title>Global read-only variables</s.Title>
