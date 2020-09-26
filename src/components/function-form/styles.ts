@@ -17,7 +17,7 @@ const commonFormItem = css`
   }
 `
 
-export const P = styled.p`
+export const Title = styled.p`
   padding-top: 1.4em;
   padding-bottom: 0.2em;
   padding-left: 0.1em;
@@ -29,22 +29,12 @@ export const Select = styled.select`
   width: 100%;
   height: 27px;
 `
-export const Textarea = styled.textarea`
-  ${commonFormItem}
-  font-size: 14px;
-  font-family: ${({ theme }) => theme.fonts.mono};
-  resize: none;
-  display: block;
-  height: 200px;
-  width: 100%;
-  padding: ${HEIGHT}px 5px;
-`
 export const OptionContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0.3em 0;
-  padding-left: 0.2em;
+  padding-left: 0.1em;
 `
 export const TextInput = styled.input.attrs({ type: 'text' })`
   ${commonFormItem}
@@ -71,7 +61,7 @@ export const SubmitButton = styled(Button).attrs({ type: 'submit' })`
   background-color: ${({ theme }) => theme.colors.contrast};
   color: ${({ theme }) => theme.colors.foreground};
   /* border: 1px solid transparent; */
-  border: 0;
+  border-left: none;
   font-weight: bold;
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
@@ -90,11 +80,12 @@ export const Error = styled.p`
 export const VariableContainer = styled.div`
   display: flex;
   align-items: center;
-  ${TextInput} {
+  div {
+    margin: 3px;
     flex: 1 1;
     &:first-child {
-      width: 70px;
       flex: 0 0;
+      flex-basis: 62px;
     }
   }
 `

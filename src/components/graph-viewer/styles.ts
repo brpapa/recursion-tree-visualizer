@@ -19,5 +19,5 @@ export const LogoIcon = styled(Logo)`
   height: 100%;
   padding: 5em;
   color: ${({ theme }) => theme.colors.contrast};
-  opacity: 0.065;
+  opacity: 0.03;
 `

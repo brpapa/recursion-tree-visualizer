@@ -3,7 +3,13 @@ import React from 'react'
 import * as s from './styles'
 import Switch from './switch'
 import CodeEditor from './code-editor'
-import { group, ungroup, codeValidate, constValidate, callValidate } from './utils'
+import {
+  group,
+  ungroup,
+  codeValidate,
+  constValidate,
+  callValidate,
+} from './utils'
 import templates from './templates'
 import useFormInput from './../../hooks/use-form-input'
 import useLocalStorage from './../../hooks/use-local-storage'
@@ -48,7 +54,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     setFnVars(res.fnVars)
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const root = document.getElementById('root')
     if (root) root.scrollIntoView()
@@ -66,9 +72,9 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   }
 
   return (
-    <s.FormContainer onSubmit={handleSubmit}>
+    <s.FormContainer onSubmit={handleFormSubmit}>
       <s.FormContent>
-        <s.P>Pre-defined templates</s.P>
+        <s.Title>Pre-defined templates</s.Title>
         <s.Select defaultValue='custom' onChange={handleSelectChange}>
           {Object.entries(templates).map(([key, template]) => (
             <option key={key} value={key}>
@@ -78,40 +84,24 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
           <option value='custom'>Custom</option>
         </s.Select>
 
-        <s.P>Recursive function</s.P>
-        <CodeEditor
-          value={fnCode}
-          onChange={setFnCode}
-          validate={codeValidate}
-        />
-        {/* <s.Textarea value={fnCode} rows={10} cols={50} /> */}
-
-        {error !== '' && <s.Error>{error}</s.Error>}
-
-        <s.P>Global read-only constants</s.P>
+        <s.Title>Global read-only variables</s.Title>
         {fnVars.map(({ name, value }, i) => (
           <s.VariableContainer key={i}>
-            <s.TextInput
-              placeholder='name'
+            <CodeEditor
               value={name}
-              onChange={(e) => {
-                const varName = e.target.value
-
+              onChange={(value) => {
                 setFnVars((v) => {
-                  if (v[i]) v[i].name = varName
+                  if (v[i]) v[i].name = value
                   return [...v]
                 })
               }}
             />
             <span>=</span>
-            <s.TextInput
-              placeholder='value'
+            <CodeEditor
               value={value}
-              onChange={(e) => {
-                const varValue = e.target.value
-
+              onChange={(value) => {
                 setFnVars((v) => {
-                  if (v[i]) v[i].value = varValue
+                  if (v[i]) v[i].value = value
                   return [...v]
                 })
               }}
@@ -119,17 +109,26 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
           </s.VariableContainer>
         ))}
 
-        <s.P>Options</s.P>
-        <s.OptionContainer>
-          <span>Memorize states (DP)</span>
-          <Switch checked={memorize} onChange={() => setMemorize((p) => !p)} />
-        </s.OptionContainer>
+        <s.Title>Recursive function</s.Title>
+        <CodeEditor
+          value={fnCode}
+          onChange={setFnCode}
+          validate={codeValidate}
+        />
+
+        {error !== '' && <s.Error>{error}</s.Error>}
+
+        <s.Title>Options</s.Title>
         <s.OptionContainer>
           <span>Show step-by-step animation</span>
           <Switch
             checked={animation}
             onChange={() => setAnimation((p) => !p)}
           />
+        </s.OptionContainer>
+        <s.OptionContainer>
+          <span>Memorize computing</span>
+          <Switch checked={memorize} onChange={() => setMemorize((p) => !p)} />
         </s.OptionContainer>
         <s.OptionContainer>
           <span>Enable dark mode</span>

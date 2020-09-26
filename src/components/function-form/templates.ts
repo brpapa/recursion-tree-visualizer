@@ -1,12 +1,12 @@
 import { Templates, FunctionData } from '../../types'
 
-const unify = (lines: string[]) => lines.map((line) => '  ' + line).join('\n')
+const codefy = (lines: string[]) => lines.map((line) => '  ' + line).join('\n')
 
 const templates: Record<Templates, FunctionData> = {
   fibo: {
     name: 'Fibonacci',
     params: [{ name: 'n', value: '5' }],
-    body: unify([
+    body: codefy([
       'if (n == 0 || n == 1)',
       '  return n',
       '',
@@ -15,53 +15,74 @@ const templates: Record<Templates, FunctionData> = {
   },
   ks: {
     name: '0-1 Knapsack',
-    params: [
-      { name: 'i', value: '0' },
-      { name: 's', value: '12' },
-    ],
     variables: [
       { name: 'v', value: '[100,70,50,10]' },
       { name: 'w', value: '[10,4,6,12]' },
     ],
-    body: unify([
-      '// i-th item, remaining capacity s',
+    params: [
+      { name: 'i', value: '0' },
+      { name: 's', value: '12' },
+    ],
+    body: codefy([
+      '// i-th item, knapsack with available capacity s',
       '',
       'if (s < 0) return -Infinity',
       'if (i == v.length) return 0',
       '',
       'return Math.max(',
-      "  fn(i+1, s), // don't choose i",
-      '  v[i] + fn(i+1, s-w[i]) // choose i',
+      '  fn(i+1, s),',
+      '  v[i] + fn(i+1, s-w[i])',
       ')',
+    ]),
+  },
+  ss: {
+    name: 'Subset Sum',
+    variables: [{ name: 'arr', value: '[1,3,4,5,2,10]' }],
+    params: [
+      { name: 'i', value: '0' },
+      { name: 's', value: '7' },
+    ],
+    body: codefy([
+      '// i-th number of arr, missing s for the current subset to arrive at the target sum',
+      '',
+      'if (s == 0) return 1',
+      'if (i == arr.length || s < 0) return 0',
+      '',
+      'return fn(i+1, s) + fn(i+1, s-arr[i])'
     ]),
   },
   cc: {
     name: 'Coin Change',
-    params: [{ name: 'v', value: '5' }],
     variables: [{ name: 'coins', value: '[1,3,4,5]' }],
-    body: unify([
+    params: [{ name: 'v', value: '5' }],
+    body: codefy([
       '// remaining v cents',
       '',
       'if (v == 0) return 0',
       'if (v < 0) return Infinity',
       '',
-      'let min = Infinity',
+      'let ans = Infinity',
       'for (const coin of coins)',
-      '  min = Math.min(min, 1 + fn(v - coin))',
-      'return min',
+      '  ans = Math.min(',
+      '    ans,',
+      '    1 + fn(v - coin)',
+      '  )',
+      'return ans',
     ]),
   },
   lcs: {
     name: 'Longest Common Subsequence',
-    params: [
-      { name: 'i', value: '0' },
-      { name: 'j', value: '0' },
-    ],
     variables: [
       { name: 'a', value: "'AGTB'" },
       { name: 'b', value: "'GTXAB'" },
     ],
-    body: unify([
+    params: [
+      { name: 'i', value: '0' },
+      { name: 'j', value: '0' },
+    ],
+    body: codefy([
+      '// i-th char of a, j-th char of b',
+      '',
       'if (i == a.length || j == b.length)',
       '  return 0',
       '',
@@ -76,40 +97,45 @@ const templates: Record<Templates, FunctionData> = {
   },
   tsp: {
     name: 'Traveling Salesman Problem',
-    params: [
-      { name: 'i', value: '0' },
-      { name: 'mask', value: '1' },
-    ],
     variables: [
+      { name: 'cities', value: '4' },
       {
         name: 'adjMat',
         value:
-          '[[0, 20, 42, 35], [20, 0, 30, 34], [42, 30, 0, 12], [35, 34, 12, 0]]',
+          '[[0, 20, 42, 35],\n [20, 0, 30, 34],\n [42, 30, 0, 12],\n [35, 34, 12, 0]]',
       },
     ],
-    body: unify([
-      'if (mask == (1 << 4) - 1)',
-      '  return adjMat[i][0]',
+    params: [
+      { name: 'u', value: '0' },
+      { name: 'mask', value: '1' },
+    ],
+    body: codefy([
+      '// current city u, set of visited cities mask (including u)',
+      '',
+      '// all cities were visited',
+      'if (mask == (1 << cities) - 1)',
+      '  return adjMat[u][0]',
       '',
       'let ans = Infinity',
       '',
-      'for (let v = 0; v < 4; v++)',
-      '  if (v != i && (mask & (1 << v)) == 0)',
+      '// for each unvisited city v',
+      'for (let v = 0; v < cities; v++)',
+      '  if ((mask & (1 << v)) == 0)',
       '    ans = Math.min(',
       '      ans,',
-      '      adjMat[i][v] + fn(v, mask | (1 << v))',
+      '      adjMat[u][v] + fn(v, mask | (1 << v))',
       '    )',
       '',
       'return ans',
     ]),
   },
-  power: {
+  pow: {
     name: 'Fast Power',
     params: [
       { name: 'a', value: '2' },
       { name: 'n', value: '5' },
     ],
-    body: unify([
+    body: codefy([
       'if (n == 0)',
       '  return 1',
       '',

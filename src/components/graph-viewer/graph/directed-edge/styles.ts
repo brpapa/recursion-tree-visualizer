@@ -25,8 +25,22 @@ export const Container = styled.g<{ highlight: boolean }>`
       }
       ${Text} {
         fill: ${color};
-        stroke: ${({theme}) => theme.colors.foreground};
+        stroke: ${({ theme }) => theme.colors.foreground};
       }
     `
   }};
+
+  --pr: ${({ theme }) => theme.colors.primary};
+  --fg: ${({ theme }) => theme.colors.foreground};
+
+  &:hover {
+    fill: var(--pr);
+    ${Line} {
+      stroke: var(--pr);
+    }
+    ${Text} {
+      fill: var(--pr);
+      stroke: var(--fg);
+    }
+  }
 `

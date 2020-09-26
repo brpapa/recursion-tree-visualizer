@@ -4,8 +4,7 @@ import { Themes } from './../types'
 
 const common = {
   fonts: {
-    body:
-      "'Inter', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif",
+    body: "'Inter', -apple-system, system-ui, 'Helvetica Neue', sans-serif",
     mono: 'Menlo, monospace',
   },
   // breakpoints: {
@@ -25,12 +24,12 @@ const light = {
   name: 'light',
   colors: {
     contrast: '#000',
-    backgroundAccent: '#e3e3e3',
     background: '#f0f0f0',
+    backgroundAccent: '#e3e3e3',
     foreground: '#fff',
     foregroundAccent: '#fcfcfc',
     border: '#ececec',
-    borderAccent: 'rgb(215, 215, 215)',
+    borderAccent: 'rgb(207, 207, 207)',
     text: '#111',
     textPlaceholder: '#aaa',
     primary: '#185EE0',
@@ -43,12 +42,12 @@ const dark = {
   name: 'dark',
   colors: {
     contrast: '#fff',
-    backgroundAccent: '#484a4d4f',
     background: '#151616',
+    backgroundAccent: '#484a4d4f',
     foreground: '#242526',
-    foregroundAccent: '#383a3d',
+    foregroundAccent: '#2A2B2C',
     border: '#474a4d',
-    borderAccent: '#707070',
+    borderAccent: '#747474',
     text: '#dadce1',
     textPlaceholder: '#aaa',
     primary: '#0093FA',

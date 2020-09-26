@@ -5,6 +5,7 @@ export const Switch = styled.input.attrs({ type: 'checkbox' })`
   --active-inner: #fff;
   --border: ${({ theme }) => theme.colors.borderAccent};
   --background: ${({ theme }) => theme.colors.foregroundAccent};
+  
   appearance: none;
   height: 21px;
   width: 38px;
@@ -18,6 +19,7 @@ export const Switch = styled.input.attrs({ type: 'checkbox' })`
   cursor: pointer;
   border: 1px solid var(--bc, var(--border));
   background: var(--b, var(--background));
+
   &:after {
     content: '';
     display: block;
@@ -32,6 +34,7 @@ export const Switch = styled.input.attrs({ type: 'checkbox' })`
     background: var(--ab, var(--border));
     transform: translateX(var(--x, 0));
   }
+
   &:checked {
     --b: var(--active);
     --bc: var(--active);
