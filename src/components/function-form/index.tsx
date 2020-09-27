@@ -7,7 +7,6 @@ import {
   group,
   ungroup,
   codeValidate,
-  constValidate,
   callValidate,
 } from './utils'
 import templates from './templates'

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const BORDER = 6
+const BORDER = 8
 const HEIGHT = 12
 
 export const Container = styled.div`

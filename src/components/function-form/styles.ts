@@ -60,7 +60,7 @@ export const SubmitButton = styled(Button).attrs({ type: 'submit' })`
   padding: ${HIGHER_HEIGHT}px 10px;
   background-color: ${({ theme }) => theme.colors.contrast};
   color: ${({ theme }) => theme.colors.foreground};
-  /* border: 1px solid transparent; */
+  border: 1px solid ${({ theme }) => theme.colors.contrast};
   border-left: none;
   font-weight: bold;
   border-bottom-left-radius: 0;

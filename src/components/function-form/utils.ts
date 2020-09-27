@@ -3,7 +3,7 @@ import { FunctionData, Variable } from './../../types'
 export const codeValidate = (s: string) =>
   /^(function\s+fn\(.*\)\s+\{\n).*(\}\s*)$/s.test(s)
 
-export const constValidate = (s: string) => /^(const\s+).*\s*=\s*.*/.test(s)
+// export const constValidate = (s: string) => /^(const\s+).*\s*=\s*.*/.test(s)
 export const callValidate = (s: string) => /^(fn\(.*\))$/.test(s)
 
 const betweenParentesis = (s: string) => {
