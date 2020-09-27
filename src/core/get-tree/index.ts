@@ -1,4 +1,3 @@
-// FIXME: código do usuário não pode mutar variables globais definidas por ele
 import { FunctionData, AdjList, Args } from '../../types'
 
 const MAX_V = 222
@@ -8,7 +7,7 @@ export default function getTree(this: any, fnData: FunctionData, memorize: boole
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   var fn: Function, _: Function
   // eslint-disable-next-line
-  var userFn: Function = eval(parseFunction(fnData)) // can throw error
+  var userFn: Function = eval(parseFunction(fnData))
   const self = this
 
   let v = 0 // current vertex id
@@ -16,6 +15,7 @@ export default function getTree(this: any, fnData: FunctionData, memorize: boole
   const adjList: AdjList = {} // u -w-> v, where w is the result of fn(...args[v])
   const recursionStack: number[] = [] // the current top is parent of current vertex
   const memo: Record<string, any> = {} // { allArgs as string, result }
+  const memoVertices: number[] = [] // vértices que foram obtidos da memória
 
   // wrapper para a fn, a qual é chamada pela função do usuário
   function fnWrapper(...allArgs: any[]) {
@@ -35,6 +35,7 @@ export default function getTree(this: any, fnData: FunctionData, memorize: boole
     if (memorize && memo[JSON.stringify(allArgs)] !== undefined) {
       adj.w = memo[JSON.stringify(allArgs)]
       recursionStack.pop()
+      memoVertices.push(adj.v)
       return adj.w
     }
     const res = userFn.apply(self, allArgs) // call fn
@@ -52,19 +53,19 @@ export default function getTree(this: any, fnData: FunctionData, memorize: boole
   const paramsValues = fnData.params.map((param) => eval(param.value))
   if (paramsValues.length > 0) result = fn(...paramsValues)
 
-  return { adjList, args, result }
+  return { adjList, args, result, memoVertices}
 }
 
 const parseFunction = (fnData: FunctionData) => {
-  const variables = fnData.variables
+  const vars = fnData.variables
     ?.map((param) => `${param.name} = ${param.value}`)
     .join(', ')
-  const variablesDeclaration = (variables && `var ${variables};`) || ''
+  const varsDeclaration = (vars && `var ${vars};`) || ''
 
   const paramsNames = fnData.params.map((param) => param.name).join(', ')
 
   const fnDeclaration = `_ = function (${paramsNames}) {
-    ${variablesDeclaration}
+    ${varsDeclaration}
     ${fnData.body}
   }`
 

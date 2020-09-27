@@ -9,17 +9,18 @@ export default function getGraphData(
   adjList: AdjList,
   args: Args,
   result: number,
+  memoVertices: number[],
   rootId = 0
 ) {
   if (Object.keys(adjList).length === 0)
-    throw new Error('The parameter adjacency list should not be empty')
+    throw new Error('The adjList argument should not be empty')
 
   const { rawCoords, rawBottomRight } = getCoords(adjList)
 
   // initializes
   const logs: string[] = [] // logs[time]: text
   const edgesData = initialEdgesData(adjList)
-  const verticesData = initialVerticesData(rawCoords, args)
+  const verticesData = initialVerticesData(rawCoords, args, memoVertices)
   const svgBottomRight: Point = [
     rawBottomRight[0] * SCALED_BY[0] + 2 * TRANSLATED_BY[0],
     rawBottomRight[1] * SCALED_BY[1] + 2 * TRANSLATED_BY[1],
@@ -75,7 +76,8 @@ const edgeKey = (u: number, v: number) => JSON.stringify([u, v])
 
 const initialVerticesData = (
   rawCoords: Record<number, Point>,
-  args: Args
+  args: Args,
+  memoVertices: number[]
 ): VerticesData => {
   return objectMap(rawCoords, (c, key) => {
     const v = Number(key)
@@ -87,6 +89,7 @@ const initialVerticesData = (
         c[1] * SCALED_BY[1] + TRANSLATED_BY[1],
       ],
       label: labeledVerticeArgs(args[v]) || `${v}`,
+      memorized: memoVertices.find((vert) => vert === v) !== undefined
     }
   })
 }

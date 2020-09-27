@@ -41,7 +41,13 @@ const Graph = ({ time, edges, vertices, bottomRight }: Props) => {
               key={key}
               center={data.coord}
               label={data.label}
-              highlight={data.times.some((t) => t === time)}
+              highlight={
+                data.times.some((t) => t === time)
+                  ? 'current'
+                  : data.memorized
+                    ? 'memorized'
+                    : 'none'
+              }
             />
           )
         )

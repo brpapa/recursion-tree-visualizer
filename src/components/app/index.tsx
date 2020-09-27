@@ -15,19 +15,21 @@ const App = () => {
   const [adjList, setAdjList] = React.useState<AdjList>({})
   const [args, setArgs] = React.useState<Args>({})
   const [result, setResult] = React.useState(NaN)
-  const [animation, setAnimation] = React.useState(true)
+  const [animate, setAnimate] = React.useState(true)
+  const [memoVertices, setMemoVertices] = React.useState<number[]>([])
 
   return (
     <ThemeProvider theme={themes[themeName]}>
       <GlobalStyle />
-      <s.App>
+      <s.AppContainer>
         <s.Sidebar>
           <FunctionForm
-            onSubmit={(adjList, args, result, animation) => {
+            onSubmit={(adjList, args, result, animate, memoVertices) => {
               setAdjList(adjList)
               setArgs(args)
               setResult(result)
-              setAnimation(animation)
+              setAnimate(animate)
+              setMemoVertices(memoVertices)
             }}
             onThemeChange={(themeName) => {
               setThemeName(themeName)
@@ -35,10 +37,10 @@ const App = () => {
           />
         </s.Sidebar>
         <s.Main>
-          <GraphViewer adjList={adjList} args={args} result={result} animation={animation}/>
+          <GraphViewer {...{ adjList, args, result, animate, memoVertices }}/>
           <Footer/>
         </s.Main>
-      </s.App>
+      </s.AppContainer>
     </ThemeProvider>
   )
 }

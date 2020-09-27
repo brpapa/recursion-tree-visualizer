@@ -34,6 +34,7 @@ export type VerticesData = Record<
     times: number[] // times em que o vértice é o atual (em ordem crescente)
     coord: Point
     label?: string
+    memorized: boolean // vértices foi obtido da memória?
   }
 >
 

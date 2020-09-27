@@ -7,10 +7,10 @@ import { Point } from '../../../../types'
 type Props = {
   center: Point
   label?: string
-  highlight?: boolean
+  highlight: 'current' | 'memorized' | 'none'
 }
 
-const Vertice = ({ center, label, highlight = false }: Props) => {
+const Vertice = ({ center, label, highlight }: Props) => {
   const textRef = React.useRef<SVGTextElement>(null)
   useScaleDown(textRef, label)
 

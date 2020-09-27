@@ -14,10 +14,11 @@ type Props = {
   adjList: AdjList
   args: Args
   result: number
-  animation: boolean
+  animate: boolean
+  memoVertices: number[]
 }
 
-const GraphViewer = ({ adjList, args, result, animation }: Props) => {
+const GraphViewer = ({ adjList, args, result, animate, memoVertices }: Props) => {
   const [time, setTime] = React.useState(0) // 0 <= time <= times
   const [times, setTimes] = React.useState(1)
   const [isUpdating, setIsUpdating] = React.useState(false)
@@ -35,17 +36,17 @@ const GraphViewer = ({ adjList, args, result, animation }: Props) => {
     setTime(0)
     if (Object.keys(adjList).length === 0) return
 
-    const res = getGraphData(adjList, args, result)
-    const { edgesData, verticesData, svgBottomRight, times, logs } = res
+    const graphData = getGraphData(adjList, args, result, memoVertices)
+    const { edgesData, verticesData, svgBottomRight, times, logs } = graphData
 
     setIsUpdating(true)
-    setTime(animation ? 0 : times)
+    setTime(animate ? 0 : times)
     setTimes(times)
     setEdgesData(edgesData)
     setVerticesData(verticesData)
     setSvgBottomRight(svgBottomRight)
     setLogs(logs)
-  }, [adjList, args, result, animation])
+  }, [adjList, args, result, animate, memoVertices])
 
   useInterval(
     () => {

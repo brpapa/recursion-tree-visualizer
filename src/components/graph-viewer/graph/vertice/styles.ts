@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 export const Circle = styled.circle`
   stroke-width: 5px;
@@ -10,27 +10,33 @@ export const Text = styled.text`
   alignment-baseline: central;
   user-select: none;
 `
-export const Container = styled.g<{ highlight: boolean }>`
-  ${Circle} {
-    fill: ${({ highlight, theme }) =>
-      highlight ? theme.colors.primary : theme.colors.foreground};
-    stroke: ${({ highlight, theme }) =>
-      highlight ? theme.colors.primary : theme.colors.contrast};
-  }
-  ${Text} {
-    fill: ${({ highlight, theme }) =>
-      highlight ? '#fff' : theme.colors.contrast};
-  }
+export const Container = styled.g<{
+  highlight: 'current' | 'memorized' | 'none'
+}>`
+  ${({ highlight, theme }) => {
+    const { foreground, contrast } = theme.colors
+    const main = highlight === 'memorized' ? contrast : theme.colors.primary
+    const filled = highlight !== 'none'
 
-  &:hover {
-    ${Circle} {
-      fill: ${({ theme }) => theme.colors.primary};
-      stroke: ${({ theme }) => theme.colors.primary};
-    }
-    ${Text} {
-      fill: ${({ theme }) => theme.colors.foreground};
-    }
-  }
+    return css`
+      ${Circle} {
+        fill: ${filled ? main : foreground};
+        stroke: ${filled ? main : contrast};
+      }
+      ${Text} {
+        fill: ${filled ? foreground : contrast};
+      }
+      &:hover {
+        ${Circle} {
+          fill: ${theme.colors.primary};
+          stroke: ${theme.colors.primary};
+        }
+        ${Text} {
+          fill: ${foreground};
+        }
+      }
+    `
+  }}
 
   ${Circle}, ${Text} {
     animation-name: ${keyframes`

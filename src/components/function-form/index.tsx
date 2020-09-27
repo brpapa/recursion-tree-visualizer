@@ -21,22 +21,24 @@ type Props = {
     adjList: AdjList,
     args: Args,
     result: number,
-    animation: boolean
+    animate: boolean,
+    memoVertices: number[]
   ) => void
   onThemeChange: (themeName: Themes) => void
 }
 
 const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
-  const [fnCode, setFnCode] = useLocalStorage('fn-code', 'function fn() {\n\n}')
   const [fnCall, setFnCall] = useFormInput('fn-call', 'fn()', callValidate)
+  const [fnCode, setFnCode] = useLocalStorage('fn-code', 'function fn() {\n\n}')
   const [fnVars, setFnVars] = useLocalStorage<Variable[]>('fn-vars', [
     { name: '', value: '' },
     { name: '', value: '' },
   ]) //! fixado em 2 vars por enquanto
 
   const [memorize, setMemorize] = useLocalStorage('memorize', false)
+  const [animate, setAnimate] = useLocalStorage('animate', true)
   const [dark, setDark] = useLocalStorage('dark-mode', false)
-  const [animation, setAnimation] = useLocalStorage('animation', true)
+
   const [error, setError] = React.useState('')
 
   React.useEffect(() => {
@@ -53,18 +55,15 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     setFnCall(res.fnCall)
     setFnVars(res.fnVars)
   }
-
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const root = document.getElementById('root')
-    if (root) root.scrollIntoView()
 
     try {
       const fnData = group(fnCode, fnCall.value, fnVars)
-      const { adjList, args, result } = getTree(fnData, memorize)
+      const { adjList, args, result, memoVertices } = getTree(fnData, memorize) // can throw error
 
       setError('')
-      onSubmit(adjList, args, result, animation)
+      onSubmit(adjList, args, result, animate, memoVertices)
     } catch (error) {
       // console.error(error.name, error.message)
       setError(error.message)
@@ -120,10 +119,10 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
         <s.Title>Options</s.Title>
         <s.OptionContainer>
-          <span>Show step-by-step animation</span>
+          <span>Show step-by-step animate</span>
           <Switch
-            checked={animation}
-            onChange={() => setAnimation((p) => !p)}
+            checked={animate}
+            onChange={() => setAnimate((p) => !p)}
           />
         </s.OptionContainer>
         <s.OptionContainer>

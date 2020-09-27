@@ -13,6 +13,22 @@ const templates: Record<Templates, FunctionData> = {
       'return fn(n-1) + fn(n-2)',
     ]),
   },
+  ss: {
+    name: 'Subset Sum',
+    variables: [{ name: 'arr', value: '[1,3,4,5,2,10]' }],
+    params: [
+      { name: 'i', value: '0' },
+      { name: 's', value: '7' },
+    ],
+    body: codefy([
+      '// i-th number of arr, missing s for the current subset to arrive at the target sum',
+      '',
+      'if (s == 0) return 1',
+      'if (i == arr.length || s < 0) return 0',
+      '',
+      'return fn(i+1, s) + fn(i+1, s-arr[i])'
+    ]),
+  },
   ks: {
     name: '0-1 Knapsack',
     variables: [
@@ -33,22 +49,6 @@ const templates: Record<Templates, FunctionData> = {
       '  fn(i+1, s),',
       '  v[i] + fn(i+1, s-w[i])',
       ')',
-    ]),
-  },
-  ss: {
-    name: 'Subset Sum',
-    variables: [{ name: 'arr', value: '[1,3,4,5,2,10]' }],
-    params: [
-      { name: 'i', value: '0' },
-      { name: 's', value: '7' },
-    ],
-    body: codefy([
-      '// i-th number of arr, missing s for the current subset to arrive at the target sum',
-      '',
-      'if (s == 0) return 1',
-      'if (i == arr.length || s < 0) return 0',
-      '',
-      'return fn(i+1, s) + fn(i+1, s-arr[i])'
     ]),
   },
   cc: {
@@ -83,8 +83,8 @@ const templates: Record<Templates, FunctionData> = {
     body: codefy([
       '// i-th char of a, j-th char of b',
       '',
-      'if (i == a.length || j == b.length)',
-      '  return 0',
+      'if (i == a.length',
+      ' || j == b.length) return 0',
       '',
       'if (a[i] == b[j])',
       '  return 1+fn(i+1, j+1)',

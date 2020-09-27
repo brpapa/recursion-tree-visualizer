@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const App = styled.div`
+export const AppContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
   display: flex;
   

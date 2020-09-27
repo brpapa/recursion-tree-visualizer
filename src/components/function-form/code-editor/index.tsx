@@ -60,7 +60,7 @@ const CodeEditor = ({ value, onChange, validate }: Props) => {
     }
   }, [theme.name])
 
-  return <s.Container ref={divRef} />
+  return <s.Container ref={divRef}/>
 }
 
 export default CodeEditor
