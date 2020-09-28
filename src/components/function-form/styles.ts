@@ -57,7 +57,7 @@ export const SubmitTextInput = styled(TextInput)`
   border-top-right-radius: 0;
 `
 export const SubmitButton = styled(Button).attrs({ type: 'submit' })`
-  padding: ${HIGHER_HEIGHT}px 10px;
+  padding: ${HIGHER_HEIGHT}px 15px;
   background-color: ${({ theme }) => theme.colors.contrast};
   color: ${({ theme }) => theme.colors.foreground};
   border: 1px solid ${({ theme }) => theme.colors.contrast};

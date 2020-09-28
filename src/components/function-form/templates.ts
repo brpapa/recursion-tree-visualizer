@@ -3,6 +3,13 @@ import { Templates, FunctionData } from '../../types'
 const codefy = (lines: string[]) => lines.map((line) => '  ' + line).join('\n')
 
 const templates: Record<Templates, FunctionData> = {
+  custom: {
+    name: 'Custom',
+    params: [{ name: '', value: '' }],
+    body: codefy([
+      '// type your own code',
+    ]),
+  },
   fibo: {
     name: 'Fibonacci',
     params: [{ name: 'n', value: '5' }],

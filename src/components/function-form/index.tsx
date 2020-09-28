@@ -45,8 +45,6 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   }, [dark, onThemeChange])
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value === 'custom') return
-
     const key = e.target.value as Templates
     const res = ungroup(templates[key])
 
@@ -74,7 +72,6 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
       <s.FormContent>
         <s.Title>Pre-defined templates</s.Title>
         <s.Select defaultValue='custom' onChange={handleSelectChange}>
-          <option value='custom'>Custom</option>
           {Object.entries(templates).map(([key, template]) => (
             <option key={key} value={key}>
               {template.name}
@@ -118,14 +115,14 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
         <s.Title>Options</s.Title>
         <s.OptionContainer>
-          <span>Show step-by-step animate</span>
+          <span>Enable step-by-step animation</span>
           <Switch
             checked={animate}
             onChange={() => setAnimate((p) => !p)}
           />
         </s.OptionContainer>
         <s.OptionContainer>
-          <span>Memorize computing</span>
+          <span>Enable memorization</span>
           <Switch checked={memorize} onChange={() => setMemorize((p) => !p)} />
         </s.OptionContainer>
         <s.OptionContainer>
