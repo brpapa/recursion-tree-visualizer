@@ -6,9 +6,7 @@ const templates: Record<Templates, FunctionData> = {
   custom: {
     name: 'Custom',
     params: [{ name: '', value: '' }],
-    body: codefy([
-      '// type your own code',
-    ]),
+    body: codefy(['// type your own code']),
   },
   fibo: {
     name: 'Fibonacci',
@@ -18,6 +16,19 @@ const templates: Record<Templates, FunctionData> = {
       '  return n',
       '',
       'return fn(n-1) + fn(n-2)',
+    ]),
+  },
+  bc: {
+    name: 'Binomial Coefficient',
+    params: [
+      { name: 'n', value: '5' },
+      { name: 'k', value: '2' },
+    ],
+    body: codefy([
+      '// given n items, how many different possible subsets of k items can be formed',
+      '',
+      'if (k == 0 || n == k) return 1',
+      'return fn(n-1, k-1) + fn(n-1, k)',
     ]),
   },
   ss: {
@@ -33,7 +44,7 @@ const templates: Record<Templates, FunctionData> = {
       'if (s == 0) return 1',
       'if (i == arr.length || s < 0) return 0',
       '',
-      'return fn(i+1, s) + fn(i+1, s-arr[i])'
+      'return fn(i+1, s) + fn(i+1, s-arr[i])',
     ]),
   },
   ks: {
