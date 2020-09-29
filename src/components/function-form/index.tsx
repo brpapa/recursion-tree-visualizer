@@ -122,7 +122,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
           />
         </s.OptionContainer>
         <s.OptionContainer>
-          <span>Enable memorization</span>
+          <span>Enable memoization</span>
           <Switch checked={memorize} onChange={() => setMemorize((p) => !p)} />
         </s.OptionContainer>
         <s.OptionContainer>
