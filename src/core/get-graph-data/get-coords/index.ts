@@ -1,7 +1,6 @@
 // a partir de uma adjList, determina a melhores coordenadas (x,y) de cada nó
 import { Point, TreeNode, AdjList } from '../../../types'
 
-// dado uma árvore, retorna as coordenadas de cada vértice no svg de uma forma esteticamente agradável
 export default function getCoords(adjList: AdjList, rootId = 0) {
   const rawCoords: Record<number, Point> = {} // rawCoords[u]: coordenada do vértice u
   const rawTopLeft: Point = [0, 0]

@@ -92,7 +92,6 @@ export const VariableContainer = styled.div`
 export const FormContent = styled.div`
   overflow: scroll;
   padding: 0.9em;
-  padding-top: 0;
 `
 export const FormSubmit = styled.div`
   display: flex;

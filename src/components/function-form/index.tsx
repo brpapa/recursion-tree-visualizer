@@ -11,9 +11,11 @@ import {
 } from './utils'
 import templates from './templates'
 import useFormInput from './../../hooks/use-form-input'
+import useCarbonAds from './../../hooks/use-carbon-ads'
 import useLocalStorage from './../../hooks/use-local-storage'
 import getTree from '../../core/get-tree'
 import { Templates, AdjList, Args, Variable, Themes } from '../../types'
+import './carbon-ads.css'
 
 type Props = {
   onSubmit: (
@@ -67,9 +69,12 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     }
   }
 
+  const { adsRef } = useCarbonAds();
+
   return (
     <s.FormContainer onSubmit={handleFormSubmit}>
       <s.FormContent>
+        <div ref={adsRef}/>
         <s.Title>Pre-defined templates</s.Title>
         <s.Select defaultValue='custom' onChange={handleSelectChange}>
           {Object.entries(templates).map(([key, template]) => (

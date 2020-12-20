@@ -14,7 +14,7 @@ const App = () => {
 
   const [adjList, setAdjList] = React.useState<AdjList>({})
   const [args, setArgs] = React.useState<Args>({})
-  const [result, setResult] = React.useState(NaN)
+  const [result, setResult] = React.useState<number | null>(null)
   const [animate, setAnimate] = React.useState(true)
   const [memoVertices, setMemoVertices] = React.useState<number[]>([])
 

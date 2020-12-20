@@ -163,6 +163,27 @@ const templates: Record<Templates, FunctionData> = {
       'return a * fn(a*a, (n-1)/2)',
     ]),
   },
+  mcm: {
+    name: 'Matrix Chain Multiplication',
+    variables: [{ name: 'D', value: '[1,2,3,4,5]' }],
+    params: [
+      { name: 'i', value: '1' },
+      { name: 'j', value: '4' },
+    ],
+    body: codefy([
+      'if (i == j) return 0',
+      '',
+      'let ans = Infinity;',
+      '',
+      'for (let k = i; k <= j-1; k++)',
+      '  ans = Math.min(',
+      '    ans,',
+      '    D[i-1]*D[k]*D[j] + fn(i, k) + fn(k+1, j)',
+      '  )',
+      '',
+      'return ans',
+    ]),
+  },
 }
 
 export default templates

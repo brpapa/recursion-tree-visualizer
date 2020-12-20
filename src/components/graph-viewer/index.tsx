@@ -13,7 +13,7 @@ const DELAY_IN_MS = 200
 type Props = {
   adjList: AdjList
   args: Args
-  result: number
+  result: number | null
   animate: boolean
   memoVertices: number[]
 }
@@ -25,9 +25,12 @@ const GraphViewer = ({
   animate,
   memoVertices,
 }: Props) => {
-  const [time, setTime] = React.useState(0) // 0 <= time <= times
+  const [time, setTime] = React.useState(0)
   const [times, setTimes] = React.useState(1)
   const [isUpdating, setIsUpdating] = React.useState(false)
+
+  if (time < 0 || time > times)
+    throw Error('`time` should be between 0 and `times`, inclusive')
 
   // graph data
   const [edgesData, setEdgesData] = React.useState<EdgesData>({})
@@ -35,12 +38,13 @@ const GraphViewer = ({
   const [svgBottomRight, setSvgBottomRight] = React.useState<Point>([0, 0])
   const [logs, setLogs] = React.useState<string[]>([])
 
-  const showBackground = Number.isNaN(result)
+  const showBackground = result === null
 
   // se args for undefined, esse effect é disparado infinitamente. mas WHY?
   React.useEffect(() => {
     setTime(0)
     if (Object.keys(adjList).length === 0) return
+    if (result === null) return
 
     const graphData = getGraphData(adjList, args, result, memoVertices)
     const { edgesData, verticesData, svgBottomRight, times, logs } = graphData
