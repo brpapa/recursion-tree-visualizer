@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./src/assets/icons/logo.svg" height="100"/>
+  <img src="./assets/logo.svg" height="100"/>
 </div>
 
 <h1 align="center">Recursion Tree Visualizer</h1>
@@ -8,27 +8,23 @@
 
 ## Overview
 
-<!-- ![screenshot](https://user-images.githubusercontent.com/16707738/92399059-5716eb00-f132-11ea-8b14-bcacdc8ec97b.png) -->
-
 Stop drawing recursion trees by hand. View the [demo video](https://youtu.be/1f-KeeN8AHs). Check out the [live project](https://recursion.now.sh).
 
+### Folders structure
 
-### Built with
-
-- [React](https://reactjs.org/)
-- [Styled components](https://styled-components.com/)
-- [PrismJS](https://prismjs.com/)
+- `packages/web-client`: front-end code deployed on Vercel. Built with React, Styled Components and PrismJS.
+<!-- - `packages/node-server`: server for analyse js code -->
 
 ## How to use
 
-In the root directory, run:
+In the `packages/web-client` directory, run:
 
 ```bash
 # Install all dependencies
-> yarn install
+> npm install
 
 # Run the app on http://localhost:3000
-> yarn start
+> npm run start
 ```
 
 ## Acknowledgements

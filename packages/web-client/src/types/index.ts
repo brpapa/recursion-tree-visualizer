@@ -11,7 +11,7 @@ export type TreeNode = {
 
 export type Point = [number, number] // [x,y]
 
-export type Templates = 'custom'| 'fibo' | 'ks' | 'ss' | 'bc' | 'cc' | 'pow' | 'lcs' | 'tsp' | 'mcm'
+export type Templates = 'custom'| 'fibo' | 'ks' | 'ss' | 'bc' | 'cc' | 'pow' | 'lcs' | 'tsp'
 export type Themes = 'light' | 'dark'
 
 export type Variable = { name: string; value: string }

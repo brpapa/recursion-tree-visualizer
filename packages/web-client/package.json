@@ -1,5 +1,6 @@
 {
-  "name": "recursion-tree-visualizer",
+  "name": "web-client",
+  "description": "Web client for visualize the recursion tree",
   "author": "Bruno Papa <bruno.papa@hotmail.com>",
   "version": "0.1.0",
   "private": true,

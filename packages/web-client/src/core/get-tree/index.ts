@@ -38,7 +38,7 @@ export default function getTree(this: any, fnData: FunctionData, memorize: boole
       memoVertices.push(adj.v)
       return adj.w
     }
-    const res = userFn.apply(self, allArgs) // call fn
+    const res = userFn.apply(self, allArgs) // userFn call fn, and fn = fnWrapper
 
     memo[JSON.stringify(allArgs)] = res
     adj.w = res
@@ -53,7 +53,7 @@ export default function getTree(this: any, fnData: FunctionData, memorize: boole
   const paramsValues = fnData.params.map((param) => eval(param.value))
   if (paramsValues.length > 0) result = fn(...paramsValues)
 
-  return { adjList, args, result, memoVertices}
+  return { adjList, args, result, memoVertices }
 }
 
 const parseFunction = (fnData: FunctionData) => {
