@@ -1,6 +1,7 @@
 import get from '.'
 import { objectMap } from './utils'
 import { AdjList } from '../../types/index'
+import getGraphData from '.'
 
 /*
     0
@@ -36,7 +37,7 @@ For each time:
 
 describe('get graph data', () => {
   describe('adj list 1', () => {
-    const { verticesData, edgesData } = get(adjList1, {})
+    const { verticesData, edgesData } = getGraphData(adjList1, {}, 0, [])
 
     test('should be compute the correct times for vertices', () => {
       expect(

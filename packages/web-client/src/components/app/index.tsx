@@ -7,38 +7,22 @@ import FunctionForm from '../function-form'
 import GraphViewer from '../graph-viewer'
 import Footer from './footer'
 import themes from './../../styles/themes'
-import { AdjList, Args, Themes } from '../../types'
+import { GraphData, Themes } from '../../types'
 
 const App = () => {
   const [themeName, setThemeName] = React.useState<Themes>('light')
-
-  const [adjList, setAdjList] = React.useState<AdjList>({})
-  const [args, setArgs] = React.useState<Args>({})
-  const [result, setResult] = React.useState<number | null>(null)
-  const [animate, setAnimate] = React.useState(true)
-  const [memoVertices, setMemoVertices] = React.useState<number[]>([])
+  const [graphData, setGraphData] = React.useState<GraphData>(null)
 
   return (
     <ThemeProvider theme={themes[themeName]}>
       <GlobalStyle />
       <s.AppContainer>
         <s.Sidebar>
-          <FunctionForm
-            onSubmit={(adjList, args, result, animate, memoVertices) => {
-              setAdjList(adjList)
-              setArgs(args)
-              setResult(result)
-              setAnimate(animate)
-              setMemoVertices(memoVertices)
-            }}
-            onThemeChange={(themeName) => {
-              setThemeName(themeName)
-            }}
-          />
+          <FunctionForm onSubmit={setGraphData} onThemeChange={setThemeName} />
         </s.Sidebar>
         <s.Main>
-          <GraphViewer {...{ adjList, args, result, animate, memoVertices }}/>
-          <Footer/>
+          <GraphViewer graphData={graphData} />
+          <Footer />
         </s.Main>
       </s.AppContainer>
     </ThemeProvider>

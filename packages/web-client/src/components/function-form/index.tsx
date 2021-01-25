@@ -3,28 +3,17 @@ import React from 'react'
 import * as s from './styles'
 import Switch from './switch'
 import CodeEditor from './code-editor'
-import {
-  group,
-  ungroup,
-  codeValidate,
-  callValidate,
-} from './utils'
+import { group, ungroup, codeValidate, callValidate } from './utils'
 import templates from './templates'
 import useFormInput from './../../hooks/use-form-input'
 import useCarbonAds from './../../hooks/use-carbon-ads'
 import useLocalStorage from './../../hooks/use-local-storage'
-import getTree from '../../core/get-tree'
-import { Templates, AdjList, Args, Variable, Themes } from '../../types'
+import getGraphData from '../../core'
+import { Templates, Variable, Themes, GraphData } from '../../types'
 import './carbon-ads.css'
 
 type Props = {
-  onSubmit: (
-    adjList: AdjList,
-    args: Args,
-    result: number,
-    animate: boolean,
-    memoVertices: number[]
-  ) => void
+  onSubmit: (graphData: GraphData) => void
   onThemeChange: (themeName: Themes) => void
 }
 
@@ -54,27 +43,27 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     setFnCall(res.fnCall)
     setFnVars(res.fnVars)
   }
+
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const fnData = group(fnCode, fnCall.value, fnVars)
+
     e.preventDefault()
+    setError('')
 
     try {
-      const fnData = group(fnCode, fnCall.value, fnVars)
-      const { adjList, args, result, memoVertices } = getTree(fnData, memorize) // can throw error
-
-      setError('')
-      onSubmit(adjList, args, result, animate, memoVertices)
+      const graphData = getGraphData(fnData, { memorize, animate })
+      onSubmit(graphData)
     } catch (error) {
-      // console.error(error.name, error.message)
       setError(error.message)
     }
   }
 
-  const { adsRef } = useCarbonAds();
+  const { adsRef } = useCarbonAds()
 
   return (
     <s.FormContainer onSubmit={handleFormSubmit}>
       <s.FormContent>
-        <div ref={adsRef}/>
+        <div ref={adsRef} />
         <s.Title>Pre-defined templates</s.Title>
         <s.Select defaultValue='custom' onChange={handleSelectChange}>
           {Object.entries(templates).map(([key, template]) => (
@@ -121,10 +110,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
         <s.Title>Options</s.Title>
         <s.OptionContainer>
           <span>Enable step-by-step animation</span>
-          <Switch
-            checked={animate}
-            onChange={() => setAnimate((p) => !p)}
-          />
+          <Switch checked={animate} onChange={() => setAnimate((p) => !p)} />
         </s.OptionContainer>
         <s.OptionContainer>
           <span>Enable memoization</span>

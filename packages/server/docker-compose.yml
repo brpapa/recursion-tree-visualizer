@@ -1,0 +1,15 @@
+version: "2"
+services:
+  server:
+    build: .
+    ports:
+      - "3000:3000"
+    # depends_on:
+    #   - mongo
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+  # mongo:
+  #   image: mongo
+  #   ports:
+  #     - "27017:27017"

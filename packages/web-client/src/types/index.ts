@@ -22,6 +22,18 @@ export type FunctionData = {
   variables?: Variable[] // variáveis que o escopo da função precisa conseguir acessar
 }
 
+// all necessary to render GraphViewer
+export type GraphData = {
+  times: number,
+  edges: EdgesData,
+  vertices: VerticesData,
+  svgBottomRight: Point,
+  logs: string[]
+  options: {
+    animate: boolean
+  }
+} | null
+
 // adjList[u]: [{v, w}, ...], sendo u -w-> v
 export type AdjList = Record<number, { v: number; w?: number }[]>
 // args[u]: array de params values do vértice u

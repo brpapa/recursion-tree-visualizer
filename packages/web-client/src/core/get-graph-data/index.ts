@@ -19,8 +19,8 @@ export default function getGraphData(
 
   // initializes
   const logs: string[] = [] // logs[time]: text
-  const edgesData = initialEdgesData(adjList)
-  const verticesData = initialVerticesData(rawCoords, args, memoVertices)
+  const edges = initialEdgesData(adjList)
+  const vertices = initialVerticesData(rawCoords, args, memoVertices)
   const svgBottomRight: Point = [
     rawBottomRight[0] * SCALED_BY[0] + 2 * TRANSLATED_BY[0],
     rawBottomRight[1] * SCALED_BY[1] + 2 * TRANSLATED_BY[1],
@@ -29,44 +29,44 @@ export default function getGraphData(
   /** */
   const seen: boolean[] = []
   let time = 0
-  eulerTour(rootId) // mutate time, logs, verticesData, edgesData
+  eulerTour(rootId) // mutate time, logs, vertices, edges
   logs.push(
-    `fn(${verticesData[0].label}) returns ${labeledEdgeCost(result)}`
+    `fn(${vertices[0].label}) returns ${labeledEdgeCost(result)}`
   )
 
-  return { verticesData, edgesData, svgBottomRight, times: time, logs }
+  return { vertices, edges, svgBottomRight, times: time, logs }
 
   function eulerTour(u: number) {
-    if (verticesData[u] === undefined) return
+    if (vertices[u] === undefined) return
     seen[u] = true
 
     // u
-    verticesData[u].times.push(time++)
-    logs.push(`running fn(${verticesData[u].label})`)
+    vertices[u].times.push(time++)
+    logs.push(`running fn(${vertices[u].label})`)
 
     // para cada aresta u -w-> v
     for (const { v } of adjList[u] || []) {
       if (!seen[v]) {
         // u -> v
-        edgesData[edgeKey(u, v)].timeRange[0] = time++
+        edges[edgeKey(u, v)].timeRange[0] = time++
         logs.push(
-          `fn(${verticesData[u].label}) calls fn(${verticesData[v].label})`
+          `fn(${vertices[u].label}) calls fn(${vertices[v].label})`
         )
 
         eulerTour(v)
 
         // v -> u
-        edgesData[edgeKey(u, v)].timeRange[1] = time - 1
-        edgesData[edgeKey(v, u)].timeRange[0] = time++
+        edges[edgeKey(u, v)].timeRange[1] = time - 1
+        edges[edgeKey(v, u)].timeRange[0] = time++
         logs.push(
-          `fn(${verticesData[v].label}) returns ${
-            edgesData[edgeKey(v, u)].label
-          } to fn(${verticesData[u].label})`
+          `fn(${vertices[v].label}) returns ${
+            edges[edgeKey(v, u)].label
+          } to fn(${vertices[u].label})`
         )
 
         // u
-        verticesData[u].times.push(time++)
-        logs.push(`continues by running fn(${verticesData[u].label})`)
+        vertices[u].times.push(time++)
+        logs.push(`continues by running fn(${vertices[u].label})`)
       }
     }
   }

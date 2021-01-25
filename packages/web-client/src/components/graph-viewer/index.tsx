@@ -4,64 +4,37 @@ import * as s from './styles'
 import Graph from './graph'
 import ProgressBar from './progress-bar'
 import LogBar from './log-bar'
-import getGraphData from '../../core/get-graph-data'
 import useInterval from '../../hooks/use-interval'
-import { Point, AdjList, Args, VerticesData, EdgesData } from './../../types'
+import { GraphData } from './../../types'
 
 const DELAY_IN_MS = 200
 
 type Props = {
-  adjList: AdjList
-  args: Args
-  result: number | null
-  animate: boolean
-  memoVertices: number[]
+  graphData: GraphData
 }
 
-const GraphViewer = ({
-  adjList,
-  args,
-  result,
-  animate,
-  memoVertices,
-}: Props) => {
+const GraphViewer = ({ graphData }: Props) => {
+  const [isUpdating, setIsUpdating] = React.useState(false)
   const [time, setTime] = React.useState(0)
   const [times, setTimes] = React.useState(1)
-  const [isUpdating, setIsUpdating] = React.useState(false)
 
   if (time < 0 || time > times)
-    throw Error('`time` should be between 0 and `times`, inclusive')
+    throw Error('Invalid state: `time` should never be outside the range from 0 to `times`')
 
-  // graph data
-  const [edgesData, setEdgesData] = React.useState<EdgesData>({})
-  const [verticesData, setVerticesData] = React.useState<VerticesData>({})
-  const [svgBottomRight, setSvgBottomRight] = React.useState<Point>([0, 0])
-  const [logs, setLogs] = React.useState<string[]>([])
-
-  const showBackground = result === null
-
-  // se args for undefined, esse effect é disparado infinitamente. mas WHY?
   React.useEffect(() => {
     setTime(0)
-    if (Object.keys(adjList).length === 0) return
-    if (result === null) return
-
-    const graphData = getGraphData(adjList, args, result, memoVertices)
-    const { edgesData, verticesData, svgBottomRight, times, logs } = graphData
-
-    setIsUpdating(true)
-    setTime(0)
-    setTimes(times)
-    setEdgesData(edgesData)
-    setVerticesData(verticesData)
-    setSvgBottomRight(svgBottomRight)
-    setLogs(logs)
-  }, [adjList, args, result, animate, memoVertices])
+    if (graphData !== null) {
+      setIsUpdating(true)
+      setTimes(graphData.times)
+    }
+  }, [graphData])
 
   useInterval(
     () => {
       if (time >= times) setIsUpdating(false)
-      setTime((time) => (animate ? Math.min(time + 1, times) : times))
+      setTime((time) =>
+        graphData?.options.animate ? Math.min(time + 1, times) : times
+      )
     },
     isUpdating ? DELAY_IN_MS : null
   )
@@ -79,16 +52,18 @@ const GraphViewer = ({
         onFirst={() => setTime(0)}
         onLast={() => setTime(times)}
       />
-      {logs[time] && <LogBar text={logs[time]} />}
-      {showBackground ? (
+      {graphData === null ? (
         <s.LogoIcon />
       ) : (
-        <Graph
-          time={time}
-          vertices={verticesData}
-          edges={edgesData}
-          bottomRight={svgBottomRight}
-        />
+        <>
+          <LogBar text={graphData.logs[time]} />
+          <Graph
+            time={time}
+            vertices={graphData.vertices}
+            edges={graphData.edges}
+            bottomRight={graphData.svgBottomRight}
+          />
+        </>
       )}
     </s.Container>
   )

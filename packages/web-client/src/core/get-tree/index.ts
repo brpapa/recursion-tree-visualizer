@@ -2,7 +2,10 @@ import { FunctionData, AdjList, Args } from '../../types'
 
 const MAX_V = 222
 
-// dado uma função recursiva, retorna a lista de adjacências da árvore de recursão
+/**
+ * Dado uma função recursiva, retorna a lista de adjacências da árvore de recursão
+ * @throws {Error} Code error
+ */
 export default function getTree(this: any, fnData: FunctionData, memorize: boolean) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   var fn: Function, _: Function
@@ -17,7 +20,7 @@ export default function getTree(this: any, fnData: FunctionData, memorize: boole
   const memo: Record<string, any> = {} // { allArgs as string, result }
   const memoVertices: number[] = [] // vértices que foram obtidos da memória
 
-  // wrapper para a fn, a qual é chamada pela função do usuário
+  // wrapper around the user-defined function
   function fnWrapper(...allArgs: any[]) {
     if (v > MAX_V) throw new Error('Too many recursive calls')
 
