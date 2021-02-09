@@ -1,0 +1,8 @@
+# @host = http://localhost:3030
+@host = https://ec2-34-226-154-53.compute-1.amazonaws.com:3030
+
+###
+POST {{host}}/runner/node
+Content-Type: application/json
+
+{}

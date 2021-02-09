@@ -11,7 +11,7 @@
     "lib": [
       "dom",
       "es6",
-      "es2017",
+      "es2019",
       "esnext.asynciterable"
     ],
     "sourceMap": true,
@@ -22,7 +22,7 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "noImplicitThis": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
