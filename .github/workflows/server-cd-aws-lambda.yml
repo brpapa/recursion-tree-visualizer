@@ -52,7 +52,7 @@ jobs:
           ECR_REGISTRY_URI: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build --tag $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG --target prod .
+          docker build --tag $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG .
           docker push $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG
           echo "::set-output name=image-uri::$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG"
 
