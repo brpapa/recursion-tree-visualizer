@@ -1,0 +1,98 @@
+# reference: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+# github-hosted runner: https://docs.github.com/en/actions/reference/specifications-for-github-hosted-runners#supported-software
+
+# run workflow locally: act -s AWS_ACCESS_KEY_ID=AKIAIKMDNXOCUOOR42TA -s AWS_SECRET_ACCESS_KEY=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
+
+
+# TODO: use aws cli to deploy to lambda as container
+
+name: Deploy as container to Amazon Lambda
+
+on:
+  push:
+    branches: develop # CHANGE TO MASTER
+  paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
+    - 'packages/lambda/**'
+
+defaults:
+  run: # provide default options for all run steps in workflow
+    shell: bash
+    working-directory: packages/lambda
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps: # each step is isolated from other
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials # set credentials as environment variables in the runner machine to be visible in next steps
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Docker login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: my-ecr-repo
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build a docker container and push it to ECR so that it can be deployed to ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: AWS CLI test
+        run: |
+          aws s3 ls
+
+
+##########################################################
+# https://github.com/marketplace/actions/aws-lambda-deploy
+
+# name: deploy to lambda
+# on: [push]
+# jobs:
+#   deploy_source:
+#     name: build and deploy lambda
+#     strategy:
+#       matrix:
+#         node-version: [12.x]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v1
+
+#       - name: Use Node.js ${{ matrix.node-version }}
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: ${{ matrix.node-version }}
+
+#       - name: npm install and build
+#         run: |
+#           npm ci
+#           npm run build --if-present
+#         env:
+#           CI: true
+
+#       - name: zip
+#         uses: montudor/action-zip@v0.1.0
+#         with:
+#           args: zip -qq -r ./bundle.zip ./
+
+#       - name: default deploy
+#         uses: appleboy/lambda-action@master
+#         with:
+#           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws_region: eu-west-1
+#           function_name: my-function
+#           zip_file: bundle.zip

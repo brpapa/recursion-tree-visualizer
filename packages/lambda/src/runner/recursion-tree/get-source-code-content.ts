@@ -1,4 +1,4 @@
-import { SupportedLanguages } from 'src/types'
+import { SupportedLanguages } from './../../types'
 
 /**
  * Get the full code string that contains the user-defined code (function, global variables, initial params values and options) and the code responsible for generating the tree from running of the recursive user-defined function.
@@ -13,7 +13,7 @@ export default function getSourceCodeContent(
       '/* Auto-generated code */',
       '',
       userDefinedCode,
-      treeGeneratorCode.node,
+      recursionTrackerCode.node,
     ].join('\n')
 
   if (lang === 'python')
@@ -22,13 +22,13 @@ export default function getSourceCodeContent(
       'import json',
       '',
       userDefinedCode,
-      treeGeneratorCode.python,
+      recursionTrackerCode.python,
     ].join('\n')
 
   return ''
 }
 
-const treeGeneratorCode = {
+const recursionTrackerCode = {
   node: `
 const MAX_RECURSIVE_CALLS = 222
 

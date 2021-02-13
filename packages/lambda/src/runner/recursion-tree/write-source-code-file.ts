@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs/promises'
-import { SupportedLanguages } from 'src/types'
+import { SupportedLanguages } from './../../types'
 
 const DIR_PATH = path.join(__dirname, '..', '..', '..', 'tmp')
 

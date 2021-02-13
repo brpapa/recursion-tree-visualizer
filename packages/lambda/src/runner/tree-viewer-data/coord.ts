@@ -1,4 +1,4 @@
-import { Point } from 'src/types'
+import { Point } from '../../types'
 
 const TRANSLATED_BY: Point = [50, 50]
 const SCALED_BY: Point = [85, 150]

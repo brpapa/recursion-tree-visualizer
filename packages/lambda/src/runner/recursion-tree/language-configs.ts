@@ -1,4 +1,4 @@
-import { SupportedLanguages } from 'src/types'
+import { SupportedLanguages } from './../../types'
 
 export const languageConfigs = (
   filePath: string

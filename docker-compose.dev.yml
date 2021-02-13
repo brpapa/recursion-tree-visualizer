@@ -1,0 +1,18 @@
+# This file defines how the docker images are used in containers
+# By default, the docker compose automatically creates a network specifically for this application stack
+
+version: "3.9"
+# define the list of containers (called as services)
+services: 
+  # the service name is automatically a `network alias`
+  server: 
+    # specifies the Dockerfile to build the image from (targeting a stage)
+    build:
+      context: ./packages/lambda
+      target: dev
+    ports:
+      - 3030:3030
+    working_dir: /app
+    volumes:
+      # bind mount the ./packages/lambda directory from the host OS in the container into /app directory
+      - ./packages/lambda/:/app 

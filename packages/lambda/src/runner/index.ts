@@ -10,7 +10,7 @@ export default class RunnerFacade {
   constructor(private readonly language: SupportedLanguages) {}
 
   /**
-   * Delegates for all operations.
+   * Delegates for all operations
    * @throws Unexpected errors
    */
   public async run(userDefinedCode: string) {

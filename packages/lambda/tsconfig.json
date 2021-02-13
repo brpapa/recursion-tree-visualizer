@@ -3,19 +3,26 @@
     "src"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.test.ts"
   ],
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2017",
     "module": "commonjs",
-    "lib": [
-      "dom",
-      "es6",
-      "es2019",
-      "esnext.asynciterable"
-    ],
-    "sourceMap": true,
     "outDir": "./dist",
+    "lib": [
+      "DOM",
+      "ES2019",
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ],
+    "esModuleInterop": true,
+    "inlineSourceMap": true,
     "moduleResolution": "node",
     "removeComments": true,
     "noImplicitAny": true,
@@ -27,10 +34,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
   }
 }
