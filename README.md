@@ -60,7 +60,7 @@ I'll assume that the AWS ECR repository was defined with the name `recursion-tre
 In the root directory:
 
 ```bash
-# Retrieve an authentication token and authenticate your Docker client to AWS ECR
+# Retrieve an authentication token and authenticate your Docker client to AWS ECR registry
 > aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <YOUR_AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
 
 # Build the docker image

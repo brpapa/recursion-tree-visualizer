@@ -23,10 +23,10 @@ on:
   #   - 'packages/lambda/**'
 
 env:
-  AWS_ECR_REPOSITORY_NAME: recursion-tree-visualizer
-  AWS_REGION: us-east-1
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  AWS_ECR_REPOSITORY_NAME: recursion-tree-visualizer
 
 defaults:
   run: # provide default options for all run steps in workflow
@@ -42,23 +42,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Docker login to Amazon ECR
+      - name: Authenticate Docker client to ECR registry
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push docker image to Amazon ECR
+      - name: Build, tag, and push docker image to ECR repository
         id: build-image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY_URI: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build --tag $ECR_REGISTRY/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG --target prod .
-          docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG"
+          docker build --tag $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG --target prod .
+          docker push $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG"
 
       - name: AWS CLI test
         run: |
           aws s3 ls
+          echo ${{ steps.build-image.outputs.image }}
 
 
 # TODO: use aws sam cli to deploy to lambda as container
