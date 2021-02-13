@@ -2,7 +2,7 @@ import RunnerFacade from './runner'
 import { SupportedLanguages } from './types'
 import { APIGatewayProxyHandler } from 'aws-lambda'
 
-export const handler: APIGatewayProxyHandler = async (event) => {
+export const handler: APIGatewayProxyHandler = async () => {
   const language: SupportedLanguages = 'node'
   // TODO: definir body
   // console.log(req.body)

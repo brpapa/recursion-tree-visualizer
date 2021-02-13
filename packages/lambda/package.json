@@ -9,7 +9,7 @@
     "test": "jest",
     "dev": "ts-node src/index.ts",
     "dev:ts": "nodemon --exec ts-node src/index.ts",
-    "start": "tsc && node dist/index.js",
+    "start": "node dist/index.js",
     "start:ts": "ts-node src/index.ts"
   },
   "dependencies": {

@@ -54,12 +54,11 @@ jobs:
         run: |
           docker build --tag $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG --target prod .
           docker push $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG"
+          echo "::set-output name=image-uri::$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG"
 
+      # TODO: use aws sam cli to deploy to lambda as container
       - name: AWS CLI test
         run: |
           aws s3 ls
-          echo ${{ steps.build-image.outputs.image }}
+          echo ${{ steps.build-image.outputs.image-uri }}
 
-
-# TODO: use aws sam cli to deploy to lambda as container
