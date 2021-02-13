@@ -1,4 +1,4 @@
-import { FunctionData, Variable } from './../../types'
+import { FunctionData, Variable } from '../../types'
 
 export const codeValidate = (s: string) =>
   /^(function\s+fn\(.*\)\s+\{\n).*(\}\s*)$/s.test(s)
@@ -6,12 +6,12 @@ export const codeValidate = (s: string) =>
 // export const constValidate = (s: string) => /^(const\s+).*\s*=\s*.*/.test(s)
 export const callValidate = (s: string) => /^(fn\(.*\))$/.test(s)
 
-const betweenParentesis = (s: string) => {
+const getParams = (s: string) => {
   const content = s.substring(s.indexOf('(') + 1, s.indexOf(')'))
   return content === '' ? [] : content.split(',')
 }
 
-// fnData -> fnCode, fnCall, vars
+// fnData => fnCode, fnCall, fnVars
 export const ungroup = (fnData: FunctionData) => {
   const { params, body, variables } = fnData
 
@@ -31,14 +31,14 @@ export const ungroup = (fnData: FunctionData) => {
   }
 }
 
-// fnCode, fnCall, vars -> fnData
+// fnCode, fnCall, fnVars => fnData
 export const group = (
   fnCode: string,
   fnCall: string,
   fnVars: Variable[]
 ): FunctionData => {
-  const paramsNames = betweenParentesis(fnCode)
-  const paramsValues = betweenParentesis(fnCall)
+  const paramsNames = getParams(fnCode)
+  const paramsValues = getParams(fnCall)
 
   if (paramsNames.length !== paramsValues.length)
     throw new Error('Incorrect params values')

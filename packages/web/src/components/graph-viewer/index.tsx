@@ -5,15 +5,15 @@ import Graph from './graph'
 import ProgressBar from './progress-bar'
 import LogBar from './log-bar'
 import useInterval from '../../hooks/use-interval'
-import { GraphData } from './../../types'
+import { TreeViewerData } from '../../types'
 
 const DELAY_IN_MS = 200
 
 type Props = {
-  graphData: GraphData
+  treeViewerData: TreeViewerData
 }
 
-const GraphViewer = ({ graphData }: Props) => {
+const TreeViewer = ({ treeViewerData }: Props) => {
   const [isUpdating, setIsUpdating] = React.useState(false)
   const [time, setTime] = React.useState(0)
   const [times, setTimes] = React.useState(1)
@@ -23,17 +23,17 @@ const GraphViewer = ({ graphData }: Props) => {
 
   React.useEffect(() => {
     setTime(0)
-    if (graphData !== null) {
+    if (treeViewerData !== null) {
       setIsUpdating(true)
-      setTimes(graphData.times)
+      setTimes(treeViewerData.times)
     }
-  }, [graphData])
+  }, [treeViewerData])
 
   useInterval(
     () => {
       if (time >= times) setIsUpdating(false)
       setTime((time) =>
-        graphData?.options.animate ? Math.min(time + 1, times) : times
+        treeViewerData?.options.animate ? Math.min(time + 1, times) : times
       )
     },
     isUpdating ? DELAY_IN_MS : null
@@ -52,16 +52,16 @@ const GraphViewer = ({ graphData }: Props) => {
         onFirst={() => setTime(0)}
         onLast={() => setTime(times)}
       />
-      {graphData === null ? (
+      {treeViewerData === null ? (
         <s.LogoIcon />
       ) : (
         <>
-          <LogBar text={graphData.logs[time]} />
+          <LogBar text={treeViewerData.logs[time]} />
           <Graph
             time={time}
-            vertices={graphData.vertices}
-            edges={graphData.edges}
-            bottomRight={graphData.svgBottomRight}
+            vertices={treeViewerData.vertices}
+            edges={treeViewerData.edges}
+            bottomRight={treeViewerData.svgBottomRight}
           />
         </>
       )}
@@ -69,4 +69,4 @@ const GraphViewer = ({ graphData }: Props) => {
   )
 }
 
-export default GraphViewer
+export default TreeViewer

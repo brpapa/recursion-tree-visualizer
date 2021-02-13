@@ -5,15 +5,14 @@ import Switch from './switch'
 import CodeEditor from './code-editor'
 import { group, ungroup, codeValidate, callValidate } from './utils'
 import templates from './templates'
-import useFormInput from './../../hooks/use-form-input'
-import useCarbonAds from './../../hooks/use-carbon-ads'
-import useLocalStorage from './../../hooks/use-local-storage'
-import getGraphData from '../../core'
-import { Templates, Variable, Themes, GraphData } from '../../types'
+import useFormInput from '../../hooks/use-form-input'
+import useCarbonAds from '../../hooks/use-carbon-ads'
+import useLocalStorage from '../../hooks/use-local-storage'
+import { Templates, Variable, Themes, TreeViewerData } from '../../types'
 import './carbon-ads.css'
 
 type Props = {
-  onSubmit: (graphData: GraphData) => void
+  onSubmit: (TreeViewerData: TreeViewerData) => void
   onThemeChange: (themeName: Themes) => void
 }
 
@@ -31,6 +30,8 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
   const [error, setError] = React.useState('')
 
+  const { adsRef } = useCarbonAds()
+
   React.useEffect(() => {
     onThemeChange(dark ? 'dark' : 'light')
   }, [dark, onThemeChange])
@@ -45,20 +46,19 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   }
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const fnData = group(fnCode, fnCall.value, fnVars)
-
     e.preventDefault()
     setError('')
 
+    // DOING: substituir por http request (SE VIER ALGUM ERRO o treeViewerData PRECISA SER NULL PARA O COMPONENTE SABER RENDERIZAR)
     try {
-      const graphData = getGraphData(fnData, { memorize, animate })
-      onSubmit(graphData)
+      // const fnData = group(fnCode, fnCall.value, fnVars) // throws error
+      // const treeViewerData = getTreeViewerData(fnData, { memorize, animate }) // throws error
+      const treeViewerData = null
+      onSubmit(treeViewerData)
     } catch (error) {
       setError(error.message)
     }
   }
-
-  const { adsRef } = useCarbonAds()
 
   return (
     <s.FormContainer onSubmit={handleFormSubmit}>

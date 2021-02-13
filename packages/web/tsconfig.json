@@ -1,6 +1,6 @@
 {
   "include": [
-    "src",
+    "src"
   ],
   "exclude": [
     "node_modules",
@@ -24,6 +24,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "removeComments": true
   }
 }

@@ -1,43 +1,25 @@
-export type TreeNode = {
-  id: number // >= 0
-  parent: TreeNode | null
-  children: TreeNode[]
-
-  x: number
-  y: number
-  mod: number
-  thread?: TreeNode
-}
-
 export type Point = [number, number] // [x,y]
 
-export type Templates = 'custom'| 'fibo' | 'ks' | 'ss' | 'bc' | 'cc' | 'pow' | 'lcs' | 'tsp'
 export type Themes = 'light' | 'dark'
+export type Templates =
+  | 'custom'
+  | 'fibo'
+  | 'ks'
+  | 'ss'
+  | 'bc'
+  | 'cc'
+  | 'pow'
+  | 'lcs'
+  | 'tsp'
 
 export type Variable = { name: string; value: string }
+
 export type FunctionData = {
-  name?: string
+  name?: string // usado pelos templates
   params: Variable[]
   body: string
   variables?: Variable[] // variáveis que o escopo da função precisa conseguir acessar
 }
-
-// all necessary to render GraphViewer
-export type GraphData = {
-  times: number,
-  edges: EdgesData,
-  vertices: VerticesData,
-  svgBottomRight: Point,
-  logs: string[]
-  options: {
-    animate: boolean
-  }
-} | null
-
-// adjList[u]: [{v, w}, ...], sendo u -w-> v
-export type AdjList = Record<number, { v: number; w?: number }[]>
-// args[u]: array de params values do vértice u
-export type Args = Record<number, any[]>
 
 // key: vértice id
 export type VerticesData = Record<
@@ -58,3 +40,15 @@ export type EdgesData = Record<
     label?: string
   }
 >
+
+// all that is necessary to render GraphViewer
+export type TreeViewerData = {
+  times: number
+  edges: EdgesData
+  vertices: VerticesData
+  svgBottomRight: Point
+  logs: string[]
+  options: {
+    animate: boolean
+  }
+} | null

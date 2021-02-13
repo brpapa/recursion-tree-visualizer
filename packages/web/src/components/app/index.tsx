@@ -1,27 +1,27 @@
 import React from 'react'
 import { ThemeProvider } from 'styled-components'
 
-import GlobalStyle from './../../styles/global'
+import GlobalStyle from '../../styles/global'
 import * as s from './styles'
 import FunctionForm from '../function-form'
-import GraphViewer from '../graph-viewer'
+import TreeViewer from '../graph-viewer'
 import Footer from './footer'
-import themes from './../../styles/themes'
-import { GraphData, Themes } from '../../types'
+import themes from '../../styles/themes'
+import { TreeViewerData, Themes } from '../../types'
 
 const App = () => {
   const [themeName, setThemeName] = React.useState<Themes>('light')
-  const [graphData, setGraphData] = React.useState<GraphData>(null)
+  const [treeViewerData, setTreeViewerData] = React.useState<TreeViewerData>(null)
 
   return (
     <ThemeProvider theme={themes[themeName]}>
       <GlobalStyle />
       <s.AppContainer>
         <s.Sidebar>
-          <FunctionForm onSubmit={setGraphData} onThemeChange={setThemeName} />
+          <FunctionForm onSubmit={setTreeViewerData} onThemeChange={setThemeName} />
         </s.Sidebar>
         <s.Main>
-          <GraphViewer graphData={graphData} />
+          <TreeViewer treeViewerData={treeViewerData} />
           <Footer />
         </s.Main>
       </s.AppContainer>
