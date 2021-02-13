@@ -6,13 +6,13 @@
 
 # TODO: use aws cli to deploy to lambda as container
 
-name: Deploy as container to Amazon Lambda
-
 on:
   push:
     branches: develop # CHANGE TO MASTER
-  paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
-    - 'packages/lambda/**'
+  # paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
+  #   - 'packages/lambda/**'
+
+name: Deploy as container to Amazon Lambda
 
 defaults:
   run: # provide default options for all run steps in workflow
