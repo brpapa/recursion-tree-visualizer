@@ -12,7 +12,7 @@ on:
   # paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
   #   - 'packages/lambda/**'
 
-name: Deploy as container to Amazon Lambda
+name: Deploy lambda function
 
 defaults:
   run: # provide default options for all run steps in workflow
@@ -21,7 +21,7 @@ defaults:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy as container to AWS Lambda
     runs-on: ubuntu-latest
 
     steps: # each step is isolated from other
@@ -39,21 +39,22 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push docker image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: my-ecr-repo
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          # Build a docker container and push it to ECR so that it can be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
       - name: AWS CLI test
         run: |
           aws s3 ls
+
+      # - name: Build, tag, and push docker image to Amazon ECR
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: my-ecr-repo
+      #     IMAGE_TAG: ${{ github.sha }}
+      #   run: |
+      #     # Build a docker container and push it to ECR so that it can be deployed to ECS.
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
 
 
 ##########################################################
