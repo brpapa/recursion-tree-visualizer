@@ -62,10 +62,7 @@ jobs:
           docker push $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG
           echo "::set-output name=image-uri::$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG"
 
-      # TODO: use aws sam cli to deploy to lambda as container
-      - name: AWS CLI test
+      - name: Update container image of the AWS Lambda
         run: |
-          aws lambda update-function-code \ 
-          --function-name ${{ env.AWS_LAMBDA_FUNCTION_NAME }} \ 
-          --image-uri ${{ steps.build-image.outputs.image-uri }}
-
+          aws --version
+          aws lambda update-function-code --function-name ${{ env.AWS_LAMBDA_FUNCTION_NAME }} --image-uri ${{ steps.build-image.outputs.image-uri }}
