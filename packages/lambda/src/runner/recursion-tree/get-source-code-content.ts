@@ -10,15 +10,12 @@ export default function getSourceCodeContent(
 ) {
   if (lang === 'node')
     return [
-      '/* Auto-generated code */',
-      '',
       userDefinedCode,
       recursionTrackerCode.node,
     ].join('\n')
 
   if (lang === 'python')
     return [
-      '"""Auto-generated code"""',
       'import json',
       '',
       userDefinedCode,

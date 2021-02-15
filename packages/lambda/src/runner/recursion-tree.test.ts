@@ -119,7 +119,6 @@ describe('Runner for `node` language', () => {
   })
 })
 
-/*
 describe('Runner for `python` language', () => {
   const pythonRunner = new RunnerFacade('python')
 
@@ -137,6 +136,7 @@ describe('Runner for `python` language', () => {
   })
 })
 
+/*
 describe('Runner for all languages', () => {
   const nodeRunner = new RunnerFacade('node')
   const pythonRunner = new RunnerFacade('python')

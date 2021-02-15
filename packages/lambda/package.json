@@ -7,7 +7,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "start": "node dist/index.js",
-    "test": "jest",
+    "test": "DEBUG=* jest",
     "dev": "DEBUG=* ts-node src/index.ts"
   },
   "dependencies": {

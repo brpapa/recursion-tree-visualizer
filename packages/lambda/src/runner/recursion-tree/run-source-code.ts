@@ -24,9 +24,9 @@ const CHILD_PROCESS_TIMEOUT_MS = 500
 
 const exec = util.promisify(childProcess.exec)
 
-/** Starts a child process that compile and run the previouslly generated source code file and return your output. */
-export default async function runSourceCodeFile(
-  filePath: string,
+/** Starts a child process that compile and run the source code content and return your output. */
+export default async function runSourceCode(
+  content: string,
   lang: SupportedLanguages
 ): Promise<
   Either<
@@ -40,14 +40,14 @@ export default async function runSourceCodeFile(
     RecursionTree
   >
 > {
-  const cmd = languageConfigs(filePath)[lang].cmd
+  const { command } = languageConfigs(content)[lang]
 
   try {
-    const { stdout } = await exec(cmd, {
+    const processReturn = await exec(command, {
       timeout: CHILD_PROCESS_TIMEOUT_MS,
     })
+    const output = JSON.parse(processReturn.stdout) as SourceCodeOutput
 
-    const output = JSON.parse(stdout) as SourceCodeOutput
     if (output.errorValue !== null)
       return error(exceededRecursiveCallsLimitError(output.errorValue))
 
@@ -68,9 +68,8 @@ export default async function runSourceCodeFile(
     const local = messages.slice(1, 3).join('\n')
     const message = messages[4]
     log(messages)
-    log(local)
-    log(message)
-
+    log('local: ', local)
+    log('message: ', message)
     return error(runtimeError(message))
   }
 }

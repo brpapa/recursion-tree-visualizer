@@ -1,9 +1,9 @@
 import { SupportedLanguages } from './../../types'
 
 export const languageConfigs = (
-  filePath: string
+  content: string
 ): Record<SupportedLanguages, any> => ({
-  node: { cmd: `node ${filePath}`, isCompiled: false },
-  python: { cmd: `python3 ${filePath}`, isCompiled: false },
-  cpp: { cmd: ``, isCompiled: false },
+  node: { command: `node -e "${content}"`, isCompiled: false },
+  python: { command: `python3 -c "${content}"`, isCompiled: false },
+  cpp: { command: ``, isCompiled: false },
 })

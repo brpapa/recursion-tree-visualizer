@@ -1,7 +1,6 @@
 import { RecursionTree, SupportedLanguages } from '../types'
 import getSourceCodeContent from './recursion-tree/get-source-code-content'
-import runSourceCodeFile from './recursion-tree/run-source-code-file'
-import writeSourceCodeFile from './recursion-tree/write-source-code-file'
+import runSourceCode from './recursion-tree/run-source-code'
 import computeRawCoords from './tree-viewer-data/compute-raw-coords'
 import traverseTree from './tree-viewer-data/traverse-tree'
 import debug from 'debug'
@@ -26,8 +25,7 @@ export default class RunnerFacade {
 
   public async buildRecursionTree(userDefinedCode: string) {
     const content = getSourceCodeContent(userDefinedCode, this.language)
-    const filePath = await writeSourceCodeFile(content, this.language)
-    const treeOrError = await runSourceCodeFile(filePath, this.language)
+    const treeOrError = await runSourceCode(content, this.language)
     return treeOrError
   }
 
