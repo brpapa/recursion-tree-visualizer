@@ -8,7 +8,8 @@
     "watch": "tsc -w",
     "start": "node dist/index.js",
     "test": "DEBUG=* && jest",
-    "dev": "DEBUG=* && ts-node src/index.ts"
+    "dev": "DEBUG=* && ts-node src/index.ts",
+    "start:dev": "docker build -t dev-image . && docker run --rm -p 8080:8080 --env DEBUG='*' dev-image"
   },
   "dependencies": {
     "debug": "^2.6.9",

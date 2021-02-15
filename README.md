@@ -37,10 +37,10 @@ Use the Amazon Runtime Interface Emulator (RIE), contained in the image, to test
 
 ```bash
 # build you local image
-> docker build --tag test . 
+> docker build --tag dev-image . 
 
 # create and run a container using AWS RIE as executable to emulate a server for your lambda function
-> docker run -p 8080:8080 test
+> docker run --rm -p 8080:8080 dev-image
 
 # make a http request to your function, passing event with the -d
 > curl -XPOST "http://localhost:8080/2015-03-31/functions/function/invocations" -d '{}'

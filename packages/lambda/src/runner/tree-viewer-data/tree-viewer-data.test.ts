@@ -1,6 +1,6 @@
-import { objectMap } from '../utils/object-map'
-import { Vertices } from '../types'
-import RunnerFacade from '.'
+import { objectMap } from '../../utils/object-map'
+import { Vertices } from '../../types'
+import RunnerFacade from '..'
 
 /*
     0

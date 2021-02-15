@@ -1,19 +1,5 @@
-import { ChildProcessError, TreeError } from '../errors'
-import RunnerFacade from '.'
-
-// const fnData: FunctionData = {
-//   variables: [{ name: 'arr', value: '[1,3,4,5,2,10]' }],
-//   params: [
-//     { name: 'i', value: '0' },
-//     { name: 's', value: '7' },
-//   ],
-//   body: codefy([
-//     'if (s == 0) return 1',
-//     'if (i == arr.length || s < 0) return 0',
-//     '',
-//     'return fn(i+1, s) + fn(i+1, s-arr[i])',
-//   ]),
-// }
+import { ChildProcessError, TreeError } from '../../errors'
+import RunnerFacade from '..'
 
 /** Examples of the same array position are equivalents */
 const userDefinedCodeExamples = [

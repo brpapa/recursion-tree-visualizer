@@ -1,8 +1,9 @@
-import { RecursionTree, SupportedLanguages } from '../types'
+import { FunctionData, RecursionTree, SupportedLanguages } from '../types'
 import getSourceCodeContent from './recursion-tree/get-source-code-content'
 import runSourceCode from './recursion-tree/run-source-code'
 import computeRawCoords from './tree-viewer-data/compute-raw-coords'
 import traverseTree from './tree-viewer-data/traverse-tree'
+import translateToPlainCode from './plain-code'
 import debug from 'debug'
 
 const log = debug('handler:runner')
@@ -15,7 +16,8 @@ export default class RunnerFacade {
    * Delegates for all operations
    * @throws Unexpected errors
    */
-  public async run(userDefinedCode: string) {
+  public async run(functionData: FunctionData) {
+    const userDefinedCode = translateToPlainCode(functionData)
     const recursionTreeOrError = await this.buildRecursionTree(userDefinedCode)
     const treeViewerDataOrError = recursionTreeOrError.applyOnSuccess(
       (recursionTree) => this.computeTreeViewerData(recursionTree)

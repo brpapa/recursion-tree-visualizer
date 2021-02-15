@@ -58,14 +58,14 @@ jobs:
           TAG: ${{ github.sha }}
         # build the docker image already with a tag to the ECR repository, and push the image to ECR repository
         run: |
-          IMAGE_URI="$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:TAG"
+          IMAGE_URI="$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG"
           docker build --tag $IMAGE_URI .
           docker push $IMAGE_URI
           echo "::set-output name=image-uri::$IMAGE_URI"
 
       - name: Update container image of the AWS Lambda
         run: |
+          aws configure set region ${{ env.AWS_REGION }}
           aws lambda update-function-code \
-            --region $AWS_REGION
             --function-name ${{ env.AWS_LAMBDA_FUNCTION_NAME }} \
             --image-uri ${{ steps.build-image.outputs.image-uri }}

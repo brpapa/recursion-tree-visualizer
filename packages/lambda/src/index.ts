@@ -1,35 +1,31 @@
 import RunnerFacade from './runner'
-import { SupportedLanguages } from './types'
+import { FunctionData, SupportedLanguages } from './types'
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import debug from 'debug'
 
 const log = debug('handler')
 
-export const handler: APIGatewayProxyHandler = async (event) => {
-  const language: SupportedLanguages = 'node'
-  log(event.body)
+type Event = {
+  lang: SupportedLanguages
+  functionData: FunctionData
+  options: { memoize: boolean }
+}
+
+export const handler: APIGatewayProxyHandler = async (event: any) => {
+  console.log(event)
 
   // request validations
   const supportedLanguages = ['node', 'python']
-  if (!supportedLanguages.includes(language))
+  if (!supportedLanguages.includes(event.lang))
     return { statusCode: 400, body: 'Unsupported language' }
 
+  if (!event.functionData) return { statusCode: 400, body: 'Bad request' }
+  
+  ///////////////////////////////////////////
+
   try {
-    const runner = new RunnerFacade(language as SupportedLanguages)
-    const treeViewerDataOrError = await runner.run(
-      [
-        'const arr = [1, 2, 3]',
-        '',
-        'function _fn(i, s) {',
-        '  if (s == 0) return 1',
-        '  if (i == arr.length || s < 0) return 0',
-        '  return fn(i + 1, s) + fn(i + 1, s - arr[i])',
-        '}',
-        '',
-        'const fnParamsValues = [0,7]',
-        'const memoize = true',
-      ].join('\n')
-    )
+    const runner = new RunnerFacade(event.lang as SupportedLanguages)
+    const treeViewerDataOrError = await runner.run(event.functionData)
 
     if (treeViewerDataOrError.isError()) {
       log('error', treeViewerDataOrError.value)
