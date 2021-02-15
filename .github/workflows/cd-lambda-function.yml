@@ -40,10 +40,10 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY_URI: ${{ steps.login-ecr.outputs.registry }} # seems like: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
-          TAG: ${{ github.sha }}
+          # TAG: ${{ github.sha }}
         # build the docker image already with a tag to the ECR repository, and push the image to ECR repository
         run: |
-          IMAGE_URI="$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG"
+          IMAGE_URI="$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:latest"
           docker build --tag $IMAGE_URI .
           docker push $IMAGE_URI
           echo "::set-output name=image-uri::$IMAGE_URI"

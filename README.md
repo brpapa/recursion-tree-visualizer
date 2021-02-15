@@ -59,7 +59,7 @@ To use the workflow `cd-lambda-function`, you will need to complete the followin
 You need create the following AWS resources:
    - Lambda function defined as container image
    - API Gateway for trigger the lambda function
-   - ECR repository for store container images
+   - ECR repository with tag immutability disabled for store container images
 
 1. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
    See the documentation for each action used below for the recommended IAM policies for this IAM user,

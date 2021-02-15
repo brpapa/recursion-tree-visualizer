@@ -4,4 +4,3 @@ build
 .vscode
 *.DS_Store
 _*
-tmp
