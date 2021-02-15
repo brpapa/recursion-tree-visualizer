@@ -5,10 +5,10 @@ import debug from 'debug'
 
 const log = debug('handler')
 
-export const handler: APIGatewayProxyHandler = async (event, context) => {
+export const handler: APIGatewayProxyHandler = async (event) => {
   const language: SupportedLanguages = 'node'
   const _ = event
-  const __ = context
+  console.log(_.body)
 
   // request validations
   const supportedLanguages = ['node', 'python']

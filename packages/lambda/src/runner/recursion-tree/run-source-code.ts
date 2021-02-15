@@ -19,10 +19,9 @@ import { languageConfigs } from './language-configs'
 import debug from 'debug'
 
 const log = debug('runner:recursion-tree')
+const exec = util.promisify(childProcess.exec)
 
 const CHILD_PROCESS_TIMEOUT_MS = 5000
-
-const exec = util.promisify(childProcess.exec)
 
 /** Starts a child process that compile and run the source code content and return your output. */
 export default async function runSourceCode(
@@ -43,10 +42,10 @@ export default async function runSourceCode(
   const { command } = languageConfigs(content)[lang]
 
   try {
-    const processReturn = await exec(command, {
+    const childProcessReturn = await exec(command, {
       timeout: CHILD_PROCESS_TIMEOUT_MS,
     })
-    const output = JSON.parse(processReturn.stdout) as SourceCodeOutput
+    const output = JSON.parse(childProcessReturn.stdout) as SourceCodeOutput
 
     if (output.errorValue !== null)
       return error(exceededRecursiveCallsLimitError(output.errorValue))
