@@ -1,13 +1,16 @@
 # To use this workflow, you will need to complete the following set-up steps:
 #
-# 1. Create an ECR repository to store your docker images.
+#
+# 1. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+#    See the documentation for each action used below for the recommended IAM policies for this IAM user,
+#    and best practices on handling the access key credentials.
+#
+# 2. Create an ECR repository to store your docker images.
 #    For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-1`.
 #    Replace the value of `AWS_ECR_REPOSITORY_NAME` env in the workflow below with your repository's name.
 #    Replace the value of `AWS_REGION` env in the workflow below with your repository's region.
 #
-# 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-#    See the documentation for each action used below for the recommended IAM policies for this IAM user,
-#    and best practices on handling the access key credentials.
+# 3. Create lambda function and API Gateway for trigger it.
 
 # reference: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 # github-hosted runner: https://docs.github.com/en/actions/reference/specifications-for-github-hosted-runners#supported-software
@@ -45,10 +48,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Equivalent to: aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
       - name: Authenticate Docker client to ECR registry
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v1 # equivalent to execute: aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
 
       - name: Build, tag, and push docker image to ECR repository
         id: build-image
@@ -65,4 +67,6 @@ jobs:
       - name: Update container image of the AWS Lambda
         run: |
           aws configure set region ${{ env.AWS_REGION }}
-          aws lambda update-function-code --function-name ${{ env.AWS_LAMBDA_FUNCTION_NAME }} --image-uri ${{ steps.build-image.outputs.image-uri }}
+          aws lambda update-function-code \
+            --function-name ${{ env.AWS_LAMBDA_FUNCTION_NAME }} \
+            --image-uri ${{ steps.build-image.outputs.image-uri }}
