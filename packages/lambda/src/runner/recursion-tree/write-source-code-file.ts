@@ -2,7 +2,7 @@ import path from 'path'
 import fs from 'fs/promises'
 import { SupportedLanguages } from './../../types'
 
-const DIR_PATH = path.join(__dirname, '..', '..', '..', 'tmp')
+const DIR_PATH = path.join(__dirname, '..', '..', 'tmp')
 
 /** Write the generated source code into file system. Returns your absolute file path. */
 export default async function writeSourceCodeFile(
