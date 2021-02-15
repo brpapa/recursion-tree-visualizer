@@ -24,8 +24,8 @@ name: Deploy lambda function
 on:
   push:
     branches: develop # TODO: CHANGE TO MASTER
-  # paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
-  #   - 'packages/lambda/**'
+  paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
+    - 'packages/lambda/**'
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -57,12 +57,12 @@ jobs:
         env:
           ECR_REGISTRY_URI: ${{ steps.login-ecr.outputs.registry }} # seems like: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
           TAG: ${{ github.sha }}
+        # build the docker image already with a tag to the ECR repository, and push the image to ECR repository
         run: |
-          # Build the docker image already with a tag to the ECR repository
-          docker build --tag $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG .
-          # Push the image to ECR repository
-          docker push $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG
-          echo "::set-output name=image-uri::$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG"
+          IMAGE_URI="$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG"
+          docker build --tag $IMAGE_URI .
+          docker push $IMAGE_URI
+          echo "::set-output name=image-uri::$IMAGE_URI"
 
       - name: Update container image of the AWS Lambda
         run: |
