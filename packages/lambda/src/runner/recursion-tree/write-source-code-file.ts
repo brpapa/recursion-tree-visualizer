@@ -12,11 +12,15 @@ export default async function writeSourceCodeFile(
   const filePath = path.join(DIR_PATH, fileName(lang))
 
   try {
-    await fs.mkdir(DIR_PATH, { recursive: true })
+    const p = await fs.mkdir(DIR_PATH, { recursive: true })
+    console.log('repository created at ' + p)
     await fs.writeFile(filePath, content, 'utf8')
+    console.log('file created')
   } catch (e) {
+    console.log('error')
+    console.log(e)
     throw new Error(
-      `File system error: fail to write the source code file at ${filePath}. ` + `${JSON.stringify(e)}`
+      `File system error: fail to write the source code file at ${filePath}`
     )
   }
 
