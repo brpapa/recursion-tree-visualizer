@@ -64,5 +64,5 @@ jobs:
 
       - name: Update container image of the AWS Lambda
         run: |
-          aws --version
+          aws configure set region ${{ env.AWS_REGION }}
           aws lambda update-function-code --function-name ${{ env.AWS_LAMBDA_FUNCTION_NAME }} --image-uri ${{ steps.build-image.outputs.image-uri }}
