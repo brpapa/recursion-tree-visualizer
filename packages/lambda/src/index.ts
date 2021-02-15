@@ -1,6 +1,6 @@
 import RunnerFacade from './runner'
 import { FunctionData, SupportedLanguages } from './types'
-import { APIGatewayProxyHandler } from 'aws-lambda'
+import { APIGatewayProxyResult, Handler } from 'aws-lambda'
 import debug from 'debug'
 
 const log = debug('handler')
@@ -11,8 +11,11 @@ type Event = {
   options: { memoize: boolean }
 }
 
-export const handler: APIGatewayProxyHandler = async (event: any) => {
-  console.log(event)
+export const handler: Handler<Event, APIGatewayProxyResult> = async (event) => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify(event),
+  }
 
   // request validations
   const supportedLanguages = ['node', 'python']
@@ -20,7 +23,7 @@ export const handler: APIGatewayProxyHandler = async (event: any) => {
     return { statusCode: 400, body: 'Unsupported language' }
 
   if (!event.functionData) return { statusCode: 400, body: 'Bad request' }
-  
+
   ///////////////////////////////////////////
 
   try {
