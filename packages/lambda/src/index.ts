@@ -7,7 +7,7 @@ const log = debug('handler')
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   const language: SupportedLanguages = 'node'
-  console.log(event.body)
+  log(event.body)
 
   // request validations
   const supportedLanguages = ['node', 'python']
@@ -35,8 +35,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       log('error', treeViewerDataOrError.value)
       // TODO: mapear erros
       // return res.status(422).json(treeViewerDataOrError.value)
-    } else {
-      log('sucess', treeViewerDataOrError.value)
     }
 
     return {
