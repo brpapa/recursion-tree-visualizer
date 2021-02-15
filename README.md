@@ -13,9 +13,9 @@ Stop drawing recursion trees by hand. Watch the [demo video](https://youtu.be/1f
 ### Folders structure
 
 - `packages/web`: web user interface. Deployed on Vercel. Built with React, Styled Components and PrismJS.
-- `packages/lambda`: a lambda function for the remote code runner and computation. Deployed on AWS Lambda as a container. Built with Node.
+- `packages/lambda`: a lambda function for the remote code runner. Deployed on AWS Lambda as a container. Built with Node.
 
-## Development 
+## Local development 
 
 ### Web
 
@@ -33,7 +33,7 @@ In the `packages/web` directory, run:
 
 In the `packages/lambda` directory: 
 
-Use the Amazon Runtime Interface Emulator (RIE), already contained in the image, to test the lambda function locally:
+Use the Amazon Runtime Interface Emulator (RIE), contained in the image, to test the lambda function locally:
 
 ```bash
 > docker build --tag test:latest . 
@@ -49,6 +49,20 @@ Use the Amazon Runtime Interface Emulator (RIE), already contained in the image,
 Just ship `packages/web` on Vercel.
 
 ### Lambda function
+
+To use the workflow `cd-lambda-function`, you will need to complete the following set-up steps:
+
+1. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+   See the documentation for each action used below for the recommended IAM policies for this IAM user,
+   and best practices on handling the access key credentials.
+
+2. Create an ECR repository to store your docker images.
+   For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-1`.
+   Replace the value of `AWS_ECR_REPOSITORY_NAME` env in the workflow below with your repository's name.
+   Replace the value of `AWS_REGION` env in the workflow below with your repository's region.
+
+3. Create lambda function and API Gateway for triggered it.
+   Replace the value of `AWS_LAMBDA_FUNCTION_NAME` env in the workflow below with your function's name.
 
 
 ## Acknowledgements
