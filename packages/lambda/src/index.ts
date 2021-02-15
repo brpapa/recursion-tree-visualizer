@@ -49,7 +49,6 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
     console.log('Unexpected error:', e)
     return { statusCode: 500, body: 'Internal server error' }
   }
-  return { statusCode: 402, body: '' }
 }
 
 /*
