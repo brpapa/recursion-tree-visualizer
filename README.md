@@ -36,21 +36,30 @@ In the `packages/lambda` directory:
 Use the Amazon Runtime Interface Emulator (RIE), contained in the image, to test the lambda function locally:
 
 ```bash
-> docker build --tag test:latest . 
-> docker run -p 8080:8080 test:latest 
+# build you local image
+> docker build --tag test . 
+
+# create and run a container using AWS RIE as executable to emulate a server for your lambda function
+> docker run -p 8080:8080 test
+
+# make a http request to your function, passing event with the -d
 > curl -XPOST "http://localhost:8080/2015-03-31/functions/function/invocations" -d '{}'
 ```
-
 
 ## Deploy to production
 
 ### Web
 
-Just ship `packages/web` on Vercel.
+Just ship `packages/web` on Vercel. Define the .env file correctly.
 
 ### Lambda function
 
 To use the workflow `cd-lambda-function`, you will need to complete the following set-up steps:
+
+You need create the following AWS resources:
+   - Lambda function defined as container image
+   - API Gateway for trigger the lambda function
+   - ECR repository for store container images
 
 1. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
    See the documentation for each action used below for the recommended IAM policies for this IAM user,
