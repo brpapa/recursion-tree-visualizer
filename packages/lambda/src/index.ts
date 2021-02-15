@@ -1,11 +1,14 @@
 import RunnerFacade from './runner'
 import { SupportedLanguages } from './types'
 import { APIGatewayProxyHandler } from 'aws-lambda'
+import debug from 'debug'
 
-export const handler: APIGatewayProxyHandler = async () => {
+const log = debug('handler')
+
+export const handler: APIGatewayProxyHandler = async (event, context) => {
   const language: SupportedLanguages = 'node'
-  // TODO: definir body
-  // console.log(req.body)
+  const _ = event
+  const __ = context
 
   // request validations
   const supportedLanguages = ['node', 'python']
@@ -30,12 +33,19 @@ export const handler: APIGatewayProxyHandler = async () => {
     )
 
     if (treeViewerDataOrError.isError()) {
+      log('error', treeViewerDataOrError.value)
       // TODO: mapear erros
       // return res.status(422).json(treeViewerDataOrError.value)
+    } else {
+      log('sucess', treeViewerDataOrError.value)
     }
 
-    // return res.json(treeViewerDataOrError.value)
+    return {
+      statusCode: 200,
+      body: JSON.stringify(treeViewerDataOrError.value),
+    }
   } catch (e) {
+    // visible on production
     console.log('Unexpected error:', e)
     return { statusCode: 500, body: 'Internal server error' }
   }

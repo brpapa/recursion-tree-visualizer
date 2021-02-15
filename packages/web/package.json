@@ -1,8 +1,8 @@
 {
-  "name": "web-client",
+  "name": "web",
+  "version": "0.0.1",
   "description": "Web client for visualize the recursion tree",
   "author": "Bruno Papa <bruno.papa@hotmail.com>",
-  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "react-scripts start",

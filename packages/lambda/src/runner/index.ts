@@ -4,6 +4,9 @@ import runSourceCodeFile from './recursion-tree/run-source-code-file'
 import writeSourceCodeFile from './recursion-tree/write-source-code-file'
 import computeRawCoords from './tree-viewer-data/compute-raw-coords'
 import traverseTree from './tree-viewer-data/traverse-tree'
+import debug from 'debug'
+
+const log = debug('handler:runner')
 
 /** Input source code, output the TreeViewerData. */
 export default class RunnerFacade {

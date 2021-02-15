@@ -12,13 +12,15 @@
 # reference: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 # github-hosted runner: https://docs.github.com/en/actions/reference/specifications-for-github-hosted-runners#supported-software
 
+# se o valor for secreto, imprimir como: echo "::add-mask::My sensitive value"
+
 
 
 name: Deploy lambda function
 
 on:
   push:
-    branches: develop # CHANGE TO MASTER
+    branches: develop # TODO: CHANGE TO MASTER
   # paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
   #   - 'packages/lambda/**'
 
@@ -27,6 +29,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-1
   AWS_ECR_REPOSITORY_NAME: recursion-tree-visualizer
+  AWS_LAMBDA_FUNCTION_NAME: recursion-tree-visualizer-lambda
 
 defaults:
   run: # provide default options for all run steps in workflow
@@ -42,6 +45,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      # Equivalent to: aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
       - name: Authenticate Docker client to ECR registry
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -49,16 +53,19 @@ jobs:
       - name: Build, tag, and push docker image to ECR repository
         id: build-image
         env:
-          ECR_REGISTRY_URI: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+          ECR_REGISTRY_URI: ${{ steps.login-ecr.outputs.registry }} # seems like: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
+          TAG: ${{ github.sha }}
         run: |
-          docker build --tag $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG .
-          docker push $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG
-          echo "::set-output name=image-uri::$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$IMAGE_TAG"
+          # Build the docker image already with a tag to the ECR repository
+          docker build --tag $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG .
+          # Push the image to ECR repository
+          docker push $ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG
+          echo "::set-output name=image-uri::$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG"
 
       # TODO: use aws sam cli to deploy to lambda as container
       - name: AWS CLI test
         run: |
-          aws s3 ls
-          echo ${{ steps.build-image.outputs.image-uri }}
+          aws lambda update-function-code \ 
+          --function-name ${{ env.AWS_LAMBDA_FUNCTION_NAME }} \ 
+          --image-uri ${{ steps.build-image.outputs.image-uri }}
 

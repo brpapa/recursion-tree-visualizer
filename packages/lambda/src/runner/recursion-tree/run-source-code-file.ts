@@ -16,6 +16,9 @@ import {
   emptyTreeError,
 } from '../../errors'
 import { languageConfigs } from './language-configs'
+import debug from 'debug'
+
+const log = debug('runner:recursion-tree')
 
 const CHILD_PROCESS_TIMEOUT_MS = 500
 
@@ -64,9 +67,9 @@ export default async function runSourceCodeFile(
     const messages = err.stderr.split('\n') as string[]
     const local = messages.slice(1, 3).join('\n')
     const message = messages[4]
-    console.log(messages)
-    console.log(local)
-    console.log(message)
+    log(messages)
+    log(local)
+    log(message)
 
     return error(runtimeError(message))
   }

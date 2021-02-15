@@ -1,6 +1,7 @@
+# This base image contains Amazon Lambda Runtime Interface Client (RIC) and Runtime Interface Emulator (RIE) for run server locally
+
 FROM amazon/aws-lambda-nodejs:14
 COPY . ${LAMBDA_TASK_ROOT}
 RUN npm install
 RUN npm run build
-WORKDIR ./dist
-CMD ["index.handler"]
+CMD ["dist/index.handler"]
