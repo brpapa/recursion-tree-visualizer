@@ -24,8 +24,8 @@ name: Deploy lambda function
 on:
   push:
     branches: develop # TODO: CHANGE TO MASTER
-  paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
-    - 'packages/lambda/**'
+    paths: # esse pipeline é executado se houver pelo menos uma alteracao em:
+      - 'packages/lambda/**'
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
