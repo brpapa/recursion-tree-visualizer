@@ -16,7 +16,7 @@ export default async function writeSourceCodeFile(
     await fs.writeFile(filePath, content, 'utf8')
   } catch (e) {
     throw new Error(
-      `File system error: fail to write the source code file at ${filePath}`
+      `File system error: fail to write the source code file at ${filePath}. ` + `${JSON.stringify(e)}`
     )
   }
 

@@ -32,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Authenticate Docker client to ECR registry
+      - name: Authenticate docker client to ECR registry
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1 # equivalent to execute: aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
 
