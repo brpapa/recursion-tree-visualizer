@@ -9,13 +9,14 @@ export default async function writeSourceCodeFile(
   content: string,
   lang: SupportedLanguages
 ): Promise<string> {
-  const filePath = path.join(DIR_PATH, fileName(lang))
+  // const filePath = path.join(DIR_PATH, fileName(lang))
+  const filePath = path.join(__dirname, fileName(lang))
 
   try {
-    const p = await fs.mkdir(DIR_PATH, { recursive: true })
-    console.log('repository created at ' + p)
+    // const p = await fs.mkdir(DIR_PATH, { recursive: true })
+    // console.log('repository created at ' + p)
     await fs.writeFile(filePath, content, 'utf8')
-    console.log('file created')
+    console.log('file created at ' + filePath)
   } catch (e) {
     console.log('error')
     console.log(e)
