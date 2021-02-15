@@ -2,7 +2,7 @@ import { SupportedLanguages } from './../../types'
 
 /**
  * Get the full code string that contains the user-defined code (function, global variables, initial params values and options) and the code responsible for generating the tree from running of the recursive user-defined function.
- * Outputs to stdout a JSON string.
+ * Should outputs to stdout an unique JSON string.
  */
 export default function getSourceCodeContent(
   userDefinedCode: string,

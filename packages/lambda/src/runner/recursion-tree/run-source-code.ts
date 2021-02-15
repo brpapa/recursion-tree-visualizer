@@ -20,7 +20,7 @@ import debug from 'debug'
 
 const log = debug('runner:recursion-tree')
 
-const CHILD_PROCESS_TIMEOUT_MS = 500
+const CHILD_PROCESS_TIMEOUT_MS = 5000
 
 const exec = util.promisify(childProcess.exec)
 
