@@ -15,11 +15,14 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   const body = JSON.parse(event.body!) as EventBody
 
   // runtime body validations
-  const supportedLanguages = ['node']
+  if (!body) return { statusCode: 400, body: 'Bad request. Provide a body object containing the encoded json string' }
+
+  const supportedLanguages = ['node', 'python']
   if (!supportedLanguages.includes(body.lang))
     return { statusCode: 400, body: 'Unsupported language' }
 
-  if (!body.functionData) return { statusCode: 400, body: 'Bad function data object' }
+  if (!body.functionData)
+    return { statusCode: 400, body: 'Bad functionData object' }
 
   ///////////////////////////////////////////
 
@@ -30,7 +33,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (treeViewerData.isError())
       return {
         statusCode: 422,
-        body: JSON.stringify(treeViewerData.value)
+        body: JSON.stringify(treeViewerData.value),
       }
 
     return {

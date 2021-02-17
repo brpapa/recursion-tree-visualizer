@@ -7,14 +7,14 @@ export interface Error<T> {
 }
 
 export enum ChildProcessError {
-  CompilationError,
-  RuntimeError,
-  TimeoutError,
-  ExceededRecursiveCallsLimit,
+  CompilationError = 'CompilationError',
+  RuntimeError = 'RuntimeError',
+  TimeoutError = 'TimeoutError',
+  ExceededRecursiveCallsLimit = 'ExceededRecursiveCallsLimit',
 }
 
 export enum TreeError {
-  EmptyTree,
+  EmptyTree = 'EmptyTree',
 }
 
 export const emptyTreeError = (): Error<TreeError.EmptyTree> => ({
@@ -25,7 +25,7 @@ export const emptyTreeError = (): Error<TreeError.EmptyTree> => ({
 export const runtimeError = (
   stderr: string
 ): Error<ChildProcessError.RuntimeError> => {
-  // TODO: stderr provavelmente é diferente entre node e python
+  // TODO: stderr provavelmente vai se diferenciar entre novas languages
 
   const messages = stderr.split('\n')
   console.log(messages)

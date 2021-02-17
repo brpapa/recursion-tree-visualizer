@@ -1,6 +1,6 @@
-import { objectMap } from '../utils/object-map'
-import { Vertices } from '../types'
-import { computeTreeViewerData } from '.'
+import { objectMap } from '../../utils/object-map'
+import { Vertices } from '../../types'
+import computeTreeViewerData from './compute-tree-viewer-data'
 
 /*
     0

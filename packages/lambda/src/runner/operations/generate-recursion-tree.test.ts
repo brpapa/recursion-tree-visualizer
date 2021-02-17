@@ -1,8 +1,8 @@
-import { ChildProcessError, TreeError } from '../errors'
+import { ChildProcessError, TreeError } from '../../errors'
 import { flow } from 'fp-ts/lib/function'
-import getFullSourceCode from './operations/get-full-source-code'
-import generateRecursionTree from './operations/generate-recursion-tree'
-import { SupportedLanguages } from '../types'
+import getFullSourceCode from './get-full-source-code'
+import generateRecursionTree from './generate-recursion-tree'
+import { SupportedLanguages } from '../../types'
 
 /** Examples of the same array position are equivalents */
 const examples = [
