@@ -1,12 +1,3 @@
-/** [x,y] */
-export type Point = [number, number]
-
-export type FunctionData = {
-  body: string
-  params: { name: string; initialValue: string }[]
-  globalVariables?: { name: string; value: string }[]
-}
-
 export type Vertices = Record<
   number,
   {
@@ -22,6 +13,15 @@ export type RecursionTree = { vertices: Vertices; fnResult: any }
 export type SourceCodeOutput = {
   successValue: RecursionTree | null
   errorValue: number | null
+}
+
+/** [x,y] */
+export type Point = [number, number]
+
+export type FunctionData = {
+  body: string
+  params: { name: string; initialValue: string }[]
+  globalVariables?: { name: string; value: string }[]
 }
 
 /** key: vértice id */
@@ -47,7 +47,7 @@ export type EdgesData = Record<
   }
 >
 
-/** all that is necessary to front-end render the tree */
+/** all that is necessary to render the tree */
 export type TreeViewerData = {
   /** amount of time steps */
   times: number
