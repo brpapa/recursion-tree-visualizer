@@ -1,4 +1,5 @@
 import { objectMap } from '../../utils/object-map'
+import { INF } from './../consts'
 import {
   Point,
   VerticesData,
@@ -91,17 +92,16 @@ const initialEdgesData = (vertices: Vertices): EdgesData => {
     // para cada aresta parentId -weight-> childId
     for (const { childId, weight } of vertices[parentId].adjList) {
       acc[edgeKey(parentId, childId)] = {
-        timeRange: [-Infinity, Infinity],
+        timeRange: [-INF, INF],
       }
       acc[edgeKey(childId, parentId)] = {
         label: edgeCostLabel(weight),
-        timeRange: [-Infinity, Infinity],
+        timeRange: [-INF, INF],
       }
     }
     return acc
   }, {})
 }
-
 
 /* helpers */
 
@@ -111,8 +111,8 @@ const MAX_NUMBER = 1e5
 
 const edgeCostLabel = (w?: number) => {
   if (w === undefined) return undefined
-  if (w === Infinity) return '∞'
-  if (w === -Infinity) return '-∞'
+  if (w === INF) return '∞'
+  if (w === -INF) return '-∞'
   return w > MAX_NUMBER ? w.toExponential(2) : w.toString()
 }
 

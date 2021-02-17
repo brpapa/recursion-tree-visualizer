@@ -1,5 +1,6 @@
 import { objectMap } from '../../utils/object-map'
 import { Vertices } from '../../types'
+import { INF } from './../consts'
 import computeTreeViewerData from './compute-tree-viewer-data'
 
 /*
@@ -11,13 +12,13 @@ import computeTreeViewerData from './compute-tree-viewer-data'
 */
 const vertices1: Vertices = {
   0: {
-    argsList: [],
     adjList: [{ childId: 1 }, { childId: 4 }],
+    argsList: [],
     memoized: false,
   },
   1: {
-    argsList: [],
     adjList: [{ childId: 2 }, { childId: 3 }],
+    argsList: [],
     memoized: false,
   },
 }
@@ -42,14 +43,14 @@ For each time:
 16: 0
 */
 
-describe('Tree viewer data from a recursion tree', () => {
+describe('TreeViewerData from a RecursionTree', () => {
   describe('Example 1', () => {
     const { verticesData, edgesData } = computeTreeViewerData({
       vertices: vertices1,
       fnResult: 0,
     })
 
-    test('Should compute the correct times for vertices', () => {
+    test('Should compute the correct times for each vertice', () => {
       expect(
         objectMap(verticesData, (data) => ({
           times: data.times,
@@ -62,20 +63,20 @@ describe('Tree viewer data from a recursion tree', () => {
         4: { times: [14] },
       })
     })
-    test('Should compute the correct time ranges for edges', () => {
+    test('Should compute the correct timeRange for each edge', () => {
       expect(
         objectMap(edgesData, (data) => ({
           timeRange: data.timeRange,
         }))
       ).toEqual({
         '[0,1]': { timeRange: [1, 10] },
-        '[1,0]': { timeRange: [11, Infinity] },
+        '[1,0]': { timeRange: [11, INF] },
         '[1,2]': { timeRange: [3, 4] },
-        '[2,1]': { timeRange: [5, Infinity] },
+        '[2,1]': { timeRange: [5, INF] },
         '[1,3]': { timeRange: [7, 8] },
-        '[3,1]': { timeRange: [9, Infinity] },
+        '[3,1]': { timeRange: [9, INF] },
         '[0,4]': { timeRange: [13, 14] },
-        '[4,0]': { timeRange: [15, Infinity] },
+        '[4,0]': { timeRange: [15, INF] },
       })
     })
   })

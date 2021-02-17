@@ -11,13 +11,6 @@ type EventBody = {
   options?: { memoize?: boolean }
 }
 
-const headers = {
-  'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-  'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
-  'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
-  'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
-}
-
 export const handler: APIGatewayProxyHandler = async (event) => {
   const body = JSON.parse(event.body!) as EventBody
 
@@ -25,7 +18,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   if (!body)
     return {
       statusCode: 400,
-      headers,
       body:
         'Bad request. Provide a body object containing the encoded json string',
     }
@@ -34,14 +26,12 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   if (!supportedLanguages.includes(body.lang))
     return {
       statusCode: 400,
-      headers,
       body: 'Unsupported language',
     }
 
   if (!body.functionData)
     return {
       statusCode: 400,
-      headers,
       body: 'Bad functionData object',
     }
 
@@ -54,20 +44,18 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (treeViewerData.isError())
       return {
         statusCode: 422,
-        headers,
+
         body: JSON.stringify(treeViewerData.value),
       }
 
     return {
       statusCode: 200,
-      headers,
       body: JSON.stringify(treeViewerData.value),
     }
   } catch (e) {
     log('Unexpected error: ', e)
     return {
       statusCode: 500,
-      headers,
       body: 'Internal server error',
     }
   }
