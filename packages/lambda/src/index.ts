@@ -14,6 +14,8 @@ type EventBody = {
 const headers = {
   'Access-Control-Allow-Origin': '*', // Required for CORS support to work
   'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
+  'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+  'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
 }
 
 export const handler: APIGatewayProxyHandler = async (event) => {
