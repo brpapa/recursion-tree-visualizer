@@ -20,7 +20,7 @@ class Error<E, S> {
     return false
   }
 
-  applyOnSuccess<T>(_: (a: S) => T): Either<E, T> {
+  onSuccess<T>(_: (a: S) => T): Either<E, T> {
     return this as any
   }
 }
@@ -36,7 +36,7 @@ class Success<E, S> {
     return true
   }
 
-  applyOnSuccess<T>(f: (a: S) => T): Either<E, T> {
+  onSuccess<T>(f: (a: S) => T): Either<E, T> {
     return success(f(this.value))
   }
 }

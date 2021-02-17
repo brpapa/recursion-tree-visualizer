@@ -49,9 +49,9 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     e.preventDefault()
     setError('')
 
-    // DOING: substituir por http request (SE VIER ALGUM ERRO o treeViewerData PRECISA SER NULL PARA O COMPONENTE SABER RENDERIZAR)
+    // DOING: substituir por http request (SE VIER ALGUM ERRO o treeViewerData PRECISA SER NULL PARA O COMPONENTE SABER RENDERIZAR) (usar cache no client side with use-swr https://swr.vercel.app/getting-started)
     try {
-      // const fnData = group(fnCode, fnCall.value, fnVars) // throws error
+      const fnData = group(fnCode, fnCall.value, fnVars) // throws error
       // const treeViewerData = getTreeViewerData(fnData, { memorize, animate }) // throws error
       const treeViewerData = null
       onSubmit(treeViewerData)

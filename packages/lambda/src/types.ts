@@ -1,14 +1,10 @@
 /** [x,y] */
 export type Point = [number, number]
 
-export type Variable = { name: string; value: string }
 export type FunctionData = {
-  /** Usado pelos templates */
-  name?: string
-  params: Variable[]
   body: string
-  /** Variáveis "globais" que o escopo da função precisa conseguir acessar */
-  variables?: Variable[]
+  params: { name: string; initialValue: string }[]
+  globalVariables?: { name: string; value: string }[]
 }
 
 export type Vertices = Record<
@@ -63,4 +59,4 @@ export type TreeViewerData = {
   logs: string[]
 }
 
-export type SupportedLanguages = 'node' | 'python' | 'cpp'
+export type SupportedLanguages = 'node' | 'python'

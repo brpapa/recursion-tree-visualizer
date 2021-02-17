@@ -13,7 +13,7 @@ Stop drawing recursion trees by hand. Watch the [demo video](https://youtu.be/1f
 ### Folders structure
 
 - `packages/web`: web user interface. Deployed on Vercel. Built with React, Styled Components and PrismJS.
-- `packages/lambda`: a lambda function for the remote code runner. Deployed on AWS Lambda as a container. Built with Node.
+- `packages/lambda`: the lambda function handler for the remote code runner. Deployed on AWS Lambda as a container and consumed with AWS API Gateway. Built with Node.
 
 ## Local development 
 

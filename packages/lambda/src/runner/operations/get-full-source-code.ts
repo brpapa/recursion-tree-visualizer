@@ -1,31 +1,32 @@
-import { SupportedLanguages } from './../../types'
+import { SupportedLanguages } from '../../types'
 
 /**
  * Get the full code string that contains the user-defined code (function, global variables, initial params values and options) and the code responsible for generating the tree from running of the recursive user-defined function.
  * Should outputs to stdout an unique JSON string.
  */
-export default function getSourceCodeContent(
-  userDefinedCode: string,
+export default function getFullSourceCode(
+  plainCode: string,
   lang: SupportedLanguages
 ) {
-  if (lang === 'node')
-    return [
-      userDefinedCode,
-      recursionTrackerCode.node,
-    ].join('\n')
-
-  if (lang === 'python')
-    return [
-      'import json',
-      '',
-      userDefinedCode,
-      recursionTrackerCode.python,
-    ].join('\n')
-
-  return ''
+  switch (lang) {
+    case 'node':
+      return [
+        plainCode,
+        recursionTrackerCode.node
+      ].join('\n')
+    case 'python':
+      return [
+        'import json',
+        '',
+        plainCode,
+        recursionTrackerCode.python
+      ].join('\n')
+    default:
+      return ''
+  }
 }
 
-const recursionTrackerCode = {
+const recursionTrackerCode: Record<SupportedLanguages, string> = {
   node: `
 const MAX_RECURSIVE_CALLS = 222
 
@@ -74,7 +75,7 @@ function fn(...args) {
   return previousResult = result
 }
 
-/* */
+//
 
 const fnResult = fn(...fnParamsValues)
 
@@ -99,6 +100,7 @@ errorValue = None
 
 def fn(*args):
     global currId
+    global errorValue
 
     if (currId > MAX_RECURSIVE_CALLS):
         errorValue = MAX_RECURSIVE_CALLS

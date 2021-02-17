@@ -1,19 +1,17 @@
 {
   "name": "lambda",
   "version": "0.0.1",
-  "main": "src/index.ts",
+  "description": "Lambda function handler for remote code runner",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w",
-    "start": "node dist/index.js",
     "test": "DEBUG=* && jest",
-    "dev": "DEBUG=* && ts-node src/index.ts",
-    "start:dev": "docker build -t dev-image . && docker run --rm -p 8080:8080 --env DEBUG='*' dev-image"
+    "dev": "docker build -t dev-image . && docker run --rm -p 8080:8080 --env DEBUG='*' dev-image"
   },
   "dependencies": {
     "debug": "^2.6.9",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "fp-ts": "^2.9.5"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.72",

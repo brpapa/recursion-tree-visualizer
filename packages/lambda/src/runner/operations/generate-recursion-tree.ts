@@ -15,7 +15,6 @@ import {
   TreeError,
   emptyTreeError,
 } from '../../errors'
-import { languageConfigs } from './language-configs'
 import debug from 'debug'
 
 const log = debug('runner:recursion-tree')
@@ -23,8 +22,8 @@ const exec = util.promisify(childProcess.exec)
 
 const CHILD_PROCESS_TIMEOUT_MS = 5000
 
-/** Starts a child process that compile and run the source code content and return your output. */
-export default async function runSourceCode(
+/** Starts a child process that compile and run the source code content and return the recursion tree. */
+export default async function generateRecursionTree(
   content: string,
   lang: SupportedLanguages
 ): Promise<
@@ -52,23 +51,20 @@ export default async function runSourceCode(
 
     const recursionTree = output.successValue!
 
-    if (
+    const recursionTreeIsEmpty =
       Object.keys(recursionTree.vertices).length === 0 ||
       recursionTree.vertices[0].adjList.length === 0
-    )
-      return error(emptyTreeError())
+    
+    if (recursionTreeIsEmpty) return error(emptyTreeError())
 
     return success(recursionTree)
   } catch (err) {
     if (err.killed) return error(timeoutError(CHILD_PROCESS_TIMEOUT_MS))
-
-    // TODO: messages é diferente entre node, python e possivelmente cpp
-    const messages = err.stderr.split('\n') as string[]
-    const local = messages.slice(1, 3).join('\n')
-    const message = messages[4]
-    log(messages)
-    log('local: ', local)
-    log('message: ', message)
-    return error(runtimeError(message))
+    return error(runtimeError(err.stderr as string))
   }
 }
+
+const languageConfigs = (content: string): Record<SupportedLanguages, any> => ({
+  node: { command: `node -e "${content}"` },
+  python: { command: `python3 -c "${content}"` },
+})

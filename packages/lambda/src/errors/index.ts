@@ -23,11 +23,24 @@ export const emptyTreeError = (): Error<TreeError.EmptyTree> => ({
 })
 
 export const runtimeError = (
-  msg: string
-): Error<ChildProcessError.RuntimeError> => ({
-  type: ChildProcessError.RuntimeError,
-  reason: `${msg}`,
-})
+  stderr: string
+): Error<ChildProcessError.RuntimeError> => {
+  // TODO: stderr provavelmente é diferente entre node e python
+
+  const messages = stderr.split('\n')
+  console.log(messages)
+  const local = messages.slice(1, 3)
+  const message = messages[4]
+  console.log('local: ', local)
+  console.log('message: ', message)
+
+  return {
+    type: ChildProcessError.RuntimeError,
+    reason: `The code outputs the following ${
+      message.split(':')[0]
+    }:${message.split(':').splice(1).join('')}`,
+  }
+}
 
 export const timeoutError = (
   timeLimitMs: number

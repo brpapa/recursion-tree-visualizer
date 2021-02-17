@@ -1,6 +1,6 @@
-import { objectMap } from '../../utils/object-map'
-import { Vertices } from '../../types'
-import RunnerFacade from '..'
+import { objectMap } from '../utils/object-map'
+import { Vertices } from '../types'
+import { computeTreeViewerData } from '.'
 
 /*
     0
@@ -42,11 +42,9 @@ For each time:
 16: 0
 */
 
-describe('Getting tree viewer data', () => {
+describe('Tree viewer data from a recursion tree', () => {
   describe('Example 1', () => {
-    const nodeRunner = new RunnerFacade('node')
-
-    const { verticesData, edgesData } = nodeRunner.computeTreeViewerData({
+    const { verticesData, edgesData } = computeTreeViewerData({
       vertices: vertices1,
       fnResult: 0,
     })

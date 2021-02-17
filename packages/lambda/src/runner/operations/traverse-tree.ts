@@ -7,9 +7,8 @@ import {
   RecursionTree,
   Vertices,
 } from '../../types'
-import coord from './coord'
 
-/** Traverse tree to populate logs, times, verticesData and edgesData */
+/** Traverse tree to adjust coords, populate logs, times, verticesData and edgesData */
 export default function traverseTree(
   tree: RecursionTree,
   rawCoords: Record<number, Point>,
@@ -103,9 +102,11 @@ const initialEdgesData = (vertices: Vertices): EdgesData => {
   }, {})
 }
 
+
+/* helpers */
+
 const edgeKey = (u: number, v: number) => JSON.stringify([u, v])
 
-/* */
 const MAX_NUMBER = 1e5
 
 const edgeCostLabel = (w?: number) => {
@@ -121,3 +122,11 @@ const verticeArgsLabel = (verticeArgs?: any[]) => {
     .map((arg) => (arg > MAX_NUMBER ? arg.toExponential(2) : arg.toString()))
     .join(',')
 }
+
+const TRANSLATED_BY: Point = [50, 50]
+const SCALED_BY: Point = [85, 150]
+
+const coord = (rawCoord: Point, isBottomRight = false): Point => [
+  rawCoord[0] * SCALED_BY[0] + (isBottomRight ? 2 : 1) * TRANSLATED_BY[0],
+  rawCoord[1] * SCALED_BY[1] + (isBottomRight ? 2 : 1) * TRANSLATED_BY[1],
+]

@@ -165,3 +165,4 @@ function centralX(nodes: TreeNode[]) {
     ? (nodes[0].x + nodes[length - 1].x) / 2
     : nodes[(length - 1) / 2].x
 }
+
