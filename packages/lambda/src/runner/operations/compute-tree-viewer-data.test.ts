@@ -1,6 +1,5 @@
 import { objectMap } from '../../utils/object-map'
 import { Vertices } from '../../types'
-import { INF } from './../consts'
 import computeTreeViewerData from './compute-tree-viewer-data'
 
 /*
@@ -70,13 +69,13 @@ describe('TreeViewerData from a RecursionTree', () => {
         }))
       ).toEqual({
         '[0,1]': { timeRange: [1, 10] },
-        '[1,0]': { timeRange: [11, INF] },
+        '[1,0]': { timeRange: [11, Infinity] },
         '[1,2]': { timeRange: [3, 4] },
-        '[2,1]': { timeRange: [5, INF] },
+        '[2,1]': { timeRange: [5, Infinity] },
         '[1,3]': { timeRange: [7, 8] },
-        '[3,1]': { timeRange: [9, INF] },
+        '[3,1]': { timeRange: [9, Infinity] },
         '[0,4]': { timeRange: [13, 14] },
-        '[4,0]': { timeRange: [15, INF] },
+        '[4,0]': { timeRange: [15, Infinity] },
       })
     })
   })

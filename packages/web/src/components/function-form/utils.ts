@@ -1,4 +1,4 @@
-import { FunctionData, Variable } from '../../types'
+import { FunctionData } from '../../types'
 
 export const codeValidate = (s: string) =>
   /^(function\s+fn\(.*\)\s+\{\n).*(\}\s*)$/s.test(s)
@@ -11,31 +11,33 @@ const getParams = (s: string) => {
   return content === '' ? [] : content.split(',')
 }
 
-// fnData => fnCode, fnCall, fnVars
+/** fnData => fnCode, fnCall, fnVars */
 export const ungroup = (fnData: FunctionData) => {
-  const { params, body, variables } = fnData
+  const { params, body, globalVariables } = fnData
 
   const paramsNames = params.map(({ name }) => name).join(',')
-  const paramsValues = params.map(({ value }) => value).join(',')
+  const paramsInitialValues = params
+    .map(({ initialValue }) => initialValue)
+    .join(',')
 
-  const var1 = variables && variables[0]
-  const var2 = variables && variables[1]
+  const var1 = globalVariables && globalVariables[0]
+  const var2 = globalVariables && globalVariables[1]
 
   return {
     fnCode: `function fn(${paramsNames}) {\n${body}\n}`,
-    fnCall: `fn(${paramsValues})`,
-    fnVars: [
+    fnCall: `fn(${paramsInitialValues})`,
+    fnGlobalVars: [
       { name: var1?.name || '', value: var1?.value || '' },
       { name: var2?.name || '', value: var2?.value || '' },
     ],
   }
 }
 
-// fnCode, fnCall, fnVars => fnData
+/** fnCode, fnCall, fnVars => fnData */
 export const group = (
   fnCode: string,
   fnCall: string,
-  fnVars: Variable[]
+  fnGlobalVars: { name: string; value: string }[]
 ): FunctionData => {
   const paramsNames = getParams(fnCode)
   const paramsValues = getParams(fnCall)
@@ -45,15 +47,15 @@ export const group = (
 
   const params = paramsNames.map((paramName, i) => ({
     name: paramName,
-    value: paramsValues[i],
+    initialValue: paramsValues[i],
   }))
   const body = fnCode.substring(
     fnCode.indexOf('{') + 1,
     fnCode.lastIndexOf('}')
   )
-  const variables = fnVars.filter(
+  const globalVariables = fnGlobalVars.filter(
     ({ name, value }) => name !== '' && value !== ''
   )
 
-  return { params, body, variables }
+  return { params, body, globalVariables }
 }

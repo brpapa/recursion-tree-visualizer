@@ -44,8 +44,8 @@ const Graph = ({ time, edges, vertices, bottomRight }: Props) => {
               highlight={
                 data.times.some((t) => t === time)
                   ? 'current'
-                  : data.memorized
-                    ? 'memorized'
+                  : data.memoized
+                    ? 'memoized'
                     : 'none'
               }
             />

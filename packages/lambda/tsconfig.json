@@ -1,7 +1,7 @@
 {
   "include": [
     "src"
-, "src/runner/parser/.ts"  ],
+, "src/runner/parser/.ts", "../_common/json.test.tss"  ],
   "exclude": [
     "node_modules",
     "**/*.test.ts"

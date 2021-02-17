@@ -13,9 +13,10 @@ Stop drawing recursion trees by hand. Watch the [demo video](https://youtu.be/1f
 ### Folders structure
 
 - `packages/web`: web user interface. Deployed on Vercel. Built with React, Styled Components and PrismJS.
-- `packages/lambda`: the lambda function handler for the remote code runner. Deployed on AWS Lambda as a container and consumed with AWS API Gateway. Built with Node.
+- `packages/lambda`: a serverless lambda function that executed code remotelly. Deployed on AWS Lambda as a container and consumed with AWS API Gateway. Built with Node.
+<!-- - `packages/common`: shared code between web and lambda -->
 
-## Local development 
+## Local development
 
 ### Web
 
@@ -31,13 +32,13 @@ In the `packages/web` directory, run:
 
 ### Lambda function
 
-In the `packages/lambda` directory: 
+In the `packages/lambda` directory:
 
 Use the Amazon Runtime Interface Emulator (RIE), contained in the image, to test the lambda function locally:
 
 ```bash
 # build you local image
-> docker build --tag dev-image . 
+> docker build --tag dev-image .
 
 # create and run a container using AWS RIE as executable to emulate a server for your lambda function
 > docker run --rm -p 8080:8080 dev-image
@@ -56,10 +57,10 @@ Just ship `packages/web` on Vercel. Define the .env file correctly.
 
 To use the workflow `cd-lambda-function`, you will need to complete the following set-up steps:
 
-You need create the following AWS resources:
+You need create the following **AWS resources**:
    - Lambda function defined as container image
-   - API Gateway for trigger the lambda function
-   - ECR repository for store the container images
+   - API Gateway: a HTTP API to trigger the lambda function with CORS support
+   - ECR repository: to store the container images
 
 1. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
    See the documentation for each action used below for the recommended IAM policies for this IAM user,

@@ -1,5 +1,4 @@
 import { objectMap } from '../../utils/object-map'
-import { INF } from './../consts'
 import {
   Point,
   VerticesData,
@@ -57,7 +56,7 @@ export default function traverseTree(
   })()
 
   logs.push(
-    `fn(${verticesData[0].label}) returns ${edgeCostLabel(tree.fnResult)}`
+    `fn(${verticesData[0].label}) returns ${labelizeEdgeWeight(tree.fnResult)}`
   )
 
   return {
@@ -79,7 +78,7 @@ const initialVerticesData = (
     return {
       times: [],
       coord: coord(c),
-      label: verticeArgsLabel(vertices[v]?.argsList) || `${v}`,
+      label: labelizeVerticeArgs(vertices[v]?.argsList) || `${v}`,
       memoized: vertices[v]?.memoized || false,
     }
   })
@@ -92,11 +91,11 @@ const initialEdgesData = (vertices: Vertices): EdgesData => {
     // para cada aresta parentId -weight-> childId
     for (const { childId, weight } of vertices[parentId].adjList) {
       acc[edgeKey(parentId, childId)] = {
-        timeRange: [-INF, INF],
+        timeRange: [-Infinity, Infinity],
       }
       acc[edgeKey(childId, parentId)] = {
-        label: edgeCostLabel(weight),
-        timeRange: [-INF, INF],
+        label: labelizeEdgeWeight(weight),
+        timeRange: [-Infinity, Infinity],
       }
     }
     return acc
@@ -107,19 +106,21 @@ const initialEdgesData = (vertices: Vertices): EdgesData => {
 
 const edgeKey = (u: number, v: number) => JSON.stringify([u, v])
 
-const MAX_NUMBER = 1e5
+const MAX_NUMBER_TO_FIT_ON_SCREEN = 1e5
 
-const edgeCostLabel = (w?: number) => {
+const labelizeEdgeWeight = (w?: number) => {
+  if (w === null) throw new Error('The `w` argument can not be null. Probabily there was an error when parsing a function call result to JSON')
   if (w === undefined) return undefined
-  if (w === INF) return '∞'
-  if (w === -INF) return '-∞'
-  return w > MAX_NUMBER ? w.toExponential(2) : w.toString()
+  if (w === Infinity) return '∞'
+  if (w === -Infinity) return '-∞'
+  return w > MAX_NUMBER_TO_FIT_ON_SCREEN ? w.toExponential(2) : w.toString()
 }
 
-const verticeArgsLabel = (verticeArgs?: any[]) => {
+const labelizeVerticeArgs = (verticeArgs?: any[]) => {
+  if (verticeArgs === null) throw new Error('`verticeArgs` can not be null')
   if (verticeArgs === undefined) return undefined
   return verticeArgs
-    .map((arg) => (arg > MAX_NUMBER ? arg.toExponential(2) : arg.toString()))
+    .map((arg) => (arg > MAX_NUMBER_TO_FIT_ON_SCREEN ? arg.toExponential(2) : arg.toString()))
     .join(',')
 }
 

@@ -16,13 +16,14 @@ import {
   emptyTreeError,
 } from '../../errors'
 import debug from 'debug'
+import { safeParse } from '../../utils/safe-json'
 
 const log = debug('runner:recursion-tree')
 const exec = util.promisify(childProcess.exec)
 
 const CHILD_PROCESS_TIMEOUT_MS = 5000
 
-/** Starts a child process that compile and run the source code content and return the recursion tree. */
+/** Starts a child process that evaluate the source code content and return the recursion tree. */
 export default async function generateRecursionTree(
   content: string,
   lang: SupportedLanguages
@@ -44,7 +45,7 @@ export default async function generateRecursionTree(
     const childProcessReturn = await exec(command, {
       timeout: CHILD_PROCESS_TIMEOUT_MS,
     })
-    const output = JSON.parse(childProcessReturn.stdout) as SourceCodeOutput
+    const output = safeParse(childProcessReturn.stdout) as SourceCodeOutput
 
     if (output.errorValue !== null)
       return error(exceededRecursiveCallsLimitError(output.errorValue))
@@ -54,7 +55,7 @@ export default async function generateRecursionTree(
     const recursionTreeIsEmpty =
       Object.keys(recursionTree.vertices).length === 0 ||
       recursionTree.vertices[0].adjList.length === 0
-    
+
     if (recursionTreeIsEmpty) return error(emptyTreeError())
 
     return success(recursionTree)

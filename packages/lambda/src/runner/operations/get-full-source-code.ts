@@ -2,7 +2,7 @@ import { SupportedLanguages } from '../../types'
 
 /**
  * Get the full code string that contains the user-defined code (function, global variables, initial params values and options) and the code responsible for generating the tree from running of the recursive user-defined function.
- * Should outputs to stdout an unique JSON string.
+ * Should outputs to stdout an JSON string.
  */
 export default function getFullSourceCode(
   plainCode: string,
@@ -11,6 +11,7 @@ export default function getFullSourceCode(
   switch (lang) {
     case 'node':
       return [
+        safeJsonCode,
         plainCode,
         recursionTrackerCode.node
       ].join('\n')
@@ -25,6 +26,25 @@ export default function getFullSourceCode(
       return ''
   }
 }
+
+const safeJsonCode = `
+const safeStringify = (obj) => JSON.stringify(obj, replacer)
+const safeParse = (text) => JSON.parse(text, reviver)
+
+const replacer = (_key, value) => {
+  if (value === Infinity) return 'Infinity'
+  if (value === -Infinity) return '-Infinity'
+  if (Number.isNaN(value)) return 'NaN'
+  return value
+}
+
+const reviver = (_key, value) => {
+  if (value === 'Infinity') return Infinity
+  if (value === '-Infinity') return -Infinity
+  if (value === 'NaN') return NaN
+  return value
+}
+`
 
 const recursionTrackerCode: Record<SupportedLanguages, string> = {
   node: `
@@ -85,7 +105,8 @@ if (errorValue != null)
 else
   output.successValue = { vertices, fnResult: fnResult === undefined? null : fnResult }
 
-console.log(JSON.stringify(output))
+// TODO: se precaver ao serializer valores como NaN, Infinity or -Infinity
+console.log(safeStringify(output))
 `,
   python: `
 MAX_RECURSIVE_CALLS = 222
@@ -146,6 +167,8 @@ if (errorValue is not None):
 else:
   output['successValue'] = { 'vertices': vertices, 'fnResult': fnResult }
 
+# FIXME: se precaver ao serializer valores como math.inf, None
 print(json.dumps(output, separators=(',', ':')))
   `,
 }
+

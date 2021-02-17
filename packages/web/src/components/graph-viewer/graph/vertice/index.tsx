@@ -7,7 +7,7 @@ import { Point } from '../../../../types'
 type Props = {
   center: Point
   label?: string
-  highlight: 'current' | 'memorized' | 'none'
+  highlight: 'current' | 'memoized' | 'none'
 }
 
 const Vertice = ({ center, label, highlight }: Props) => {

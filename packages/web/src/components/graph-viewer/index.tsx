@@ -10,31 +10,32 @@ import { TreeViewerData } from '../../types'
 const DELAY_IN_MS = 200
 
 type Props = {
-  treeViewerData: TreeViewerData
+  data: TreeViewerData
+  options: { animate?: boolean }
 }
 
-const TreeViewer = ({ treeViewerData }: Props) => {
+const TreeViewer = ({ data, options: { animate = false } }: Props) => {
   const [isUpdating, setIsUpdating] = React.useState(false)
   const [time, setTime] = React.useState(0)
   const [times, setTimes] = React.useState(1)
 
   if (time < 0 || time > times)
-    throw Error('Invalid state: `time` should never be outside the range from 0 to `times`')
+    throw Error(
+      'Invalid state: `time` should never be outside the range from 0 to `times`'
+    )
 
   React.useEffect(() => {
     setTime(0)
-    if (treeViewerData !== null) {
+    if (data !== null) {
       setIsUpdating(true)
-      setTimes(treeViewerData.times)
+      setTimes(data.times)
     }
-  }, [treeViewerData])
+  }, [data])
 
   useInterval(
     () => {
       if (time >= times) setIsUpdating(false)
-      setTime((time) =>
-        treeViewerData?.options.animate ? Math.min(time + 1, times) : times
-      )
+      setTime((time) => (animate ? Math.min(time + 1, times) : times))
     },
     isUpdating ? DELAY_IN_MS : null
   )
@@ -52,16 +53,16 @@ const TreeViewer = ({ treeViewerData }: Props) => {
         onFirst={() => setTime(0)}
         onLast={() => setTime(times)}
       />
-      {treeViewerData === null ? (
+      {data === null ? (
         <s.LogoIcon />
       ) : (
         <>
-          <LogBar text={treeViewerData.logs[time]} />
+          <LogBar text={data.logs[time]} />
           <Graph
             time={time}
-            vertices={treeViewerData.vertices}
-            edges={treeViewerData.edges}
-            bottomRight={treeViewerData.svgBottomRight}
+            vertices={data.verticesData}
+            edges={data.edgesData}
+            bottomRight={data.svgBottomRight}
           />
         </>
       )}

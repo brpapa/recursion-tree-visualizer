@@ -1,21 +1,27 @@
-/*
 import buildRunner from '.'
 
 describe('TreeViewerData from FunctionData', () => {
   describe('For `node` language', () => {
     const run = buildRunner('node')
 
-    it('Example 1', async () => {
+    it('Example 1: coin change', async () => {
       const treeViewData = await run({
-        globalVariables: [],
-        params: [{ name: 'n', initialValue: '5' }],
+        globalVariables: [{ name: 'coins', value: '[1,3,4,5]' }],
+        params: [{ name: 'v', initialValue: '5' }],
         body: [
-          'if (n == 0 || n == 1) return n',
-          'return fn(n-1) + fn(n-2)',
+          'if (v == 0) return 0',
+          'if (v < 0) return Infinity',
+          '',
+          'let ans = Infinity',
+          'for (const coin of coins)',
+          '  ans = Math.min(',
+          '    ans,',
+          '    1 + fn(v - coin)',
+          '  )',
+          'return ans',
         ].join('\n'),
       })
-      console.log(treeViewData)
+      expect(treeViewData.isSuccess()).toBeTruthy()
     })
   })
 })
-*/

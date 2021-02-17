@@ -2,6 +2,7 @@ import buildRunner from './runner'
 import { FunctionData, SupportedLanguages } from './types'
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import debug from 'debug'
+import { safeParse, safeStringify } from './utils/safe-json'
 
 const log = debug('handler')
 
@@ -12,7 +13,7 @@ type EventBody = {
 }
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-  const body = JSON.parse(event.body!) as EventBody
+  const body = safeParse(event.body!) as EventBody
 
   // runtime body validations
   if (!body)
@@ -44,13 +45,12 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (treeViewerData.isError())
       return {
         statusCode: 422,
-
-        body: JSON.stringify(treeViewerData.value),
+        body: safeStringify(treeViewerData.value),
       }
 
     return {
       statusCode: 200,
-      body: JSON.stringify(treeViewerData.value),
+      body: safeStringify(treeViewerData.value),
     }
   } catch (e) {
     log('Unexpected error: ', e)

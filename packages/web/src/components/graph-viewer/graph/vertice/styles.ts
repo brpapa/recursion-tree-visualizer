@@ -11,11 +11,11 @@ export const Text = styled.text`
   user-select: none;
 `
 export const Container = styled.g<{
-  highlight: 'current' | 'memorized' | 'none'
+  highlight: 'current' | 'memoized' | 'none'
 }>`
   ${({ highlight, theme }) => {
     const { foreground, contrast } = theme.colors
-    const main = highlight === 'memorized' ? contrast : theme.colors.primary
+    const main = highlight === 'memoized' ? contrast : theme.colors.primary
     const filled = highlight !== 'none'
 
     return css`

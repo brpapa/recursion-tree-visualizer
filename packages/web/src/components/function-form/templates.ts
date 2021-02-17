@@ -5,12 +5,12 @@ const codefy = (lines: string[]) => lines.map((line) => '  ' + line).join('\n')
 const templates: Record<Templates, FunctionData> = {
   custom: {
     name: 'Custom',
-    params: [{ name: '', value: '' }],
+    params: [{ name: '', initialValue: '' }],
     body: codefy(['// type your own code']),
   },
   fibo: {
     name: 'Fibonacci',
-    params: [{ name: 'n', value: '5' }],
+    params: [{ name: 'n', initialValue: '5' }],
     body: codefy([
       'if (n == 0 || n == 1)',
       '  return n',
@@ -21,8 +21,8 @@ const templates: Record<Templates, FunctionData> = {
   bc: {
     name: 'Binomial Coefficient',
     params: [
-      { name: 'n', value: '5' },
-      { name: 'k', value: '2' },
+      { name: 'n', initialValue: '5' },
+      { name: 'k', initialValue: '2' },
     ],
     body: codefy([
       '// given n items, how many different possible subsets of k items can be formed',
@@ -33,10 +33,10 @@ const templates: Record<Templates, FunctionData> = {
   },
   ss: {
     name: 'Subset Sum',
-    variables: [{ name: 'arr', value: '[1,3,4,5,2,10]' }],
+    globalVariables: [{ name: 'arr', value: '[1,3,4,5,2,10]' }],
     params: [
-      { name: 'i', value: '0' },
-      { name: 's', value: '7' },
+      { name: 'i', initialValue: '0' },
+      { name: 's', initialValue: '7' },
     ],
     body: codefy([
       '// i-th number of arr, missing s for the current subset to arrive at the target sum',
@@ -49,13 +49,13 @@ const templates: Record<Templates, FunctionData> = {
   },
   ks: {
     name: '0-1 Knapsack',
-    variables: [
+    globalVariables: [
       { name: 'v', value: '[100,70,50,10]' },
       { name: 'w', value: '[10,4,6,12]' },
     ],
     params: [
-      { name: 'i', value: '0' },
-      { name: 's', value: '12' },
+      { name: 'i', initialValue: '0' },
+      { name: 's', initialValue: '12' },
     ],
     body: codefy([
       '// i-th item, knapsack with available capacity s',
@@ -71,8 +71,8 @@ const templates: Record<Templates, FunctionData> = {
   },
   cc: {
     name: 'Coin Change',
-    variables: [{ name: 'coins', value: '[1,3,4,5]' }],
-    params: [{ name: 'v', value: '5' }],
+    globalVariables: [{ name: 'coins', value: '[1,3,4,5]' }],
+    params: [{ name: 'v', initialValue: '5' }],
     body: codefy([
       '// remaining v cents',
       '',
@@ -90,13 +90,13 @@ const templates: Record<Templates, FunctionData> = {
   },
   lcs: {
     name: 'Longest Common Subsequence',
-    variables: [
+    globalVariables: [
       { name: 'a', value: "'AGTB'" },
       { name: 'b', value: "'GTXAB'" },
     ],
     params: [
-      { name: 'i', value: '0' },
-      { name: 'j', value: '0' },
+      { name: 'i', initialValue: '0' },
+      { name: 'j', initialValue: '0' },
     ],
     body: codefy([
       '// i-th char of a, j-th char of b',
@@ -115,7 +115,7 @@ const templates: Record<Templates, FunctionData> = {
   },
   tsp: {
     name: 'Traveling Salesman Problem',
-    variables: [
+    globalVariables: [
       { name: 'cities', value: '4' },
       {
         name: 'adjMat',
@@ -124,8 +124,8 @@ const templates: Record<Templates, FunctionData> = {
       },
     ],
     params: [
-      { name: 'u', value: '0' },
-      { name: 'mask', value: '1' },
+      { name: 'u', initialValue: '0' },
+      { name: 'mask', initialValue: '1' },
     ],
     body: codefy([
       '// current city u, set of visited cities mask (including u)',
@@ -150,8 +150,8 @@ const templates: Record<Templates, FunctionData> = {
   pow: {
     name: 'Fast Power',
     params: [
-      { name: 'a', value: '2' },
-      { name: 'n', value: '5' },
+      { name: 'a', initialValue: '2' },
+      { name: 'n', initialValue: '5' },
     ],
     body: codefy([
       'if (n == 0)',
@@ -165,10 +165,10 @@ const templates: Record<Templates, FunctionData> = {
   },
   // mcm: {
   //   name: 'Matrix Chain Multiplication',
-  //   variables: [{ name: 'D', value: '[1,2,3,4,5]' }],
+  //   globalVariables: [{ name: 'D', value: '[1,2,3,4,5]' }],
   //   params: [
-  //     { name: 'i', value: '1' },
-  //     { name: 'j', value: '4' },
+  //     { name: 'i', initialValue: '1' },
+  //     { name: 'j', initialValue: '4' },
   //   ],
   //   body: codefy([
   //     'if (i == j) return 0',
