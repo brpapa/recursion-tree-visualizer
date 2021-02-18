@@ -6,6 +6,8 @@ export interface Error<T> {
   reason: string
 }
 
+////
+
 export enum ChildProcessError {
   CompilationError = 'CompilationError',
   RuntimeError = 'RuntimeError',
@@ -13,32 +15,21 @@ export enum ChildProcessError {
   ExceededRecursiveCallsLimit = 'ExceededRecursiveCallsLimit',
 }
 
-export enum TreeError {
-  EmptyTree = 'EmptyTree',
-}
-
-export const emptyTreeError = (): Error<TreeError.EmptyTree> => ({
-  type: TreeError.EmptyTree,
-  reason: 'The recursion tree is empty',
-})
-
 export const runtimeError = (
   stderr: string
 ): Error<ChildProcessError.RuntimeError> => {
-  // TODO: stderr provavelmente vai se diferenciar entre novas languages
+  // TODO: stderr provavelmente vai se diferenciar entre outras languages alem python e node
 
-  const messages = stderr.split('\n')
-  console.log(messages)
-  const local = messages.slice(1, 3)
-  const message = messages[4]
-  console.log('local: ', local)
-  console.log('message: ', message)
+  const rawMessages = stderr.split('\n')
+  const rawMessage = rawMessages[4]
+
+  const errorType = rawMessage.split(':')[0]
+  const errorMessage = rawMessage.split(':').splice(1).join('')
+  // const errorLocal = rawMessages.slice(1, 3)
 
   return {
     type: ChildProcessError.RuntimeError,
-    reason: `The code outputs the following ${
-      message.split(':')[0]
-    }:${message.split(':').splice(1).join('')}`,
+    reason: `The code outputs the following ${errorType}:${errorMessage}`,
   }
 }
 
@@ -57,3 +48,14 @@ export const exceededRecursiveCallsLimitError = (
 })
 
 const toSeconds = (ms: number) => (ms / 1000).toFixed(2)
+
+////
+
+export enum TreeError {
+  EmptyTree = 'EmptyTree',
+}
+
+export const emptyTreeError = (): Error<TreeError.EmptyTree> => ({
+  type: TreeError.EmptyTree,
+  reason: 'The recursion tree is empty',
+})

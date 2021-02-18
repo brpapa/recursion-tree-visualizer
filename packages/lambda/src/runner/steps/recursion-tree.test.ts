@@ -1,7 +1,7 @@
 import { ChildProcessError, TreeError } from '../../errors'
 import { flow } from 'fp-ts/lib/function'
-import getFullSourceCode from './get-full-source-code'
-import generateRecursionTree from './generate-recursion-tree'
+import getFullSourceCode from './full-source-code'
+import generateRecursionTree from './recursion-tree'
 import { SupportedLanguages } from '../../types'
 
 /** Examples of the same array position are equivalents */

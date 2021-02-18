@@ -1,5 +1,5 @@
 import { FunctionData, SupportedLanguages } from '../../types'
-import translateToPlainCode from './translate-to-plain-code'
+import translateToPlainCode from './plain-code'
 
 const examples: Record<SupportedLanguages, FunctionData>[] = [
   {

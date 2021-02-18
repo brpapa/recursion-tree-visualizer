@@ -1,3 +1,4 @@
+import computeRawCoords from "./raw-coords"
 import { objectMap } from '../../utils/object-map'
 import {
   Point,
@@ -8,8 +9,14 @@ import {
   Vertices,
 } from '../../types'
 
+export default function computeTreeViewerData(tree: RecursionTree) {
+  const { rawCoords, rawBottomRight } = computeRawCoords(tree.vertices)
+  const treeViewerData = traverseTree(tree, rawCoords, rawBottomRight)
+  return treeViewerData
+}
+
 /** Traverse tree to adjust coords, populate logs, times, verticesData and edgesData */
-export default function traverseTree(
+function traverseTree(
   tree: RecursionTree,
   rawCoords: Record<number, Point>,
   rawBottomRight: Point
@@ -109,7 +116,10 @@ const edgeKey = (u: number, v: number) => JSON.stringify([u, v])
 const MAX_NUMBER_TO_FIT_ON_SCREEN = 1e5
 
 const labelizeEdgeWeight = (w?: number) => {
-  if (w === null) throw new Error('The `w` argument can not be null. Probabily there was an error when parsing a function call result to JSON')
+  if (w === null)
+    throw new Error(
+      'The `w` argument can not be null. Probabily there was an error when parsing a function call result to JSON'
+    )
   if (w === undefined) return undefined
   if (w === Infinity) return '∞'
   if (w === -Infinity) return '-∞'
@@ -120,7 +130,9 @@ const labelizeVerticeArgs = (verticeArgs?: any[]) => {
   if (verticeArgs === null) throw new Error('`verticeArgs` can not be null')
   if (verticeArgs === undefined) return undefined
   return verticeArgs
-    .map((arg) => (arg > MAX_NUMBER_TO_FIT_ON_SCREEN ? arg.toExponential(2) : arg.toString()))
+    .map((arg) =>
+      arg > MAX_NUMBER_TO_FIT_ON_SCREEN ? arg.toExponential(2) : arg.toString()
+    )
     .join(',')
 }
 

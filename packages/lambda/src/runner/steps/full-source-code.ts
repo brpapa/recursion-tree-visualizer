@@ -8,26 +8,15 @@ export default function getFullSourceCode(
   plainCode: string,
   lang: SupportedLanguages
 ) {
-  switch (lang) {
-    case 'node':
-      return [
-        safeJsonCode,
-        plainCode,
-        recursionTrackerCode.node
-      ].join('\n')
-    case 'python':
-      return [
-        'import json',
-        '',
-        plainCode,
-        recursionTrackerCode.python
-      ].join('\n')
-    default:
-      return ''
-  }
+  return [
+    dependenciesCode[lang],
+    plainCode,
+    recursionTrackerCode[lang]
+  ].join('\n\n')
 }
 
-const safeJsonCode = `
+const dependenciesCode: Record<SupportedLanguages, string> = {
+  node: `
 const safeStringify = (obj) => JSON.stringify(obj, replacer)
 const safeParse = (text) => JSON.parse(text, reviver)
 
@@ -44,7 +33,11 @@ const reviver = (_key, value) => {
   if (value === 'NaN') return NaN
   return value
 }
-`
+`,
+  python: `
+import json
+`,
+}
 
 const recursionTrackerCode: Record<SupportedLanguages, string> = {
   node: `
@@ -95,8 +88,6 @@ function fn(...args) {
   return previousResult = result
 }
 
-//
-
 const fnResult = fn(...fnParamsValues)
 
 const output = { successValue: null, errorValue: null }
@@ -105,7 +96,6 @@ if (errorValue != null)
 else
   output.successValue = { vertices, fnResult: fnResult === undefined? null : fnResult }
 
-// TODO: se precaver ao serializer valores como NaN, Infinity or -Infinity
 console.log(safeStringify(output))
 `,
   python: `
@@ -157,8 +147,6 @@ def fn(*args):
     previousResult = result
     return result
 
-#
-
 fnResult = fn(*fnParamsValues)
 
 output = { 'successValue': None, 'errorValue': None }
@@ -167,8 +155,6 @@ if (errorValue is not None):
 else:
   output['successValue'] = { 'vertices': vertices, 'fnResult': fnResult }
 
-# FIXME: se precaver ao serializer valores como math.inf, None
 print(json.dumps(output, separators=(',', ':')))
-  `,
+`,
 }
-

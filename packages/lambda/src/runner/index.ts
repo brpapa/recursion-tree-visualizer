@@ -1,8 +1,8 @@
 import { flow } from 'fp-ts/function'
-import getFullSourceCode from './operations/get-full-source-code'
-import generateRecursionTree from './operations/generate-recursion-tree'
-import translateToPlainCode from './operations/translate-to-plain-code'
-import computeTreeViewerData from './operations/compute-tree-viewer-data'
+import getFullSourceCode from './steps/full-source-code'
+import generateRecursionTree from './steps/recursion-tree'
+import translateToPlainCode from './steps/plain-code'
+import computeTreeViewerData from './steps/tree-viewer-data'
 import { FunctionData, SupportedLanguages } from '../types'
 
 /** Input FuncionData, output the TreeViewerData. */
