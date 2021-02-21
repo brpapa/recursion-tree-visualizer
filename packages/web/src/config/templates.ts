@@ -1,4 +1,4 @@
-import { Templates, FunctionData } from '../../types'
+import { Templates, FunctionData } from '../types'
 
 const codefy = (lines: string[]) => lines.map((line) => '  ' + line).join('\n')
 

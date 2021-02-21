@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 import * as s from './styles'
 import Graph from './graph'
 import ProgressBar from './progress-bar'
 import LogBar from './log-bar'
+import Loader from './loader'
 import useInterval from '../../hooks/use-interval'
 import { TreeViewerData } from '../../types'
 
@@ -11,26 +12,38 @@ const DELAY_IN_MS = 200
 
 type Props = {
   data: TreeViewerData
+  isLoading: boolean
   options: { animate?: boolean }
 }
 
-const TreeViewer = ({ data, options: { animate = false } }: Props) => {
-  const [isUpdating, setIsUpdating] = React.useState(false)
-  const [time, setTime] = React.useState(0)
-  const [times, setTimes] = React.useState(1)
+const TreeViewer = ({
+  data,
+  isLoading,
+  options: { animate = false },
+}: Props) => {
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [time, setTime] = useState(0)
+  const [times, setTimes] = useState(1)
 
   if (time < 0 || time > times)
     throw Error(
       'Invalid state: `time` should never be outside the range from 0 to `times`'
     )
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTime(0)
     if (data !== null) {
       setIsUpdating(true)
       setTimes(data.times)
     }
   }, [data])
+
+  useEffect(() => {
+    if (isLoading) {
+      setTime(0)
+      setIsUpdating(false)
+    }
+  }, [isLoading])
 
   useInterval(
     () => {
@@ -53,7 +66,9 @@ const TreeViewer = ({ data, options: { animate = false } }: Props) => {
         onFirst={() => setTime(0)}
         onLast={() => setTime(times)}
       />
-      {data === null ? (
+      {isLoading ? (
+        <Loader />
+      ) : data === null ? (
         <s.LogoIcon />
       ) : (
         <>

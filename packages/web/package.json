@@ -14,7 +14,9 @@
     "react": "^16.12.0",
     "react-codejar": "^1.0.1",
     "react-dom": "^16.12.0",
-    "styled-components": "^5.0.1"
+    "react-hot-toast": "^1.0.2",
+    "styled-components": "^5.0.1",
+    "swr": "^0.4.2"
   },
   "devDependencies": {
     "@types/node": "^14.6.4",

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ThemeProvider } from 'styled-components'
-
+import { Toaster, toast } from 'react-hot-toast'
 import GlobalStyle from '../../styles/global'
 import * as s from './styles'
 import FunctionForm from '../function-form'
@@ -8,47 +8,65 @@ import TreeViewer from '../graph-viewer'
 import Footer from './footer'
 import themes from '../../styles/themes'
 import { TreeViewerData, Themes, FunctionData } from '../../types'
-import { safeParse } from '../../utils/safe-json'
+import { safeParse, safeStringify } from '../../utils/safe-json'
+import { url as apiUrl } from './../../config/api'
+
+const fetchTreeViewerData = (requestBody: any) =>
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: safeStringify(requestBody),
+  })
 
 const App = () => {
-  const [themeName, setThemeName] = React.useState<Themes>('light')
-  const [treeViewerData, setTreeViewerData] = React.useState<TreeViewerData>(
-    null
-  )
+  const [themeName, setThemeName] = useState<Themes>('light')
+  const [treeViewerData, setTreeViewerData] = useState<TreeViewerData>(null)
+  const [treeViewerOptions, setTreeViewerOptions] = useState({ animate: false })
+  const [isLoading, setIsLoading] = useState(false)
 
-  // TODO: toast and loading
   const handleFunctionFormSubmit = async (
     functionData: FunctionData,
     options: { memoize: boolean; animate: boolean }
   ) => {
+    setIsLoading(true)
+
     try {
-      const response = await fetch(
-        'https://8j3kgh0303.execute-api.us-east-1.amazonaws.com/rtv-lambda',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            lang: 'node',
-            functionData,
-            options: { memoize: options.memoize },
-          })
-        }
-      )
-      const text = await response.text()
-      const responseBody = safeParse(text) as TreeViewerData
-      console.log(responseBody)
-      setTreeViewerData(responseBody)
+      const response = await fetchTreeViewerData({
+        lang: 'node',
+        functionData,
+        options: { memoize: options.memoize },
+      })
+
+      const rawResponseBody = await response.text()
+
+      if (response.ok) {
+        const treeViewerData = safeParse(rawResponseBody) as TreeViewerData
+        setTreeViewerData(treeViewerData)
+        setTreeViewerOptions({ animate: options.animate })
+      } else {
+        const { reason } = safeParse(rawResponseBody) as { reason: string }
+        toast.error(reason)
+        setTreeViewerData(null)
+      }
     } catch (e) {
-      console.log(e)
+      console.error(e)
+      toast.error('Unexpected error!')
       setTreeViewerData(null)
     }
+
+    setIsLoading(false)
   }
 
   return (
     <ThemeProvider theme={themes[themeName]}>
       <GlobalStyle />
+      <Toaster
+        position='top-center'
+        reverseOrder={false}
+        toastOptions={{ duration: 5000 }}
+      />
       <s.AppContainer>
         <s.Sidebar>
           <FunctionForm
@@ -57,7 +75,11 @@ const App = () => {
           />
         </s.Sidebar>
         <s.Main>
-          <TreeViewer data={treeViewerData} options={{ animate: false }} />
+          <TreeViewer
+            isLoading={isLoading}
+            data={treeViewerData}
+            options={treeViewerOptions}
+          />
           <Footer />
         </s.Main>
       </s.AppContainer>
