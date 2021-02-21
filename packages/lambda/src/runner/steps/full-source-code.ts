@@ -72,7 +72,7 @@ function fn(...args) {
 
   stack.push(currId++)
 
-  let previousResult = memoizedResults[JSON.stringify(args)]
+  let previousResult = memoizedResults[safeStringify(args)]
 
   if (memoize && previousResult !== undefined) {
     adj.weight = previousResult
@@ -85,7 +85,8 @@ function fn(...args) {
   adj.weight = result
 
   stack.pop()
-  return previousResult = result
+  memoizedResults[safeStringify(args)] = result
+  return result
 }
 
 const fnResult = fn(...fnParamsValues)
@@ -144,7 +145,7 @@ def fn(*args):
     adj['weight'] = result
 
     stack.pop()
-    previousResult = result
+    previous = result
     return result
 
 fnResult = fn(*fnParamsValues)

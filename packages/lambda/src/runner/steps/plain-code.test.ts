@@ -34,7 +34,9 @@ const examples: Record<SupportedLanguages, FunctionData>[] = [
 
 describe('For `node` language', () => {
   it('Example 0', () => {
-    const plainCode = translateToPlainCode(examples[0].node, 'node')
+    const plainCode = translateToPlainCode(examples[0].node, 'node', {
+      memoize: false,
+    })
     expect(plainCode).toEqual(
       [
         'const arr = [1,3,4,5,2,10]',
@@ -55,7 +57,9 @@ describe('For `node` language', () => {
 
 describe('For `python` language', () => {
   it('Example 0', () => {
-    const plainCode = translateToPlainCode(examples[0].python, 'python')
+    const plainCode = translateToPlainCode(examples[0].python, 'python', {
+      memoize: false,
+    })
     expect(plainCode).toEqual(
       [
         'arr = [1,3,4,5,2,10]',

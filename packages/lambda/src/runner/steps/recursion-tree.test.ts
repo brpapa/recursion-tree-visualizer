@@ -30,7 +30,7 @@ const examples = [
       '    return fn(i + 1, s) + fn(i + 1, s - arr[i])',
       '',
       'fnParamsValues = [0, 7]',
-      'memoize = False',
+      'memoize = True',
     ].join('\n'),
   },
   {
@@ -162,16 +162,17 @@ describe('Recursion tree from a plain code for `python` language', () => {
 })
 
 
-describe('For all supported languages', () => {
-  describe('The result for equivalent user-defined code should be equals between all languages', () => {
-    it('Example 0', async () => {
-      const nodeRes = await buildRecursionTreeForNode(
-        examples[0].node
-      )
-      const pythonRes = await buildRecursionTreeForPython(
-        examples[0].python
-      )
-      expect(nodeRes).toEqual(pythonRes)
-    })
-  })
-})
+// TODO: terminar
+// describe('For all supported languages', () => {
+//   describe('The result for equivalent user-defined code should be equals between all languages', () => {
+//     it('Example 0', async () => {
+//       const nodeRes = await buildRecursionTreeForNode(
+//         examples[0].node
+//       )
+//       const pythonRes = await buildRecursionTreeForPython(
+//         examples[0].python
+//       )
+//       expect(nodeRes.value).toEqual(pythonRes.value)
+//     })
+//   })
+// })

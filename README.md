@@ -12,8 +12,8 @@ Stop drawing recursion trees by hand. Watch the [demo video](https://youtu.be/1f
 
 ### Folders structure
 
-- `packages/web`: web user interface built with React.
-- `packages/lambda`: serverless lambda function to execute user-defined code remotely built with Node.
+- `packages/web`: react user interface.
+- `packages/lambda`: serverless lambda function to execute user-defined code remotely.
 <!-- - `packages/common`: shared code between web and lambda -->
 
 ## Local development

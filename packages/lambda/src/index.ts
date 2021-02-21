@@ -9,7 +9,7 @@ const log = debug('handler')
 type EventBody = {
   lang: SupportedLanguages
   functionData: FunctionData
-  options?: { memoize?: boolean }
+  options: { memoize: boolean }
 }
 
 export const handler: APIGatewayProxyHandler = async (event) => {
@@ -28,6 +28,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   if (!body.functionData) return badRequest('Bad function object')
 
   ///////////////////////////////////////////
+
+  log('Event body: ', body)
 
   try {
     const run = buildRunner(body.lang, body.options)

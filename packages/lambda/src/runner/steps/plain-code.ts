@@ -3,7 +3,7 @@ import { FunctionData, SupportedLanguages } from '../../types'
 export default function translateToPlainCode(
   fnData: FunctionData,
   lang: SupportedLanguages,
-  options?: any
+  options: { memoize: boolean }
 ) {
   const declare = declareBuilder(lang)
 
@@ -21,7 +21,7 @@ export default function translateToPlainCode(
     declare.function('_fn', paramsNames, fnData.body),
     '',
     declare.variable('fnParamsValues', declare.array(paramsInitialValues)),
-    declare.variable('memoize', declare.boolean(options?.memoize || false)),
+    declare.variable('memoize', declare.boolean(options.memoize)),
   ].join('\n')
 
   return plainCode
@@ -67,10 +67,9 @@ const declareBuilder = (lang: SupportedLanguages) => ({
           '}',
         ].join('\n')
       case 'python':
-        return [
-          `def ${name}(${params.join(', ')}):`,
-          indentedLines(body),
-        ].join('\n')
+        return [`def ${name}(${params.join(', ')}):`, indentedLines(body)].join(
+          '\n'
+        )
       default:
         return ''
     }
@@ -78,4 +77,7 @@ const declareBuilder = (lang: SupportedLanguages) => ({
 })
 
 const indentedLines = (code: string) =>
-  code.split('\n').map((line) => `  ${line}`).join('\n')
+  code
+    .split('\n')
+    .map((line) => `  ${line}`)
+    .join('\n')

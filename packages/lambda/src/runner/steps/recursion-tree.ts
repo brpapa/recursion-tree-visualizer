@@ -60,8 +60,9 @@ export default async function generateRecursionTree(
 
     return success(recursionTree)
   } catch (err) {
-    if (err.killed) return error(timeoutError(CHILD_PROCESS_TIMEOUT_MS))
-    return error(runtimeError(err.stderr as string))
+    if (err?.killed) return error(timeoutError(CHILD_PROCESS_TIMEOUT_MS))
+    if (err?.stderr) return error(runtimeError(err.stderr as string))
+    throw err
   }
 }
 
