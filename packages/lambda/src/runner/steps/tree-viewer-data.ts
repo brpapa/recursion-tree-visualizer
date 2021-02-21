@@ -1,4 +1,4 @@
-import computeRawCoords from "./raw-coords"
+import computeRawCoords from './raw-coords'
 import { objectMap } from '../../utils/object-map'
 import {
   Point,
@@ -33,7 +33,7 @@ function traverseTree(
 
     // parentId
     verticesData[parentId].times.push(time++)
-    logs.push(`running fn(${verticesData[parentId].label})`)
+    logs.push(`fn(${verticesData[parentId].label}) starts running`)
 
     // para cada aresta parentId -w-> childId
     for (const { childId: childId } of tree.vertices[parentId]?.adjList || []) {
@@ -49,15 +49,23 @@ function traverseTree(
         // childId -> parentId
         edgesData[edgeKey(parentId, childId)].timeRange[1] = time - 1
         edgesData[edgeKey(childId, parentId)].timeRange[0] = time++
-        logs.push(
-          `fn(${verticesData[childId].label}) returns ${
-            edgesData[edgeKey(childId, parentId)].label
-          } to fn(${verticesData[parentId].label})`
-        )
+        if (verticesData[childId].memoized) {
+          logs.push(
+            `fn(${verticesData[childId].label}) gets ${
+              edgesData[edgeKey(childId, parentId)].label
+            } from memory and returns it to fn(${verticesData[parentId].label})`
+          )
+        } else {
+          logs.push(
+            `fn(${verticesData[childId].label}) returns ${
+              edgesData[edgeKey(childId, parentId)].label
+            } to fn(${verticesData[parentId].label})`
+          )
+        }
 
         // parentId
         verticesData[parentId].times.push(time++)
-        logs.push(`continues by running fn(${verticesData[parentId].label})`)
+        logs.push(`fn(${verticesData[parentId].label}) continues running`)
       }
     }
   })()

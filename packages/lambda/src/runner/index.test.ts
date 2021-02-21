@@ -25,24 +25,27 @@ describe('TreeViewerData from FunctionData', () => {
         expect(noMemoizeResult.value.times > withMemoizeResult.value.times).toBeTruthy()
     })
 
-    // it('Example 2: coin change', async () => {
-    //   const treeViewerData = await run({
-    //     globalVariables: [{ name: 'coins', value: '[1,3,4,5]' }],
-    //     params: [{ name: 'v', initialValue: '5' }],
-    //     body: [
-    //       'if (v == 0) return 0',
-    //       'if (v < 0) return Infinity',
-    //       '',
-    //       'let ans = Infinity',
-    //       'for (const coin of coins)',
-    //       '  ans = Math.min(',
-    //       '    ans,',
-    //       '    1 + fn(v - coin)',
-    //       '  )',
-    //       'return ans',
-    //     ].join('\n'),
-    //   })
-    //   expect(treeViewerData.isSuccess()).toBeTruthy()
-    // })
+    it('Example 1: coin change', async () => {
+      const run = buildRunner('node', {memoize: true})
+      const treeViewerData = await run({
+        globalVariables: [{ name: 'coins', value: '[1,3,4,5]' }],
+        params: [{ name: 'v', initialValue: '5' }],
+        body: [
+          'if (v == 0) return 0',
+          'if (v < 0) return Infinity',
+          '',
+          'let ans = Infinity',
+          'for (const coin of coins)',
+          '  ans = Math.min(',
+          '    ans,',
+          '    1 + fn(v - coin)',
+          '  )',
+          'return ans',
+        ].join('\n'),
+      })
+      expect(treeViewerData.isSuccess()).toBeTruthy()
+      // if (treeViewerData.isSuccess())
+      //   console.log(treeViewerData.value?.logs)
+    })
   })
 })
