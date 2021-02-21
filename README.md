@@ -12,8 +12,8 @@ Stop drawing recursion trees by hand. Watch the [demo video](https://youtu.be/1f
 
 ### Folders structure
 
-- `packages/web`: web user interface. Deployed on Vercel. Built with React, Styled Components and PrismJS.
-- `packages/lambda`: a serverless lambda function that executed code remotelly. Deployed on AWS Lambda as a container and consumed with AWS API Gateway. Built with Node.
+- `packages/web`: web user interface built with React.
+- `packages/lambda`: serverless lambda function to execute user-defined code remotely built with Node.
 <!-- - `packages/common`: shared code between web and lambda -->
 
 ## Local development
@@ -30,61 +30,64 @@ In the `packages/web` directory, run:
 > npm run start
 ```
 
-### Lambda function
+### Lambda
 
-In the `packages/lambda` directory:
+You can use the Amazon Runtime Interface Emulator (RIE), already contained in the docker image, to test the Lambda function.
 
-Use the Amazon Runtime Interface Emulator (RIE), contained in the image, to test the lambda function locally:
+In the `packages/lambda` directory, run:
 
 ```bash
-# build you local image
+# build your local image
 > docker build --tag dev-image .
 
 # create and run a container using AWS RIE as executable to emulate a server for your lambda function
 > docker run --rm -p 8080:8080 dev-image
 
-# make a http request to your function, passing event with the -d
-> curl -XPOST "http://localhost:8080/2015-03-31/functions/function/invocations" -d '{}'
+# make a http request to your function, passing event with the -d in body field (escaped json)
+> curl -XPOST "http://localhost:8080/2015-03-31/functions/function/invocations" -d '{"body":"{}"}'
 ```
 
 ## Deploy to production
 
 ### Web
 
-Just ship `packages/web` on Vercel. Define the .env file correctly.
+Set your lambda API endpoint in `packages/web/src/config/api.ts`.
 
-### Lambda function
+Ships `packages/web` on Vercel.
 
-To use the workflow `cd-lambda-function`, you will need to complete the following set-up steps:
+### Lambda
 
-You need create the following **AWS resources**:
-   - Lambda function defined as container image
-   - API Gateway: a HTTP API to trigger the lambda function with CORS support
-   - ECR repository: to store the container images
+The deployment of the Lambda function is automatized by the workflow `cd-lambda-function`. You will need to complete the following set-up steps to use it:
 
-1. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-   See the documentation for each action used below for the recommended IAM policies for this IAM user,
-   and best practices on handling the access key credentials.
+1. Create the following **AWS resources**:
 
-2. Create an ECR repository to store your docker images.
-   For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-1`.
-   Replace the value of `AWS_ECR_REPOSITORY_NAME` env in the workflow below with your repository's name.
-   Replace the value of `AWS_REGION` env in the workflow below with your repository's region.
+   - Lambda function defined as a container image
 
-3. Create lambda function and API Gateway for triggered it.
-   Replace the value of `AWS_LAMBDA_FUNCTION_NAME` env in the workflow below with your function's name.
+   - API Gateway to trigger the lambda function with CORS support
+
+   - ECR repository to store your Docker images
+
+2. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+
+3. Change the workflow file `github/workflows/cd-lambda-function.yml`:
+
+   - Replace the value of the `AWS_REGION` env with the region of all your AWS resources.
+
+   - Replace the value of the `AWS_ECR_REPOSITORY_NAME` env with your repository's name.
+
+   - Replace the value of the `AWS_LAMBDA_FUNCTION_NAME` env with your function's name.
 
 
 ## Acknowledgements
 
-To position each node of the tree on 2D plane in an aesthetically pleasing way, I implemented the Reingold-Tilford's algorithm. Thanks to:
+To position each node of the tree on a 2D plane in an aesthetically pleasing way, I implemented Reingold-Tilford's algorithm. Thanks to:
 
 - [Drawing Presentable Trees](https://llimllib.github.io/pymag-trees/#foot5)
 - [Improving Walker's Algorithm to Run in Linear Time](http://dirk.jivas.de/papers/buchheim02improving.pdf)
 
 ## Compatibility
 
-For a better experience I recommend running in a chromium-based browser, like  Chrome or Edge.
+For a better experience, I recommend using a chromium-based browser like Chrome or Edge.
 
 ## Contact me
 

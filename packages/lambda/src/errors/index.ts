@@ -9,10 +9,10 @@ export interface Error<T> {
 ////
 
 export enum ChildProcessError {
-  CompilationError = 'CompilationError',
-  RuntimeError = 'RuntimeError',
-  TimeoutError = 'TimeoutError',
-  ExceededRecursiveCallsLimit = 'ExceededRecursiveCallsLimit',
+  CompilationError = 'Compilation Error',
+  RuntimeError = 'Runtime Error',
+  TimeoutError = 'Timeout Error',
+  ExceededRecursiveCallsLimit = 'Exceeded Recursive Calls Limit Error',
 }
 
 export const runtimeError = (
@@ -29,7 +29,7 @@ export const runtimeError = (
 
   return {
     type: ChildProcessError.RuntimeError,
-    reason: `The code outputs the following ${errorType}:${errorMessage}`,
+    reason: `Your code outputs the following ${errorType}:${errorMessage}`,
   }
 }
 
@@ -52,7 +52,7 @@ const toSeconds = (ms: number) => (ms / 1000).toFixed(2)
 ////
 
 export enum TreeError {
-  EmptyTree = 'EmptyTree',
+  EmptyTree = 'Empty Tree Error',
 }
 
 export const emptyTreeError = (): Error<TreeError.EmptyTree> => ({

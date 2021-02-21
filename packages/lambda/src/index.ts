@@ -1,5 +1,5 @@
 import buildRunner from './runner'
-import { FunctionData, SupportedLanguages } from './types'
+import { FunctionData, SupportedLanguages, TreeViewerData } from './types'
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import debug from 'debug'
 import { safeParse, safeStringify } from './utils/safe-json'
@@ -15,26 +15,17 @@ type EventBody = {
 export const handler: APIGatewayProxyHandler = async (event) => {
   const body = safeParse(event.body!) as EventBody
 
-  // runtime body validations
+  // TODO: runtime body validations
   if (!body)
-    return {
-      statusCode: 400,
-      body:
-        'Bad request. Provide a body object containing the encoded json string',
-    }
+    return badRequest(
+      'Provide a body object containing the encoded json string'
+    )
 
   const supportedLanguages = ['node', 'python']
   if (!supportedLanguages.includes(body.lang))
-    return {
-      statusCode: 400,
-      body: 'Unsupported language',
-    }
+    return badRequest('Unsupported language')
 
-  if (!body.functionData)
-    return {
-      statusCode: 400,
-      body: 'Bad functionData object',
-    }
+  if (!body.functionData) return badRequest('Bad function object')
 
   ///////////////////////////////////////////
 
@@ -43,20 +34,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     const treeViewerData = await run(body.functionData)
 
     if (treeViewerData.isError())
-      return {
-        statusCode: 422,
-        body: safeStringify(treeViewerData.value),
-      }
+      return unprocessableEntity(treeViewerData.value.reason)
 
-    return {
-      statusCode: 200,
-      body: safeStringify(treeViewerData.value),
-    }
+    return ok(treeViewerData.value)
   } catch (e) {
     log('Unexpected error: ', e)
-    return {
-      statusCode: 500,
-      body: 'Internal server error',
-    }
+    return internalServerError('Internal server error')
   }
 }
+
+const ok = (body: TreeViewerData) => result(200, body)
+const badRequest = (reason: string) => result(400, { reason })
+const unprocessableEntity = (reason: string) => result(422, { reason })
+const internalServerError = (reason: string) => result(500, { reason })
+
+const result = (statusCode: number, body: Record<string, any>) => ({
+  statusCode,
+  body: safeStringify(body),
+})

@@ -52,7 +52,7 @@ const App = () => {
       }
     } catch (e) {
       console.error(e)
-      toast.error('Unexpected error!')
+      toast.error('Unexpected error')
       setTreeViewerData(null)
     }
 
