@@ -1,4 +1,5 @@
 import React from 'react'
+import {toast} from 'react-hot-toast'
 
 import * as s from './styles'
 import Switch from './switch'
@@ -33,8 +34,6 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   const [animate, setAnimate] = useLocalStorage('animate', true)
   const [dark, setDark] = useLocalStorage('dark-mode', false)
 
-  const [error, setError] = React.useState('')
-
   const { adsRef } = useCarbonAds()
 
   React.useEffect(() => {
@@ -52,13 +51,13 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError('')
 
+    // client-side validation
     try {
-      const fnData = group(fnCode, fnCall.value, fnGlobalVars) // can throw error
+      const fnData = group(fnCode, fnCall.value, fnGlobalVars) // throw error
       onSubmit(fnData, { memoize, animate })
     } catch (error) {
-      setError(error.message)
+      toast.error(error.message)
     }
   }
 
@@ -106,8 +105,6 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
           onChange={setFnCode}
           validate={codeValidate}
         />
-
-        {error !== '' && <s.Error>{error}</s.Error>}
 
         <s.Title>Options</s.Title>
         <s.OptionContainer>
