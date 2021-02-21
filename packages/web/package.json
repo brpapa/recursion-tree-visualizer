@@ -1,7 +1,7 @@
 {
   "name": "web",
   "version": "0.0.1",
-  "description": "Web client for visualize the recursion tree",
+  "description": "Web client to visualize the recursion tree",
   "author": "Bruno Papa <bruno.papa@hotmail.com>",
   "private": true,
   "scripts": {
@@ -15,8 +15,8 @@
     "react-codejar": "^1.0.1",
     "react-dom": "^16.12.0",
     "react-hot-toast": "^1.0.2",
-    "styled-components": "^5.0.1",
-    "swr": "^0.4.2"
+    "react-is": "^17.0.1",
+    "styled-components": "^5.0.1"
   },
   "devDependencies": {
     "@types/node": "^14.6.4",
