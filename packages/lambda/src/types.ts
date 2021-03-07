@@ -20,7 +20,7 @@ export type Point = [number, number]
 
 export type FunctionData = {
   body: string
-  params: { name: string; initialValue: string }[]
+  params?: { name: string; initialValue: string }[]
   globalVariables?: { name: string; value: string }[]
 }
 

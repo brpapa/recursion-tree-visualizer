@@ -1,10 +1,10 @@
 import { SupportedLanguages } from '../../types'
 
 /**
- * Get the full code string that contains the user-defined code (function, global variables, initial params values and options) and the code responsible for generating the tree from running of the recursive user-defined function.
- * Should outputs to stdout an JSON string.
+ * Get the full code string that will be passed via cli argument, so escape char ".
+ * The code contains the user-defined code (function, global variables, initial params values and options) and the code responsible for generating the tree from running of the recursive user-defined function. And should outputs to stdout an JSON string.
  */
-export default function getFullSourceCode(
+export default function getSourceCode(
   plainCode: string,
   lang: SupportedLanguages
 ) {
@@ -36,6 +36,10 @@ const reviver = (_key, value) => {
 `,
   python: `
 import json
+import math
+
+def safeStringify(o):
+  return json.dumps(o, separators=(',', ':'), indent=None).replace(':Infinity', ':\\"Infinity\\"').replace(':-Infinity', ':\\"-Infinity\\"')
 `,
 }
 
@@ -111,42 +115,42 @@ stack = []  # the current top is the parent id of the current vertex
 errorValue = None
 
 def fn(*args):
-    global currId
-    global errorValue
+  global currId 
+  global errorValue
 
-    if (currId > MAX_RECURSIVE_CALLS):
-        errorValue = MAX_RECURSIVE_CALLS
-        return None
+  if (currId > MAX_RECURSIVE_CALLS):
+    errorValue = MAX_RECURSIVE_CALLS
+    return None
 
-    vertices[currId] = {
-        'argsList': list(args),
-        'adjList': [],
-        'memoized': False
-    }
+  vertices[currId] = {
+    'argsList': list(args),
+    'adjList': [],
+    'memoized': False
+  }
 
-    adj = {'childId': currId, 'weight': None}
+  adj = {'childId': currId, 'weight': None}
 
-    if (len(stack) > 0):
-        parentId = stack[-1]
-        vertices[parentId]['adjList'].append(adj)
+  if (len(stack) > 0):
+    parentId = stack[-1]
+    vertices[parentId]['adjList'].append(adj)
 
-    stack.append(currId)
-    currId += 1
+  stack.append(currId)
+  currId += 1
 
-    previousResult = memoizedResults.get(json.dumps(list(args)))
+  previousResult = memoizedResults.get(safeStringify(list(args)))
 
-    if (memoize and previousResult != None):
-        adj['weight'] = previousResult
-        stack.pop()
-        vertices[adj.childId]['memoized'] = True
-        return adj['weight']
-
-    result = _fn(*args)
-    adj['weight'] = result
-
+  if (memoize and previousResult != None):
+    adj['weight'] = previousResult
     stack.pop()
-    previous = result
-    return result
+    vertices[adj.childId]['memoized'] = True
+    return adj['weight']
+
+  result = _fn(*args)
+  adj['weight'] = result
+
+  stack.pop()
+  previous = result
+  return result
 
 fnResult = fn(*fnParamsValues)
 
@@ -156,6 +160,6 @@ if (errorValue is not None):
 else:
   output['successValue'] = { 'vertices': vertices, 'fnResult': fnResult }
 
-print(json.dumps(output, separators=(',', ':')))
+print(safeStringify(output))
 `,
 }

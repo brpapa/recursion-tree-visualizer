@@ -7,13 +7,14 @@ export default function translateToPlainCode(
 ) {
   const declare = declareBuilder(lang)
 
-  const globalVarLines =
-    fnData.globalVariables?.map((param) =>
-      declare.variable(param.name, param.value)
-    ) || []
+  const globalVarLines = (fnData.globalVariables || []).map((param) =>
+    declare.variable(param.name, param.value)
+  )
 
-  const paramsNames = fnData.params.map((param) => param.name)
-  const paramsInitialValues = fnData.params.map((param) => param.initialValue)
+  const paramsNames = (fnData.params || []).map((param) => param.name)
+  const paramsInitialValues = (fnData.params || []).map(
+    (param) => param.initialValue
+  )
 
   const plainCode = [
     ...globalVarLines,

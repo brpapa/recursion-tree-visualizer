@@ -15,7 +15,8 @@ type EventBody = {
 export const handler: APIGatewayProxyHandler = async (event) => {
   const body = safeParse(event.body!) as EventBody
 
-  // TODO: runtime body validations
+  // request validations
+
   if (!body)
     return badRequest(
       'Provide a body object containing the encoded json string'

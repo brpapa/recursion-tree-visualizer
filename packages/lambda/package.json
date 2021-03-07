@@ -1,7 +1,6 @@
 {
   "name": "lambda",
   "version": "0.0.1",
-  "description": "Lambda function handler for remote code runner",
   "license": "MIT",
   "scripts": {
     "build": "tsc",

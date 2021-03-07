@@ -7,14 +7,12 @@ const bc: FunctionData = {
     { name: 'k', initialValue: '2' },
   ],
   body: [
-    '// given n items, how many different possible subsets of k items can be formed',
-    '',
     'if (k == 0 || n == k) return 1',
     'return fn(n-1, k-1) + fn(n-1, k)',
   ].join('\n'),
 }
 
-describe('TreeViewerData from FunctionData', () => {
+describe('Getting tree viewer data from function data', () => {
   describe('For `node` language', () => {
     it('The memoize option should works', async () => {
       const noMemoizeResult = await buildRunner('node', { memoize: false })(bc)
@@ -25,7 +23,7 @@ describe('TreeViewerData from FunctionData', () => {
         expect(noMemoizeResult.value.times > withMemoizeResult.value.times).toBeTruthy()
     })
 
-    it('Example 1: coin change', async () => {
+    it('Coin change should be run sucessfully', async () => {
       const run = buildRunner('node', {memoize: true})
       const treeViewerData = await run({
         globalVariables: [{ name: 'coins', value: '[1,3,4,5]' }],

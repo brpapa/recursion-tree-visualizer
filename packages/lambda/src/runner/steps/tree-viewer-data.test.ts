@@ -42,7 +42,7 @@ For each time:
 16: 0
 */
 
-describe('TreeViewerData from a RecursionTree', () => {
+describe('Getting tree viewer data from recursion tree', () => {
   describe('Example 1', () => {
     const { verticesData, edgesData } = computeTreeViewerData({
       vertices: vertices1,
