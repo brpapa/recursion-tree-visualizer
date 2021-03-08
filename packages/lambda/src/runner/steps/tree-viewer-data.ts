@@ -141,7 +141,7 @@ const labelizeVerticeArgs = (verticeArgs?: any[]) => {
         if (typeof value === 'number')
           return labelizeNumber(value)
         return value
-      })
+      }).replace(/"/g, '')
     )
     .join(',')
 }
