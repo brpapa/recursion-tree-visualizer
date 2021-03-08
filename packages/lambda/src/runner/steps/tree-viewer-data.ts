@@ -129,9 +129,7 @@ const labelizeEdgeWeight = (w?: number) => {
       'The `w` argument can not be null. Probabily there was an error when parsing a function call result to JSON'
     )
   if (w === undefined) return undefined
-  if (w === Infinity) return '∞'
-  if (w === -Infinity) return '-∞'
-  return w > MAX_NUMBER_TO_FIT_ON_SCREEN ? w.toExponential(2) : w.toString()
+  return labelizeNumber(w)
 }
 
 const labelizeVerticeArgs = (verticeArgs?: any[]) => {
@@ -139,9 +137,20 @@ const labelizeVerticeArgs = (verticeArgs?: any[]) => {
   if (verticeArgs === undefined) return undefined
   return verticeArgs
     .map((arg) =>
-      arg > MAX_NUMBER_TO_FIT_ON_SCREEN ? arg.toExponential(2) : arg.toString()
+      JSON.stringify(arg, (_key: string, value: any) => {
+        if (typeof value === 'number')
+          return labelizeNumber(value)
+        return value
+      })
     )
     .join(',')
+}
+
+const labelizeNumber = (n: number) => {
+  if (n === Infinity) return '∞'
+  if (n === -Infinity) return '-∞'
+  if (Number.isNaN(n)) return 'NaN'
+  return n > MAX_NUMBER_TO_FIT_ON_SCREEN ? n.toExponential(2) : n.toString()
 }
 
 const TRANSLATED_BY: Point = [50, 50]

@@ -80,10 +80,9 @@ The deployment of the Lambda function is automatized by the workflow `cd-lambda-
 
 ## Acknowledgements
 
-To position each node of the tree on a 2D plane in an aesthetically pleasing way, I implemented Reingold-Tilford's algorithm. Thanks to:
+To position each node of the tree on a 2D plane in an aesthetically pleasing way, I implemented Reingold-Tilford's algorithm. Thanks to [Drawing Presentable Trees](https://llimllib.github.io/pymag-trees/#foot5) and [Improving Walker's Algorithm to Run in Linear Time](http://dirk.jivas.de/papers/buchheim02improving.pdf) articles.
 
-- [Drawing Presentable Trees](https://llimllib.github.io/pymag-trees/#foot5)
-- [Improving Walker's Algorithm to Run in Linear Time](http://dirk.jivas.de/papers/buchheim02improving.pdf)
+Thanks [CodeJar](https://medv.io/codejar/) for the lightweight code editor embedded in browser. 
 
 ## Compatibility
 

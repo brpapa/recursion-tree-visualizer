@@ -21,6 +21,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     return badRequest(
       'Provide a body object containing the encoded json string'
     )
+  
+  log(`Event body: ${safeStringify(body)}`)
 
   const supportedLanguages = ['node', 'python']
   if (!supportedLanguages.includes(body.lang))
@@ -29,8 +31,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   if (!body.functionData) return badRequest('Bad function object')
 
   ///////////////////////////////////////////
-
-  log('Event body: ', body)
 
   try {
     const run = buildRunner(body.lang, body.options)
@@ -41,7 +41,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     return ok(treeViewerData.value)
   } catch (e) {
-    log('Unexpected error: ', e)
+    log(`Unexpected error: ${e}`)
     return internalServerError('Internal server error')
   }
 }

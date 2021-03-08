@@ -304,6 +304,14 @@ const errorCases: TestCase[] = [
       body: 'pass',
     },
   },
+  // {
+  //   node: {
+  //     body: 'return 1',
+  //   },
+  //   python: {
+  //     body: 'return 1',
+  //   },
+  // },
 ]
 
 describe('Getting recursion tree from plain code', () => {
@@ -323,9 +331,14 @@ describe('Getting recursion tree from plain code', () => {
   describe('Success test case 3', getSuccessTestHandler(successCases[3]))
   describe('Success test case 4', getSuccessTestHandler(successCases[4]))
   describe('Success test case 5', getSuccessTestHandler(successCases[5]))
-  describe('Error test case 0', getErrorTestHandler(errorCases[0], ChildProcessError.ExceededRecursiveCallsLimit))
-  describe('Error test case 1', getErrorTestHandler(errorCases[1], ChildProcessError.RuntimeError))
-  describe('Error test case 2', getErrorTestHandler(errorCases[2], TreeError.EmptyTree))
+  describe('Error test case 0: exceed recursive calls limit error',
+    getErrorTestHandler(errorCases[0], ChildProcessError.ExceededRecursiveCallsLimit))
+  describe('Error test case 1: runtime error',
+    getErrorTestHandler(errorCases[1], ChildProcessError.RuntimeError))
+  describe('Error test case 2: empty tree', 
+    getErrorTestHandler(errorCases[2], TreeError.EmptyTree))
+  describe('Error test case 3: empty tree', 
+    getErrorTestHandler(errorCases[3], TreeError.EmptyTree))
 
   function getSuccessTestHandler(test: TestCase) {
     return () => {
@@ -358,7 +371,10 @@ describe('Getting recursion tree from plain code', () => {
       it('Should return the expected error type for `python` language', async () => {
         const res = await buildRecursionTreeForPython(test.python)
         expect(res.isError()).toBeTruthy()
-        if (res.isError()) expect(res.value.type).toEqual(targetError)
+        if (res.isError()) {
+          console.log(res.value)
+          expect(res.value.type).toEqual(targetError)
+        }
       })
       it('Should return the same error type between all supported languages', async () => {
         const nodeRes = await buildRecursionTreeForNode(test.node)
