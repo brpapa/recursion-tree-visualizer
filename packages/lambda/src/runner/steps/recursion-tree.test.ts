@@ -304,17 +304,35 @@ const errorCases: TestCase[] = [
       body: 'pass',
     },
   },
-  // {
-  //   node: {
-  //     body: 'return 1',
-  //   },
-  //   python: {
-  //     body: 'return 1',
-  //   },
-  // },
+  // TODO: testar: deveria voltar timeout
+  {
+    node: {
+      body: 'let a = 1\nwhile(true) a++',
+    },
+    python: {
+      body: '',
+    },
+  },
 ]
 
 describe('Getting recursion tree from plain code', () => {
+  describe('Success test case 0', buildSuccessTestHandler(successCases[0]))
+  describe('Success test case 1', buildSuccessTestHandler(successCases[1]))
+  describe('Success test case 2', buildSuccessTestHandler(successCases[2]))
+  describe('Success test case 3', buildSuccessTestHandler(successCases[3]))
+  describe('Success test case 4', buildSuccessTestHandler(successCases[4]))
+  describe('Success test case 5', buildSuccessTestHandler(successCases[5]))
+
+  describe('Error test case 0: exceed recursive calls limit error',
+    buildErrorTestHandler(errorCases[0], ChildProcessError.ExceededRecursiveCallsLimit))
+  describe('Error test case 1: runtime error',
+    buildErrorTestHandler(errorCases[1], ChildProcessError.RuntimeError))
+  describe('Error test case 2: empty tree', 
+    buildErrorTestHandler(errorCases[2], TreeError.EmptyTree))
+  // describe('Error test case 3: empty tree', 
+  //   buildErrorTestHandler(errorCases[3], TreeError.EmptyTree))
+
+
   const recursionTreeBuilder = (lang: SupportedLanguages) =>
     flow(
       (fnData: FunctionData) => translateToPlainCode(fnData, lang, { memoize: false }),
@@ -325,22 +343,7 @@ describe('Getting recursion tree from plain code', () => {
   const buildRecursionTreeForPython = recursionTreeBuilder('python')
   const buildRecursionTreeForNode = recursionTreeBuilder('node')
 
-  describe('Success test case 0', getSuccessTestHandler(successCases[0]))
-  describe('Success test case 1', getSuccessTestHandler(successCases[1]))
-  describe('Success test case 2', getSuccessTestHandler(successCases[2]))
-  describe('Success test case 3', getSuccessTestHandler(successCases[3]))
-  describe('Success test case 4', getSuccessTestHandler(successCases[4]))
-  describe('Success test case 5', getSuccessTestHandler(successCases[5]))
-  describe('Error test case 0: exceed recursive calls limit error',
-    getErrorTestHandler(errorCases[0], ChildProcessError.ExceededRecursiveCallsLimit))
-  describe('Error test case 1: runtime error',
-    getErrorTestHandler(errorCases[1], ChildProcessError.RuntimeError))
-  describe('Error test case 2: empty tree', 
-    getErrorTestHandler(errorCases[2], TreeError.EmptyTree))
-  describe('Error test case 3: empty tree', 
-    getErrorTestHandler(errorCases[3], TreeError.EmptyTree))
-
-  function getSuccessTestHandler(test: TestCase) {
+  function buildSuccessTestHandler(test: TestCase) {
     return () => {
       it('Should return success object for `node` language', async () => {
         const res = await buildRecursionTreeForNode(test.node)
@@ -358,7 +361,7 @@ describe('Getting recursion tree from plain code', () => {
     }
   }
 
-  function getErrorTestHandler(
+  function buildErrorTestHandler(
     test: TestCase,
     targetError: ChildProcessError | TreeError
   ) {
@@ -372,7 +375,7 @@ describe('Getting recursion tree from plain code', () => {
         const res = await buildRecursionTreeForPython(test.python)
         expect(res.isError()).toBeTruthy()
         if (res.isError()) {
-          console.log(res.value)
+          // console.log(res.value)
           expect(res.value.type).toEqual(targetError)
         }
       })

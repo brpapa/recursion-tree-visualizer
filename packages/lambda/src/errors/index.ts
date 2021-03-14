@@ -18,18 +18,20 @@ export enum ChildProcessError {
 export const runtimeError = (
   stderr: string
 ): Error<ChildProcessError.RuntimeError> => {
-  // TODO: stderr provavelmente vai se diferenciar entre outras languages alem python e node
-
   const rawMessages = stderr.split('\n')
-  const rawMessage = rawMessages[4]
 
-  const errorType = rawMessage.split(':')[0]
-  const errorMessage = rawMessage.split(':').splice(1).join('')
-  // const errorLocal = rawMessages.slice(1, 3)
+  try {
+    const rawMessage = rawMessages[4]
+    const errorType = rawMessage.split(':')[0]
+    const errorMessage = rawMessage.split(':').splice(1).join('')
+    // const errorLocal = rawMessages.slice(1, 3)
 
-  return {
-    type: ChildProcessError.RuntimeError,
-    reason: `Your code outputs the following ${errorType}:${errorMessage}`,
+    return {
+      type: ChildProcessError.RuntimeError,
+      reason: `Your code outputs the following ${errorType}:${errorMessage}`,
+    }
+  } catch {
+    throw new Error(`The following stderr can not be parsed:\n${stderr}`)
   }
 }
 
