@@ -68,5 +68,5 @@ export default async function generateRecursionTree(
 
 const languageConfigs = (content: string): Record<SupportedLanguages, any> => ({
   node: { command: `node -e "${content}"` },
-  python: { command: `python3 -c "${content}"` },
+  python: { command: `python -c "${content}"` },
 })
