@@ -1,3 +1,4 @@
+import { describe, test, expect } from '@jest/globals'
 import { objectMap } from '../../utils/object-map'
 import { Vertices } from '../../types'
 import computeTreeViewerData from './tree-viewer-data'

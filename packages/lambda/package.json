@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "test": "DEBUG=* && jest",
+    "test": "DEBUG=* npx jest --config jest.config.js",
+    "test:cov": "npx jest --config jest.config.js --coverage",
     "dev": "docker build -t dev-image . && docker run --rm -p 8080:8080 --env DEBUG='*' dev-image"
   },
   "dependencies": {

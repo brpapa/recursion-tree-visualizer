@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals'
 import { objectMap } from './object-map'
 
 describe('Object map', () => {
@@ -10,7 +11,6 @@ describe('Object map', () => {
 
     const mapped2 = objectMap(obj, (v, k) => v + k)
     expect(mapped2).toEqual({ a: '1a', b: '2b' })
-
   })
   // test('should be handle with number key', () => {
   //   expect(objectMap({ 0: 1, 1: 2 }, (v) => 2 * v)).toEqual({ 0: 2, 1: 4 })

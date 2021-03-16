@@ -1,3 +1,4 @@
+import { describe, test, expect } from '@jest/globals'
 import buildRunner from '.'
 import { FunctionData } from '../types'
 
@@ -14,17 +15,19 @@ const bc: FunctionData = {
 
 describe('Getting tree viewer data from function data', () => {
   describe('For `node` language', () => {
-    it('The memoize option should works', async () => {
+    test('The memoize option should works', async () => {
       const noMemoizeResult = await buildRunner('node', { memoize: false })(bc)
       const withMemoizeResult = await buildRunner('node', { memoize: true })(bc)
       expect(noMemoizeResult.isSuccess()).toBeTruthy()
       expect(withMemoizeResult.isSuccess()).toBeTruthy()
       if (noMemoizeResult.isSuccess() && withMemoizeResult.isSuccess())
-        expect(noMemoizeResult.value.times > withMemoizeResult.value.times).toBeTruthy()
+        expect(
+          noMemoizeResult.value.times > withMemoizeResult.value.times
+        ).toBeTruthy()
     })
 
-    it('Coin change should be run sucessfully', async () => {
-      const run = buildRunner('node', {memoize: true})
+    test('Coin change should be run sucessfully', async () => {
+      const run = buildRunner('node', { memoize: true })
       const treeViewerData = await run({
         globalVariables: [{ name: 'coins', value: '[1,3,4,5]' }],
         params: [{ name: 'v', initialValue: '5' }],

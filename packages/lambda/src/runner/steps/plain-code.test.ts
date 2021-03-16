@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals'
 import { FunctionData, SupportedLanguages } from '../../types'
 import translateToPlainCode from './plain-code'
 

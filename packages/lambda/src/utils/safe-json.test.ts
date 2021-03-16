@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals'
 import { safeParse, safeStringify } from './safe-json'
 
 describe('Json issues when a function call return +/- Infinity number', () => {
