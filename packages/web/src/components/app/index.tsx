@@ -7,9 +7,10 @@ import FunctionForm from '../function-form'
 import TreeViewer from '../graph-viewer'
 import Footer from './footer'
 import themes from '../../styles/themes'
-import { TreeViewerData, Themes, FunctionData } from '../../types'
+import { TreeViewerData, ThemeType, FunctionData, Language } from '../../types'
 import { safeParse, safeStringify } from '../../utils/safe-json'
 import { url as apiUrl } from './../../config/api'
+import { DEFAULT_THEME_TYPE } from '../../config/consts'
 
 const fetchTreeViewerData = (requestBody: any) =>
   fetch(apiUrl, {
@@ -21,12 +22,13 @@ const fetchTreeViewerData = (requestBody: any) =>
   })
 
 const App = () => {
-  const [themeName, setThemeName] = useState<Themes>('light')
+  const [themeType, setThemeName] = useState<ThemeType>(DEFAULT_THEME_TYPE)
   const [treeViewerData, setTreeViewerData] = useState<TreeViewerData>(null)
   const [treeViewerOptions, setTreeViewerOptions] = useState({ animate: false })
   const [isLoading, setIsLoading] = useState(false)
 
   const handleFunctionFormSubmit = async (
+    lang: Language,
     functionData: FunctionData,
     options: { memoize: boolean; animate: boolean }
   ) => {
@@ -34,7 +36,7 @@ const App = () => {
 
     try {
       const response = await fetchTreeViewerData({
-        lang: 'node',
+        lang,
         functionData,
         options: { memoize: options.memoize },
       })
@@ -47,7 +49,7 @@ const App = () => {
         setTreeViewerOptions({ animate: options.animate })
       } else {
         const { reason } = safeParse(rawResponseBody) as { reason: string }
-        toast.error(reason)
+        toast.error(reason || 'Internal Server Errror')
         setTreeViewerData(null)
       }
     } catch (e) {
@@ -60,7 +62,7 @@ const App = () => {
   }
 
   return (
-    <ThemeProvider theme={themes[themeName]}>
+    <ThemeProvider theme={themes[themeType]}>
       <GlobalStyle />
       <Toaster
         position='top-center'

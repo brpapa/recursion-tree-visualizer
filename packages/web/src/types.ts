@@ -1,5 +1,6 @@
-export type Themes = 'light' | 'dark'
-export type Templates =
+export type ThemeType = 'light' | 'dark'
+export type Language = 'node' | 'python'
+export type Template =
   | 'custom'
   | 'fibo'
   | 'ks'
@@ -14,10 +15,8 @@ export type Templates =
 export type Point = [number, number]
 
 export type FunctionData = {
-  /** usado pelos templates */
-  name?: string
   body: string
-  params: { name: string; initialValue: string }[]
+  params?: { name: string; initialValue: string }[]
   globalVariables?: { name: string; value: string }[]
 }
 

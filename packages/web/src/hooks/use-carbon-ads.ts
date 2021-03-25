@@ -17,5 +17,5 @@ export default function useCarbonAds() {
     }
   }, [])
 
-  return { adsRef }
+  return adsRef
 }

@@ -1,9 +1,9 @@
-import { Themes } from '../types'
+import { ThemeType as ThemeType } from '../types'
 
 const common = {
   fonts: {
     body: "'Inter', -apple-system, system-ui, 'Helvetica Neue', sans-serif",
-    mono: 'Menlo, monospace',
+    mono: 'Menlo, SF Mono, monospace',
   },
   // breakpoints: {
   //   sm: '576px',
@@ -19,7 +19,7 @@ const common = {
 
 const light = {
   ...common,
-  name: 'light',
+  type: 'light' as ThemeType,
   colors: {
     contrast: '#000',
     background: '#f0f0f0',
@@ -37,7 +37,7 @@ const light = {
 
 const dark = {
   ...common,
-  name: 'dark',
+  type: 'dark' as ThemeType,
   colors: {
     contrast: '#fff',
     background: '#151616',
@@ -54,4 +54,4 @@ const dark = {
 }
 
 export type Theme = typeof light
-export default { light, dark } as Record<Themes, Theme>
+export default { light, dark } as Record<ThemeType, Theme>

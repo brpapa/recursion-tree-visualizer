@@ -12,7 +12,6 @@ const commonFormItem = css`
   /* border: 1px solid transparent; */
   border-radius: 5px;
   &:focus {
-    outline: none;
     border: 1px solid ${({ theme }) => theme.colors.borderAccent};
   }
 `
@@ -29,7 +28,7 @@ export const Select = styled.select`
   width: 100%;
   height: 27px;
 `
-export const OptionContainer = styled.div`
+export const Option = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -80,8 +79,8 @@ export const Error = styled.p`
 export const VariableContainer = styled.div`
   display: flex;
   align-items: center;
+  margin: 0.4em 0;
   div {
-    margin: 3px;
     flex: 1 1;
     &:first-child {
       flex: 0 0;

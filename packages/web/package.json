@@ -1,21 +1,21 @@
 {
   "name": "web",
-  "version": "0.0.1",
-  "description": "Web client to visualize the recursion tree",
+  "version": "1.0.0",
   "author": "Bruno Papa <bruno.papa@hotmail.com>",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "prismjs": "^1.21.0",
+    "prism-react-renderer": "^1.2.0",
     "react": "^16.12.0",
-    "react-codejar": "^1.0.1",
     "react-dom": "^16.12.0",
     "react-hot-toast": "^1.0.2",
     "react-is": "^17.0.1",
+    "react-simple-code-editor": "^0.11.0",
     "styled-components": "^5.0.1"
   },
   "devDependencies": {
@@ -29,7 +29,7 @@
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.0",
-    "react-scripts": "^3.4.3",
+    "react-scripts": "^4.0.3",
     "typescript": "^3.8.3"
   },
   "browserslist": {

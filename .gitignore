@@ -1,6 +1,8 @@
-node_modules
-dist
-build
+**/node_modules
+**/dist
+**/build
+**/coverage
 .vscode
 *.DS_Store
-_*
+**/_*
+packages/lambda/Dockerfile.alpine

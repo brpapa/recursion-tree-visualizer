@@ -2,7 +2,7 @@ import useLocalStorage from './use-local-storage'
 
 type HTMLELements = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement
 
-// with useLocalStorage built-in
+/* with local storage persistence by default */
 const useFormInput = (
   localStorageKey: string,
   initialValue: string,
