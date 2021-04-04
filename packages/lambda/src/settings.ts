@@ -1,5 +1,6 @@
+import { SupportedLanguages } from './types'
+
 require('dotenv').config()
 
-const environment = String(process.env.NODE_ENV) || 'production'
-
-export { environment }
+export const environment = String(process.env.NODE_ENV) || 'production'
+export const supportedLanguages: SupportedLanguages[] = ['node', 'python']

@@ -1,6 +1,6 @@
 import { describe, test, expect } from '@jest/globals'
-import buildRunner from '.'
-import { FunctionData } from '../types'
+import buildRunner from '../../src/runner'
+import { FunctionData } from '../../src/types'
 
 const bc: FunctionData = {
   params: [

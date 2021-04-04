@@ -1,0 +1,5 @@
+**/.aws-sam
+
+# tmp
+Dockerfile.alpine
+template.yaml
