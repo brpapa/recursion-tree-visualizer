@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
-    "test": "DEBUG=app:*,test:* npx jest --config jest.config.js",
+    "test": "DEBUG='app:*,test:*' npx jest --config jest.config.js",
     "test:cov": "npx jest --config jest.config.js --coverage"
   },
   "dependencies": {

@@ -1,3 +1,9 @@
+export type EventBody = {
+  lang: SupportedLanguages
+  functionData: FunctionData
+  options: { memoize: boolean }
+}
+
 export type Vertices = Record<
   number,
   {

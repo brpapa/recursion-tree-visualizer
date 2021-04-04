@@ -2,7 +2,8 @@ name: Deploy lambda function to AWS Lambda
 
 on:
   push:
-    branches: master
+    branches: 
+      - master
     paths: # this workflow is executed if there is at least one change in
       - 'packages/lambda/**'
 

@@ -4,7 +4,7 @@
  */
 export type Either<E, S> = Error<E, S> | Success<E, S> // the Error and Success classes needs to share the same interface
 
-export const error = <E, S>(e: E): Either<E, S> => new Error(e)
+export const error = <E, S>(e: E): Either<E, S> => new Error<E, S>(e)
 export const success = <E, S>(s: S): Either<E, S> => new Success<E, S>(s)
 
 class Error<E, S> {
@@ -18,7 +18,7 @@ class Error<E, S> {
     return false
   }
 
-  onSuccess<T>(_: (a: S) => T): Either<E, T> {
+  onSuccess<T>(_f: (s: S) => T): Either<E, T> {
     return this as any
   }
 }
@@ -34,7 +34,7 @@ class Success<E, S> {
     return true
   }
 
-  onSuccess<T>(f: (a: S) => T): Either<E, T> {
+  onSuccess<T>(f: (s: S) => T): Either<E, T> {
     return success(f(this.value))
   }
 }

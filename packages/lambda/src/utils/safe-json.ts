@@ -1,14 +1,25 @@
 import { debug } from 'debug'
-const log = debug('app:utils')
+const log = debug('app:utils:safe-json')
 
-/* FIXME: code shared between
+/* FIXME: code shared between (ESSA EH A FONTE DA VERDADE)
   - lambda/src/utils/safe-json.ts
   - lambda/src/runner/operations/get-full-source-code.ts
   - web/src/utils/safe-json.ts
 */
 
 export const safeStringify = (obj: any) => JSON.stringify(obj, replacer)
-export const safeParse = (str: string) => isJson(str)? JSON.parse(str, reviver) : {}
+export const safeParse = (str: string) => isJson(str)? JSON.parse(sanitizate(str), reviver) : {}
+
+export const isJson = (str: string) => {
+  const sanitizated = sanitizate(str)
+  try {
+    JSON.parse(sanitizated, reviver)
+  } catch {
+    log('Error to parse: %O', sanitizated)
+    return false
+  }
+  return true
+}
 
 const replacer = (_key: string, value: any) => {
   if (value === Infinity) return 'Infinity'
@@ -24,12 +35,7 @@ const reviver = (_key: string, value: any) => {
   return value
 }
 
-export const isJson = (str: string) => {
-  try {
-    JSON.parse(str)
-  } catch {
-    log('Error to parse: %O', str)
-    return false
-  }
-  return true
-}
+const sanitizate = (jsonString: string) =>
+  jsonString
+    .replace(/,\s*]/g, ']')
+    .replace(/,\s*}/g, '}')
