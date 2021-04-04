@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals'
-import { FunctionData, SupportedLanguages } from '../../src/types'
-import translateToPlainCode from '../../src/runner/steps/plain-code'
+import { FunctionData, SupportedLanguages } from '../../types'
+import translateToPlainCode from './plain-code'
 
 const cases: Record<SupportedLanguages, FunctionData>[] = [
   {

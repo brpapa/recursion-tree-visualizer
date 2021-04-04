@@ -5,7 +5,7 @@ export default function translateToPlainCode(
   lang: SupportedLanguages,
   options: { memoize: boolean }
 ) {
-  const declare = buildDeclare(lang)
+  const declare = declareBuilder(lang)
 
   const globalVarLines = (fnData.globalVariables || []).map((param) =>
     declare.variable(param.name, param.value)
@@ -29,37 +29,55 @@ export default function translateToPlainCode(
 }
 
 /** HOC to build a declare function, that outputs a declaration (string) for the specified language */
-const buildDeclare = (lang: SupportedLanguages) => ({
+const declareBuilder = (lang: SupportedLanguages) => ({
   variable: (name: string, value: string) => {
-    if (lang === 'node') return `const ${name} = ${value}`
-    if (lang === 'python') return `${name} = ${value}`
-    return ''
+    switch (lang) {
+      case 'node':
+        return `const ${name} = ${value}`
+      case 'python':
+        return `${name} = ${value}`
+      default:
+        return ''
+    }
   },
   boolean: (value: boolean) => {
-    if (lang === 'node') return value === true ? 'true' : 'false'
-    if (lang === 'python') return value === true ? 'True' : 'False'
-    return ''
+    switch (lang) {
+      case 'node':
+        return value === true ? 'true' : 'false'
+      case 'python':
+        return value === true ? 'True' : 'False'
+      default:
+        return ''
+    }
   },
   array: (values: string[]) => {
-    return `[${values.join(', ')}]`
+    switch (lang) {
+      case 'node':
+      case 'python':
+        return `[${values.join(', ')}]`
+      default:
+        return ''
+    }
   },
   function: (name: string, params: string[], body: string) => {
-    if (lang === 'node')
-      return [
-        `function ${name}(${params.join(', ')}) {`,
-        indent(body),
-        '}',
-      ].join('\n')
-    if (lang === 'python')
-      return [
-        `def ${name}(${params.join(', ')}):`,
-        indent(body)
-      ].join('\n')
-    return ''
+    switch (lang) {
+      case 'node':
+        return [
+          `function ${name}(${params.join(', ')}) {`,
+          indentedLines(body),
+          '}',
+        ].join('\n')
+      case 'python':
+        return [`def ${name}(${params.join(', ')}):`, indentedLines(body)].join(
+          '\n'
+        )
+      default:
+        return ''
+    }
   },
 })
 
-const indent = (code: string) =>
+const indentedLines = (code: string) =>
   code
     .split('\n')
     .map((line) => `  ${line}`)

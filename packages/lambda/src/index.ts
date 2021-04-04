@@ -1,12 +1,10 @@
-import { APIGatewayProxyHandler } from 'aws-lambda'
-import debug from 'debug'
-import joi from 'joi'
 import buildRunner from './runner'
 import { FunctionData, SupportedLanguages, TreeViewerData } from './types'
-import { safeParse, safeStringify, isJson } from './utils/safe-json'
-import { supportedLanguages } from './settings'
+import { APIGatewayProxyHandler } from 'aws-lambda'
+import debug from 'debug'
+import { safeParse, safeStringify } from './utils/safe-json'
 
-const log = debug('app:handler')
+const log = debug('handler')
 
 type EventBody = {
   lang: SupportedLanguages
@@ -15,59 +13,35 @@ type EventBody = {
 }
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-  ////////////////////////////////////////////  dynamic object validation
+  const body = safeParse(event.body!) as EventBody
 
-  log('Event received: %O', event)
+  // request validations
 
-  const eventSchema = joi.object({
-    body: joi.string().custom((value) => {
-      if (!isJson(value))
-        throw new Error('it should be an encoded json string')
-      return value
-    }).required()
-  })
-  const eventValidated = eventSchema.validate(event)
-  if (eventValidated.error)
-    return badRequest(eventValidated.error.message)
+  if (!body)
+    return badRequest(
+      'Provide a body object containing the encoded json string'
+    )
   
-  const eventBody = safeParse(event.body!) as EventBody
+  log(`Event body: ${safeStringify(body)}`)
 
-  const eventBodySchema = joi.object({
-    lang: joi.string().valid(...supportedLanguages).required(),
-    functionData: joi.object({
-      body: joi.string().required(),
-      params: joi.array().items(joi.object({
-        name: joi.string().required(),
-        initialValue: joi.string().required()
-      })),
-      globalVariables: joi.array().items(joi.object({
-        name: joi.string().required(),
-        value: joi.string().required()
-      }))
-    }).required(),
-    options: joi.object({
-      memoize: joi.bool().required()
-    })
-  }).required()
+  const supportedLanguages = ['node', 'python']
+  if (!supportedLanguages.includes(body.lang))
+    return badRequest('Unsupported language')
 
-  const eventBodyValidated = eventBodySchema.validate(eventBody)
-  // eventBody = eventBodyValidated.value
-
-  if (eventBodyValidated.error)
-    return badRequest(eventBodyValidated.error.message)
+  if (!body.functionData) return badRequest('Bad function object')
 
   ///////////////////////////////////////////
 
   try {
-    const run = buildRunner(eventBody.lang, eventBody.options)
-    const treeViewerData = await run(eventBody.functionData)
+    const run = buildRunner(body.lang, body.options)
+    const treeViewerData = await run(body.functionData)
 
     if (treeViewerData.isError())
       return unprocessableEntity(treeViewerData.value.reason)
 
     return ok(treeViewerData.value)
   } catch (e) {
-    log('Unexpected error: %O', e)
+    log(`Unexpected error: ${e}`)
     return internalServerError('Internal server error')
   }
 }

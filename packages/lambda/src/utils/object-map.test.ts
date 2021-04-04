@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals'
-import { objectMap } from '../../src/utils/object-map'
+import { objectMap } from './object-map'
 
 describe('Object map', () => {
   test('Should be handle with string key', () => {

@@ -18,10 +18,10 @@ export enum ChildProcessError {
 export const runtimeError = (
   stderr: string
 ): Error<ChildProcessError.RuntimeError> => {
-  const rawMessages = stderr.split('\n').filter(m => !!m)
+  const rawMessages = stderr.split('\n')
 
   try {
-    const rawMessage = rawMessages[3]
+    const rawMessage = rawMessages[4]
     const errorType = rawMessage.split(':')[0]
     const errorMessage = rawMessage.split(':').splice(1).join('')
     // const errorLocal = rawMessages.slice(1, 3)
