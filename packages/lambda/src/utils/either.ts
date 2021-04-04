@@ -1,10 +1,8 @@
-// The key advantage is that Error and Success classes share the same interface
-
 /**
  * @param E Error object type
  * @param S Success object type
  */
-export type Either<E, S> = Error<E, S> | Success<E, S>
+export type Either<E, S> = Error<E, S> | Success<E, S> // the Error and Success classes needs to share the same interface
 
 export const error = <E, S>(e: E): Either<E, S> => new Error(e)
 export const success = <E, S>(s: S): Either<E, S> => new Success<E, S>(s)

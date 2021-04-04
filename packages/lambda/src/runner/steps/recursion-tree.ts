@@ -18,7 +18,7 @@ import {
 import debug from 'debug'
 import { safeParse } from '../../utils/safe-json'
 
-const log = debug('runner:recursion-tree')
+const log = debug('app:runner:recursion-tree')
 const exec = util.promisify(childProcess.exec)
 
 const CHILD_PROCESS_TIMEOUT_MS = 5000
@@ -39,13 +39,13 @@ export default async function generateRecursionTree(
     RecursionTree
   >
 > {
-  const { command } = languageConfigs(content)[lang]
+  const declare = buildDeclare(lang)
 
   try {
-    const childProcessReturn = await exec(command, {
+    const { stdout } = await exec(declare.command(content), {
       timeout: CHILD_PROCESS_TIMEOUT_MS,
     })
-    const output = safeParse(childProcessReturn.stdout) as SourceCodeOutput
+    const output = safeParse(stdout) as SourceCodeOutput
 
     if (output.errorValue !== null)
       return error(exceededRecursiveCallsLimitError(output.errorValue))
@@ -66,7 +66,10 @@ export default async function generateRecursionTree(
   }
 }
 
-const languageConfigs = (content: string): Record<SupportedLanguages, any> => ({
-  node: { command: `node -e "${content}"` },
-  python: { command: `python3 -c "${content}"` },
+const buildDeclare = (lang: SupportedLanguages) => ({
+  command: (content: string) => {
+    if (lang === 'node') return `node -e "${content}"`
+    if (lang === 'python') return `python3 -c "${content}"`
+    return ''
+  },
 })

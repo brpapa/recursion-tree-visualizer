@@ -4,5 +4,10 @@
 **/coverage
 .vscode
 *.DS_Store
+.env
+**/logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 **/_*
-packages/lambda/Dockerfile.alpine
