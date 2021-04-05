@@ -1,7 +1,6 @@
 import { describe, it, expect } from '@jest/globals'
 import { handler } from '../src/index'
 import { debug } from 'debug'
-
 const log = debug('test:handler')
 
 describe('Lambda handler receiving an event object', () => {
@@ -65,7 +64,7 @@ describe('Lambda handler receiving an event object', () => {
 })
 
 describe('Lambda handler receiving an mocked API Gateway payload', () => {
-  it.only.each([
+  it.each([
     [
       {
         version: '2.0',

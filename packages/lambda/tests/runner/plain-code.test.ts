@@ -1,6 +1,8 @@
 import { describe, it, expect } from '@jest/globals'
 import { FunctionData, SupportedLanguages } from '../../src/types'
 import translateToPlainCode from '../../src/runner/steps/plain-code'
+import { debug } from 'debug'
+const log = debug('test:runner:plain-code')
 
 const cases: Record<SupportedLanguages, FunctionData>[] = [
   {
@@ -60,7 +62,7 @@ describe('Getting plain code from function data', () => {
   describe('For `python` language', () => {
     it('Example 0', () => {
       const plainCode = translateToPlainCode(cases[0].python, 'python', {
-        memoize: false,
+        memoize: true,
       })
       expect(plainCode).toEqual(
         [
@@ -73,7 +75,7 @@ describe('Getting plain code from function data', () => {
           '  return fn(i+1, s) + fn(i+1, s-arr[i])',
           '',
           'fnParamsValues = [0, 7]',
-          'memoize = False',
+          'memoize = True',
         ].join('\n')
       )
     })

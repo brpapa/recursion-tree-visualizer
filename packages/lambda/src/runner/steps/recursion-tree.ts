@@ -25,7 +25,7 @@ const CHILD_PROCESS_TIMEOUT_MS = 5000
 
 /** Starts a child process that evaluate the source code content and return the recursion tree. */
 export default async function generateRecursionTree(
-  content: string,
+  sourceCode: string,
   lang: SupportedLanguages
 ): Promise<
   Either<
@@ -38,11 +38,11 @@ export default async function generateRecursionTree(
     >,
     RecursionTree
   >
-> {
+  > {
   const declare = buildDeclare(lang)
 
   try {
-    const { stdout } = await exec(declare.command(content), {
+    const { stdout } = await exec(declare.command(sourceCode), {
       timeout: CHILD_PROCESS_TIMEOUT_MS,
     })
     const output = safeParse(stdout) as SourceCodeOutput
@@ -67,9 +67,9 @@ export default async function generateRecursionTree(
 }
 
 const buildDeclare = (lang: SupportedLanguages) => ({
-  command: (content: string) => {
-    if (lang === 'node') return `node -e "${content}"`
-    if (lang === 'python') return `python3 -c "${content}"`
+  command: (sourceCode: string) => {
+    if (lang === 'node') return `node -e "${sourceCode}"`
+    if (lang === 'python') return `python3 -c "${sourceCode}"`
     return ''
   },
 })

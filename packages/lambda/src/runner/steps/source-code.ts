@@ -1,4 +1,6 @@
 import { SupportedLanguages } from '../../types'
+import { debug } from 'debug'
+const log = debug('app:runner:source-code')
 
 /**
  * Get the full code string that will be passed via cli argument, so escape char ".
@@ -77,7 +79,6 @@ function fn(...args) {
   stack.push(currId++)
 
   let previousResult = memoizedResults[safeStringify(args)]
-
   if (memoize && previousResult !== undefined) {
     adj.weight = previousResult
     stack.pop()
@@ -115,8 +116,12 @@ stack = []  # the current top is the parent id of the current vertex
 errorValue = None
 
 def fn(*args):
+  global vertices
   global currId 
+  global memoizedResults
+  global stack
   global errorValue
+  global memoize
 
   if (currId > MAX_RECURSIVE_CALLS):
     errorValue = MAX_RECURSIVE_CALLS
@@ -138,18 +143,17 @@ def fn(*args):
   currId += 1
 
   previousResult = memoizedResults.get(safeStringify(list(args)))
-
-  if (memoize and previousResult != None):
+  if (memoize and previousResult is not None):
     adj['weight'] = previousResult
     stack.pop()
-    vertices[adj.childId]['memoized'] = True
+    vertices[adj['childId']]['memoized'] = True
     return adj['weight']
 
   result = _fn(*args)
   adj['weight'] = result
 
   stack.pop()
-  previous = result
+  memoizedResults[safeStringify(list(args))] = result
   return result
 
 fnResult = fn(*fnParamsValues)

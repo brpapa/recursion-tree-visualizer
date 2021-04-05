@@ -1,6 +1,6 @@
 # This base image already contains the Amazon Lambda Runtime Interface Client (RIC) for run server in production, and the Runtime Interface Emulator (RIE) for run server locally
-
 FROM amazon/aws-lambda-nodejs:14
+
 RUN yum -y install python3.x86_64
 ENV DEBUG 'app:*'
 

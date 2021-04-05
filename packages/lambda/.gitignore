@@ -1,5 +1,5 @@
 **/.aws-sam
 
 # tmp
-Dockerfile.alpine
+Dockerfile.custom
 template.yaml
