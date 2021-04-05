@@ -3,19 +3,27 @@ import { ThemeContext } from 'styled-components'
 import { toast } from 'react-hot-toast'
 
 import * as s from './styles'
-import Switch from './switch'
 import CodeEditor from './code-editor'
 import { buildFnCodeValidator, buildFnCallValidator } from './validators'
-import { buildFnCodeDecomposer, buildFnCodeComposer, composeFnData, decomposeFnData } from './template-handler'
+import {
+  buildFnCodeDecomposer,
+  buildFnCodeComposer,
+  composeFnData,
+  decomposeFnData,
+} from './template-handler'
 import templates from '../../config/templates'
 import useFormInput from '../../hooks/use-form-input'
 import useCarbonAds from '../../hooks/use-carbon-ads'
 import useLocalStorage from '../../hooks/use-local-storage'
-import { Template, ThemeType, FunctionData, Language } from '../../types'
+import {
+  Template,
+  ThemeType,
+  FunctionData,
+  Language,
+  GlobalVar,
+} from '../../types'
 import './carbon-ads.css'
-import { DEFAULT_LANGUAGE, DEFAULT_TEMPLATE, LANGUAGES } from '../../config/consts'
-
-type GlobalVar = { name: string; value: string }
+import * as consts from '../../config/consts'
 
 type Props = {
   onSubmit: (
@@ -27,30 +35,32 @@ type Props = {
 }
 
 const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
-  const [lang, setLang] = useLocalStorage<Language>('fn-lang', DEFAULT_LANGUAGE)
+  const [lang, setLang] = useLocalStorage<Language>(
+    'fn-lang',
+    consts.DEFAULT_LANGUAGE
+  )
   const [fnCall, setFnCall] = useFormInput(
     'fn-call',
     'fn()',
     buildFnCallValidator(lang)
   )
-  const [fnCode, setFnCode] = useLocalStorage('fn-code', buildFnCodeComposer(DEFAULT_LANGUAGE)())
+  const [fnCode, setFnCode] = useLocalStorage('fn-code', consts.DEFAULT_FN_CODE)
   const [fnGlobalVars, setFnGlobalVars] = useLocalStorage<GlobalVar[]>(
     'fn-global-vars',
-    [
-      { name: '', value: '' },
-      { name: '', value: '' },
-    ]
+    consts.DEFAULT_GLOBAL_VARS
   )
 
   const [memoize, setMemoize] = useLocalStorage('memoize', false)
   const [animate, setAnimate] = useLocalStorage('animate', true)
-  
+
   const theme = useContext(ThemeContext)
 
-  // if null, user changed the default template code
-  const [activeTemplate, setActiveTemplate] = useState<Template | null>(DEFAULT_TEMPLATE)
-  
-  const adsRef = useCarbonAds()
+  // if null, user changed the default code that comes in with template
+  const [activeTemplate, setActiveTemplate] = useState<Template | null>(
+    consts.DEFAULT_TEMPLATE
+  )
+
+  const divRefAds = useCarbonAds()
 
   const handleSelectTemplateChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -64,39 +74,37 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     setFnGlobalVars(res.fnGlobalVars)
   }
 
-  // useEffect(() => {
-  //   console.log(activeTemplate)
-  // }, [activeTemplate])
-  
-  // const handleSelectLanguageChange = (
-  //   e: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const newLang = e.target.value as Language
-  //   setLang(newLang)
+  const handleSelectLanguageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newLang = e.target.value as Language
+    setLang(newLang)
 
-  //   // DOING: testing (selecione um template node, mude o codigo manualmente e mude pra python)
-  //   if (activeTemplate === null) {
-  //     // keep user-defined body and params names (both contained in fnCode)
-  //     setFnCode((prevFnCode) => {
-  //       const decomposeFnCode = buildFnCodeDecomposer(lang)
-  //       const composeFnCode = buildFnCodeComposer(newLang)
-  //       return composeFnCode(decomposeFnCode(prevFnCode))
-  //     })
-  //   } else {
-  //     const { fnCode, fnCall, fnGlobalVars } = decomposeFnData(
-  //       templates[activeTemplate].fnData[newLang],
-  //       newLang
-  //     )
-  //     setFnCode(fnCode)
-  //     setFnCall(fnCall)
-  //     setFnGlobalVars(fnGlobalVars)
-  //   }
-  // }
+    if (activeTemplate === null) {
+      // keep only the previous params names (inside fnCode)
+      setFnCode((prevFnCode) => {
+        const decomposeFnCode = buildFnCodeDecomposer(lang)
+        const composeFnCode = buildFnCodeComposer(newLang)
+
+        const { paramsNames } = decomposeFnCode(prevFnCode)
+        return composeFnCode({ paramsNames })
+      })
+    } else {
+      const { fnCode, fnCall, fnGlobalVars } = decomposeFnData(
+        templates[activeTemplate].fnData[newLang],
+        newLang
+      )
+      setFnCode(fnCode)
+      setFnCall(fnCall)
+      setFnGlobalVars(fnGlobalVars)
+    }
+  }
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     // client-side validation
+    // TODO: remover try/catch
     try {
       const fnData = composeFnData(fnCode, fnCall.value, fnGlobalVars, lang) // throw error
       onSubmit(lang, fnData, { memoize, animate })
@@ -108,7 +116,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   return (
     <s.FormContainer onSubmit={handleFormSubmit}>
       <s.FormContent>
-        <div ref={adsRef} />
+        <div ref={divRefAds} />
 
         <s.Title>Pre-defined templates</s.Title>
         <s.Select
@@ -135,7 +143,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
                 })
               }}
             />
-            <span style={{margin: '0 0.3em'}}>=</span>
+            <span style={{ margin: '0 0.3em' }}>=</span>
             <CodeEditor
               lang={lang}
               value={value}
@@ -149,40 +157,60 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
           </s.VariableContainer>
         ))}
 
-        {/* <s.Title>Language</s.Title>
-        <s.Select value={lang} onChange={handleSelectLanguageChange}>
-          {LANGUAGES.map((lang) => (
-            <option key={lang} value={lang}>
-              {lang}
-            </option>
-          ))}
-        </s.Select> */}
-
         <s.Title>Recursive function</s.Title>
-        <CodeEditor
-          lang={lang}
-          value={fnCode}
-          shouldValueChange={buildFnCodeValidator(lang)}
-          onValueChange={(newValue) => {
-            setFnCode((prevValue) => {
-              if (prevValue !== newValue) setActiveTemplate(null)
-              return newValue
-            })
-          }}
-        />
+        <div style={{ position: 'relative' }}>
+          <s.Select
+            value={lang}
+            onChange={handleSelectLanguageChange}
+            style={{
+              position: 'absolute',
+              top: '-27px',
+              right: '0',
+              width: '80px',
+              height: '22px',
+              fontSize: '14px'
+            }}
+          >
+            {consts.LANGUAGES.map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
+          </s.Select>
+          <CodeEditor
+            lang={lang}
+            value={fnCode}
+            shouldValueChange={buildFnCodeValidator(lang)}
+            onValueChange={(newValue) => {
+              setFnCode((prevValue) => {
+                if (prevValue !== newValue) setActiveTemplate(null)
+                return newValue
+              })
+            }}
+            onValueReset={() => {
+              const composeFnCode = buildFnCodeComposer(lang)
+              setFnCode(composeFnCode())
+            }}
+          />
+        </div>
 
         <s.Title>Options</s.Title>
         <s.Option>
           <span>Enable step-by-step animation</span>
-          <Switch checked={animate} onChange={() => setAnimate((p) => !p)} />
+          <s.Switch checked={animate} onChange={() => setAnimate((p) => !p)} />
         </s.Option>
         <s.Option>
           <span>Enable memoization</span>
-          <Switch checked={memoize} onChange={() => setMemoize((p) => !p)} />
+          <s.Switch checked={memoize} onChange={() => setMemoize((p) => !p)} />
         </s.Option>
         <s.Option>
           <span>Enable dark mode</span>
-          <Switch checked={theme.type === 'dark'} onChange={() => onThemeChange(theme.type === 'light'? 'dark' : 'light')} />
+          <s.Switch
+            checked={theme.type === 'dark'}
+            onChange={() =>
+              onThemeChange(theme.type === 'light' ? 'dark' : 'light')
+            }
+          />
         </s.Option>
       </s.FormContent>
 

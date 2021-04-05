@@ -14,6 +14,8 @@ export type Template =
 /** [x,y] */
 export type Point = [number, number]
 
+export type GlobalVar = { name: string; value: string }
+
 export type FunctionData = {
   body: string
   params?: { name: string; initialValue: string }[]

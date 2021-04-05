@@ -5,15 +5,18 @@ export default function useCarbonAds() {
   const adsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const divEl = adsRef?.current
+    if (divEl === null) return
+
     const scriptEl = document.createElement('script')
     scriptEl.type = 'text/javascript'
     scriptEl.async = true
     scriptEl.src = '//cdn.carbonads.com/carbon.js?serve=CKYIC27J&placement=pathfindingnowsh'
     scriptEl.id = '_carbonads_js'
 
-    adsRef?.current?.appendChild(scriptEl)
+    divEl.appendChild(scriptEl)
     return () => {
-      adsRef?.current?.removeChild(scriptEl)
+      divEl.removeChild(scriptEl)
     }
   }, [])
 

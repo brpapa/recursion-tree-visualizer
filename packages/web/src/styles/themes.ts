@@ -3,7 +3,7 @@ import { ThemeType as ThemeType } from '../types'
 const common = {
   fonts: {
     body: "'Inter', -apple-system, system-ui, 'Helvetica Neue', sans-serif",
-    mono: 'Menlo, SF Mono, monospace',
+    mono: "'Menlo', 'SF Mono', monospace",
   },
   // breakpoints: {
   //   sm: '576px',

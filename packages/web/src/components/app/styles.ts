@@ -14,7 +14,7 @@ export const Sidebar = styled.div`
   
   width: 100%;
   ${({theme}) => theme.devices.desktop} {
-    width: 350px;
+    width: 390px;
   }
 `
 export const Main = styled.div`

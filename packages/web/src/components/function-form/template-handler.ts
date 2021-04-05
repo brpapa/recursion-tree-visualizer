@@ -67,10 +67,10 @@ export const buildFnCodeComposer = (lang: Language) => {
   switch (lang) {
     case 'node':
       return (fnCode?: { body?: string; paramsNames?: string[] }) =>
-        `function fn(${(fnCode?.paramsNames || []).join(',')}) {\n${fnCode?.body || ''}\n}`
+        `function fn(${(fnCode?.paramsNames || []).join(',')}) {\n${fnCode?.body || '  '}\n}`
     case 'python':
       return (fnCode?: { body?: string; paramsNames?: string[] }) =>
-        `def fn(${(fnCode?.paramsNames || []).join(',')}):\n${fnCode?.body || ''}`
+        `def fn(${(fnCode?.paramsNames || []).join(',')}):\n${fnCode?.body || '  '}`
   }
 }
 
@@ -80,6 +80,7 @@ const getParamsNames = (fnCode: string) => {
   return names
 }
 
+// TODO: unit tests
 // 'fn((1,2))' should return ['(1,2)']
 // 'fn([1,2],[1])' should return ['[1,2]', '[1]']
 // 'fn({1,2},1)' should return ['{1,2}', 1]
@@ -89,20 +90,26 @@ const getParamsValues = (fnCall: string) => {
     .substring(fnCall.indexOf('(') + 1, fnCall.lastIndexOf(')'))
     .replace(/\s*/g, '')
   
-  const openChars = ['(', '[', '{']
-  const closeChars = [')', ']', '}']
-  const values = []
+  const specialChars = [
+    { open: '(', close: ')' },
+    { open: '[', close: ']' },
+    { open: '{', close: '}' },
+  ]
 
   let value = ''
   const targetCloseCharsStack: string[] = []
+  const values: string[] = []
 
-  for (const char of valuesDeclaration) {
-    const openCharIndex = openChars.findIndex(c => c === char)
-    if (openCharIndex !== -1) {
+  valuesDeclaration.split('').forEach((char) => {
+    const specialChar = specialChars.find(c => c.open === char)
+    if (specialChar) {
       value += char
-      targetCloseCharsStack.push(closeChars[openCharIndex])
+      targetCloseCharsStack.push(specialChar.close)
     } else {
-      if (targetCloseCharsStack.length > 0 && char === targetCloseCharsStack[targetCloseCharsStack.length-1]) {
+      if (
+        targetCloseCharsStack.length > 0 &&
+        char === targetCloseCharsStack[targetCloseCharsStack.length - 1]
+      ) {
         targetCloseCharsStack.pop()
         value += char
         if (targetCloseCharsStack.length === 0) {
@@ -118,7 +125,7 @@ const getParamsValues = (fnCall: string) => {
         value += char
       }
     }
-  }
+  })
   if (value !== '') values.push(value)
 
   return values

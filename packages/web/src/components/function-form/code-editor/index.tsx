@@ -16,6 +16,7 @@ type Props = {
   lang: Language
   value: string
   onValueChange: (value: string) => void
+  onValueReset?: () => void
   shouldValueChange?: (value: string) => boolean
 }
 
@@ -23,16 +24,22 @@ const CodeEditor = ({
   lang,
   value,
   onValueChange,
+  onValueReset,
   shouldValueChange,
 }: Props) => {
   const theme = useContext(ThemeContext)
 
   const onCodeChange = useCallback(
     (newCode: string) => {
+      if (onValueReset && /^(\s*)$/.test(newCode)) {
+        onValueReset()
+        return
+      }
+      
       if (!shouldValueChange || shouldValueChange(newCode))
         onValueChange(newCode)
     },
-    [onValueChange, shouldValueChange]
+    [onValueChange, onValueReset, shouldValueChange]
   )
 
   const highlight = useCallback(
