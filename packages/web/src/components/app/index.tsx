@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { Toaster, toast } from 'react-hot-toast'
 import GlobalStyle from '../../styles/global'
+import theme from '../../styles/themes'
 import * as s from './styles'
 import FunctionForm from '../function-form'
 import TreeViewer from '../graph-viewer'
@@ -49,12 +50,12 @@ const App = () => {
         setTreeViewerOptions({ animate: options.animate })
       } else {
         const { reason } = safeParse(rawResponseBody) as { reason: string }
-        toast.error(reason || 'Internal Server Errror')
+        toast.error(reason || 'Internal server error')
         setTreeViewerData(null)
       }
     } catch (e) {
       console.error(e)
-      toast.error('Unexpected error')
+      toast.error('Unexpected client error')
       setTreeViewerData(null)
     }
 
@@ -65,9 +66,17 @@ const App = () => {
     <ThemeProvider theme={themes[themeType]}>
       <GlobalStyle />
       <Toaster
-        position='top-center'
+        position='top-left'
         reverseOrder={false}
-        toastOptions={{ duration: 5000 }}
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: theme[themeType].colors.foreground,
+            border: `1px solid ${theme[themeType].colors.border}`,
+            color: theme[themeType].colors.contrast,
+            boxShadow: 'none'
+          },
+        }}
       />
       <s.AppContainer>
         <s.Sidebar>
