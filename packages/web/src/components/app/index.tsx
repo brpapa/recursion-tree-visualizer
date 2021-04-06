@@ -54,7 +54,6 @@ const App = () => {
         setTreeViewerData(null)
       }
     } catch (e) {
-      console.error(e)
       toast.error('Unexpected client error')
       setTreeViewerData(null)
     }

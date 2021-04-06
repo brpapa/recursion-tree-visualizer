@@ -2,7 +2,7 @@ import { buildFnCodeComposer } from "../components/function-form/template-handle
 import { GlobalVar, Language, Template, ThemeType } from "../types";
 
 export const DEFAULT_THEME_TYPE: ThemeType = 'light'
-export const DEFAULT_LANGUAGE: Language = 'node'
+export const DEFAULT_LANGUAGE: Language = 'python'
 export const DEFAULT_TEMPLATE: Template = 'custom'
 export const DEFAULT_GLOBAL_VARS: GlobalVar[] = [
   { name: '', value: '' },

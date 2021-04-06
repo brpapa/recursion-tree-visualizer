@@ -81,7 +81,8 @@ export const VariableContainer = styled.div`
   }
 `
 export const FormContent = styled.div`
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 0.9em;
 `
 export const FormSubmit = styled.div`
