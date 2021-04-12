@@ -3,18 +3,18 @@ import debug from 'debug'
 import buildRunner from './runner'
 import { TreeViewerData } from './types'
 import { safeStringify } from './utils/safe-json'
-import { validateEventDynamically } from './validations/event'
+import { validateAPIGatewayProxyEvent } from './validations/event'
 
 const log = debug('app:handler')
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   log('Event received: %O', event)
 
-  const result = validateEventDynamically(event)
-  if (result.isError())
-    return badRequest(result.value)
+  const validatedEvent = validateAPIGatewayProxyEvent(event)
+  if (validatedEvent.isError())
+    return badRequest(validatedEvent.value)
   
-  const body = result.value
+  const body = validatedEvent.value
 
   try {
     const run = buildRunner(body.lang, body.options)

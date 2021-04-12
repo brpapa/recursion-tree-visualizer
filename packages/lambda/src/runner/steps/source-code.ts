@@ -116,12 +116,7 @@ stack = []  # the current top is the parent id of the current vertex
 errorValue = None
 
 def fn(*args):
-  global vertices
-  global currId 
-  global memoizedResults
-  global stack
-  global errorValue
-  global memoize
+  global vertices, currId , memoizedResults, stack, errorValue, memoize
 
   if (currId > MAX_RECURSIVE_CALLS):
     errorValue = MAX_RECURSIVE_CALLS

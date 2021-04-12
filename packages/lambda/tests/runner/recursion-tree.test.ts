@@ -1,7 +1,8 @@
 import { describe, expect, test } from '@jest/globals'
 import { debug } from 'debug'
 
-import { ChildProcessError, TreeError } from '../../src/errors'
+import { ChildProcessError } from '../../src/errors/child-process'
+import { TreeError } from '../../src/errors/tree'
 import { flow } from 'fp-ts/lib/function'
 import getSourceCode from '../../src/runner/steps/source-code'
 import generateRecursionTree from '../../src/runner/steps/recursion-tree'
@@ -351,7 +352,7 @@ describe('Getting recursion tree from plain code', () => {
   )
 
   describe.each([
-    [errorCases[0], ChildProcessError.ExceededRecursiveCallsLimit],
+    [errorCases[0], TreeError.ExceededRecursiveCallsLimit],
     [errorCases[1], ChildProcessError.RuntimeError],
     [errorCases[2], TreeError.EmptyTree],
     // [errorCases[3], TreeError.EmptyTree],

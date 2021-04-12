@@ -16,7 +16,7 @@ export type Vertices = Record<
 >
 
 export type RecursionTree = { vertices: Vertices; fnResult: any }
-export type SourceCodeOutput = {
+export type ChildProcessStdout = {
   successValue: RecursionTree | null
   errorValue: number | null
 }

@@ -1,22 +1,20 @@
 import childProcess from 'child_process'
 import util from 'util'
-import {
-  RecursionTree,
-  SourceCodeOutput,
-  SupportedLanguages,
-} from '../../types'
+import { RecursionTree, SupportedLanguages } from '../../types'
 import { Either, error, success } from '../../utils/either'
+import { Error } from '../../errors/common'
 import {
-  Error,
-  ChildProcessError as ChildProcessError,
-  exceededRecursiveCallsLimitError,
+  ChildProcessError,
   runtimeError,
   timeoutError,
+} from '../../errors/child-process'
+import {
   TreeError,
   emptyTreeError,
-} from '../../errors'
+  exceededRecursiveCallsLimitError,
+} from '../../errors/tree'
 import debug from 'debug'
-import { safeParse } from '../../utils/safe-json'
+import { validateChildProcessStdout } from '../../validations/stdout'
 
 const log = debug('app:runner:recursion-tree')
 const exec = util.promisify(childProcess.exec)
@@ -33,24 +31,29 @@ export default async function generateRecursionTree(
       | ChildProcessError.RuntimeError
       | ChildProcessError.CompilationError
       | ChildProcessError.TimeoutError
-      | ChildProcessError.ExceededRecursiveCallsLimit
+      | TreeError.ExceededRecursiveCallsLimit
       | TreeError.EmptyTree
     >,
     RecursionTree
   >
-  > {
+> {
   const declare = buildDeclare(lang)
 
   try {
-    const { stdout } = await exec(declare.command(sourceCode), {
+    const { stdout: rawStdout } = await exec(declare.command(sourceCode), {
       timeout: CHILD_PROCESS_TIMEOUT_MS,
     })
-    const output = safeParse(stdout) as SourceCodeOutput
+    const validatedStdout = validateChildProcessStdout(rawStdout)
+    if (validatedStdout.isError())
+      throw new Error(`Fail to validate \`rawStdout\`:\n${validatedStdout.value}`)
 
-    if (output.errorValue !== null)
-      return error(exceededRecursiveCallsLimitError(output.errorValue))
+    const stdout = validatedStdout.value
+    if (stdout.errorValue !== null)
+      return error(
+        exceededRecursiveCallsLimitError(stdout.errorValue)
+      )
 
-    const recursionTree = output.successValue!
+    const recursionTree = stdout.successValue!
 
     const recursionTreeIsEmpty =
       Object.keys(recursionTree.vertices).length === 0 ||

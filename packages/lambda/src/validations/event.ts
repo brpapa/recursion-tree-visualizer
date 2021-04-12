@@ -5,21 +5,25 @@ import { EventBody } from '../types'
 import { Either, error, success } from '../utils/either'
 import { isJson, safeParse } from '../utils/safe-json'
 
-export const validateEventDynamically = (
+/** Runtime valition of the event object received by API Gateway Proxy, returning the parsed event body */
+export const validateAPIGatewayProxyEvent = (
   event: APIGatewayProxyEvent
 ): Either<string, EventBody> => {
-  const eventSchema = joi.object({
-    body: joi
-      .string()
-      .custom((value) => {
-        if (!isJson(value))
-          throw new Error('it should be an encoded json string')
-        return value
-      })
-      .required(),
-  }).unknown(true)
-  const eventValidated = eventSchema.validate(event)
-  if (eventValidated.error) return error(eventValidated.error.message)
+  const eventSchema = joi
+    .object({
+      body: joi
+        .string()
+        .custom((value) => {
+          if (!isJson(value))
+            throw new Error('it should be an encoded json string')
+          return value
+        })
+        .required(),
+    })
+    .unknown(true)
+    .required()
+  const validatedEvent = eventSchema.validate(event)
+  if (validatedEvent.error) return error(validatedEvent.error.message)
 
   const eventBody = safeParse(event.body!) as EventBody
 
@@ -52,9 +56,8 @@ export const validateEventDynamically = (
     })
     .required()
 
-  const eventBodyValidated = eventBodySchema.validate(eventBody)
-  if (eventBodyValidated.error) return error(eventBodyValidated.error.message)
+  const validatedEventBody = eventBodySchema.validate(eventBody)
+  if (validatedEventBody.error) return error(validatedEventBody.error.message)
 
-  const body = eventBodyValidated.value as EventBody
-  return success(body)
+  return success(validatedEventBody.value as EventBody)
 }

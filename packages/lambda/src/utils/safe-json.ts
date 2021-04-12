@@ -8,14 +8,14 @@ const log = debug('app:utils:safe-json')
 */
 
 export const safeStringify = (obj: any) => JSON.stringify(obj, replacer)
-export const safeParse = (str: string) => isJson(str)? JSON.parse(sanitizate(str), reviver) : {}
+export const safeParse = (str: string) => isJson(str)? JSON.parse(sanitize(str), reviver) : {}
 
 export const isJson = (str: string) => {
-  const sanitizated = sanitizate(str)
+  const sanitized = sanitize(str)
   try {
-    JSON.parse(sanitizated, reviver)
+    JSON.parse(sanitized, reviver)
   } catch {
-    log('Error to parse: %O', sanitizated)
+    // log('Error to parse: %O', sanitized)
     return false
   }
   return true
@@ -35,7 +35,7 @@ const reviver = (_key: string, value: any) => {
   return value
 }
 
-const sanitizate = (jsonString: string) =>
+const sanitize = (jsonString: string) =>
   jsonString
     .replace(/,\s*]/g, ']')
     .replace(/,\s*}/g, '}')

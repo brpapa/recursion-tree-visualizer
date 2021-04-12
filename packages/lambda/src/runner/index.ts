@@ -14,6 +14,6 @@ export default function buildRunner(
     (fnData: FunctionData) => translateToPlainCode(fnData, lang, options),
     (plainCode) => getSourceCode(plainCode, lang),
     (sourceCode) => generateRecursionTree(sourceCode, lang),
-    async (treeOrError) => (await treeOrError).onSuccess(computeTreeViewerData)
+    async (tree) => (await tree).onSuccess(computeTreeViewerData)
   )
 }
