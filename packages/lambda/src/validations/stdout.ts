@@ -3,6 +3,7 @@ import { ChildProcessStdout } from '../types'
 import { Either, error, success } from '../utils/either'
 import { safeParse } from '../utils/safe-json'
 
+/** Runtime valition of the stdout received by child process, returning the parsed stdout */
 export const validateChildProcessStdout = (
   rawStdout: string
 ): Either<string, ChildProcessStdout> => {
@@ -13,13 +14,13 @@ export const validateChildProcessStdout = (
     .pattern(
       /^\d+$/,
       joi.object({
-        argsList: joi.array().items(joi.any()).required(),
+        argsList: joi.array().items(joi.any()).required().not(null),
         adjList: joi
           .array()
           .items(
             joi.object({
               childId: joi.number().required(),
-              weight: joi.number().allow(Infinity, -Infinity, NaN),
+              weight: joi.any().not(null), // if null, probably there was an error when parsing a function call result to JSON
             })
           )
           .required(),

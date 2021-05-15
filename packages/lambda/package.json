@@ -7,7 +7,8 @@
   "scripts": {
     "build": "npx tsc",
     "test": "DEBUG='app:*,test:*' npx jest --config jest.config.js",
-    "test:cov": "npx jest --config jest.config.js --coverage"
+    "test:cov": "npx jest --config jest.config.js --coverage",
+    "typesync": "npx typesync"
   },
   "dependencies": {
     "debug": "^2.6.9",

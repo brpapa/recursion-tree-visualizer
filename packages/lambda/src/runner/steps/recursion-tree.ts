@@ -40,12 +40,15 @@ export default async function generateRecursionTree(
   const declare = buildDeclare(lang)
 
   try {
-    const { stdout: rawStdout } = await exec(declare.command(sourceCode), {
-      timeout: CHILD_PROCESS_TIMEOUT_MS,
-    })
+    const { stdout: rawStdout } = await exec(
+      declare.command(sourceCode), 
+      { timeout: CHILD_PROCESS_TIMEOUT_MS }
+    ) // throws exceptions if not output a stdout
+    // log(rawStdout)
+
     const validatedStdout = validateChildProcessStdout(rawStdout)
     if (validatedStdout.isError())
-      throw new Error(`Fail to validate \`rawStdout\`:\n${validatedStdout.value}`)
+      throw new Error(`Fail to deserialize the \`rawStdout\` object:\n${validatedStdout.value}`)
 
     const stdout = validatedStdout.value
     if (stdout.errorValue !== null)

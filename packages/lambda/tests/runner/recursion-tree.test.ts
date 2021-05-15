@@ -11,7 +11,11 @@ import translateToPlainCode from '../../src/runner/steps/plain-code'
 
 const log = debug('test:runner:recursion-tree')
 
-const successCases: Record<SupportedLanguages, FunctionData>[] = [
+type TestCase = {
+  [key in SupportedLanguages]: FunctionData
+}
+
+const successCases: TestCase[] = [
   {
     node: {
       globalVariables: [{ name: 'arr', value: '[1, 2, 3]' }],
@@ -277,7 +281,7 @@ const successCases: Record<SupportedLanguages, FunctionData>[] = [
     },
   },
 ]
-const errorCases: Record<SupportedLanguages, FunctionData>[] = [
+const errorCases: TestCase[] = [
   {
     node: {
       body: 'return fn()',
@@ -334,18 +338,19 @@ describe('Getting recursion tree from plain code', () => {
     [successCases[5], 'Fast Power'],
   ])(
     'Success test case %#: %c%s',
-    (tc: Record<SupportedLanguages, FunctionData>) => {
+    (tc: TestCase) => {
       test(`Should return success object for 'node' language`, async () => {
-        const res = await buildRecursionTreeForNode(tc.node)
+        const res = await buildRecursionTreeForNode(tc.node!)
         expect(res.isSuccess()).toBeTruthy()
       })
       test(`Should return success object for 'python' language`, async () => {
-        const res = await buildRecursionTreeForPython(tc.python)
+        const res = await buildRecursionTreeForPython(tc.python!)
         expect(res.isSuccess()).toBeTruthy()
       })
       test('Should return exactly the same object between all supported languages', async () => {
-        const nodeRes = await buildRecursionTreeForNode(tc.node)
-        const pythonRes = await buildRecursionTreeForPython(tc.python)
+        const nodeRes = await buildRecursionTreeForNode(tc.node);
+        const pythonRes = await buildRecursionTreeForPython(tc.python);
+
         expect(nodeRes.value).toEqual(pythonRes.value)
       })
     }
@@ -359,16 +364,16 @@ describe('Getting recursion tree from plain code', () => {
   ])(
     'Error test case %#: %c%s',
     (
-      tc: Record<SupportedLanguages, FunctionData>,
+      tc: TestCase,
       expectedError: ChildProcessError | TreeError
     ) => {
       test(`Should return the expected error type for 'node' language`, async () => {
-        const res = await buildRecursionTreeForNode(tc.node)
+        const res = await buildRecursionTreeForNode(tc.node!)
         expect(res.isError()).toBeTruthy()
         if (res.isError()) expect(res.value.type).toEqual(expectedError)
       })
       test(`Should return the expected error type for 'python' language`, async () => {
-        const res = await buildRecursionTreeForPython(tc.python)
+        const res = await buildRecursionTreeForPython(tc.python!)
         expect(res.isError()).toBeTruthy()
         if (res.isError()) {
           log('Error returned: %O', res.value)

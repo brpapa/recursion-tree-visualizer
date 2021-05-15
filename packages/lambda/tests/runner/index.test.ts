@@ -48,7 +48,7 @@ describe('Getting tree viewer data from function data', () => {
       }
     )
   })
-  describe('The full pipeline should run sucessfully', () => {
+  describe('The full pipeline should run successfully', () => {
     test('For `node` language', async () => {
       const run = buildRunner('node', { memoize: true })
       const treeViewerData = await run({
@@ -70,6 +70,31 @@ describe('Getting tree viewer data from function data', () => {
       expect(treeViewerData.isSuccess()).toBeTruthy()
       // if (treeViewerData.isSuccess())
       //    log(treeViewerData.value?.logs)
+    })
+  })
+  describe('Should be acceptable a function with different return types', () => {
+    test('For `python` language', async () => {
+      const run = buildRunner('python', { memoize: false })
+      const treeViewerData = await run({
+        globalVariables: [
+          { name: 'steps', value: '3' },
+          { name: 'arrLen', value: '2' },
+        ],
+        params: [
+          { name: 'idx', initialValue: '0' },
+          { name: 'step', initialValue: 'steps' },
+        ],
+        body: [
+          'if idx < 0 or idx >= arrLen:',
+          '    return 0',
+          'if 0 == step:',
+          '    return 0 == idx',
+          'return(fn(idx - 1, step - 1) + fn(idx + 1, step - 1) + fn(idx, step - 1)) % 1000000007',
+        ].join('\n')
+      })
+      expect(treeViewerData.isSuccess()).toBeTruthy()
+      // if (treeViewerData.isSuccess())
+      //    log(treeViewerData.value)
     })
   })
 })

@@ -121,36 +121,29 @@ const initialEdgesData = (vertices: Vertices): EdgesData => {
 
 const edgeKey = (u: number, v: number) => JSON.stringify([u, v])
 
-const MAX_NUMBER_TO_FIT_ON_SCREEN = 1e5
+const MAX_NUMBER_THAT_FIT_ON_SCREEN = 1e5
 
-const labelizeEdgeWeight = (w?: number) => {
-  if (w === null)
-    throw new Error(
-      'The `w` argument can not be null. Probabily there was an error when parsing a function call result to JSON'
-    )
+const labelizeEdgeWeight = (w: any | undefined) => {
   if (w === undefined) return undefined
-  return labelizeNumber(w)
+  return labelize(w)
 }
 
-const labelizeVerticeArgs = (verticeArgs?: any[]) => {
-  if (verticeArgs === null) throw new Error('`verticeArgs` can not be null')
+const labelizeVerticeArgs = (verticeArgs: any[] | undefined) => {
   if (verticeArgs === undefined) return undefined
-  return verticeArgs
-    .map((arg) =>
-      JSON.stringify(arg, (_key: string, value: any) => {
-        if (typeof value === 'number')
-          return labelizeNumber(value)
-        return value
-      }).replace(/"/g, '')
-    )
-    .join(',')
+  return verticeArgs.map(labelize).join(',')
+}
+
+const labelize = (value: any) => {
+  return JSON.stringify(value, (_: string, v: any) =>
+    typeof v === 'number' ? labelizeNumber(v) : v
+  ).replace(/"/g, '')
 }
 
 const labelizeNumber = (n: number) => {
   if (n === Infinity) return '∞'
   if (n === -Infinity) return '-∞'
   if (Number.isNaN(n)) return 'NaN'
-  return n > MAX_NUMBER_TO_FIT_ON_SCREEN ? n.toExponential(2) : n.toString()
+  return n > MAX_NUMBER_THAT_FIT_ON_SCREEN ? n.toExponential(2) : n.toString()
 }
 
 const TRANSLATED_BY: Point = [50, 50]

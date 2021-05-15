@@ -1,7 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import debug from 'debug'
 import buildRunner from './runner'
-import { TreeViewerData } from './types'
 import { safeStringify } from './utils/safe-json'
 import { validateAPIGatewayProxyEvent } from './validations/event'
 
@@ -30,7 +29,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   }
 }
 
-const ok = (body: TreeViewerData) => result(200, body)
+const ok = (body: any) => result(200, body)
 const badRequest = (reason: string) => result(400, { reason })
 const unprocessableEntity = (reason: string) => result(422, { reason })
 const internalServerError = (reason: string) => result(500, { reason })

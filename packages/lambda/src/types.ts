@@ -10,7 +10,7 @@ export type Vertices = Record<
     /** vertices[u].argsList: array de params values do vértice u */
     argsList: any[]
     /** vertices[u].adjList: [{v, w}, ...], sendo u -w-> v, onde w é o resultado de fn(...argsList[u]) */
-    adjList: { childId: number; weight?: number }[]
+    adjList: { childId: number; weight?: any }[]
     memoized: boolean
   }
 >
