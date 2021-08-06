@@ -7,7 +7,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "lint": "eslint 'src/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'",
+    "typesync": "npx typesync"
   },
   "dependencies": {
     "prism-react-renderer": "^1.2.0",
@@ -19,10 +20,12 @@
     "styled-components": "^5.0.1"
   },
   "devDependencies": {
+    "@types/eslint": "^6.8.1",
     "@types/node": "^14.6.4",
     "@types/prismjs": "^1.16.1",
     "@types/react": "^16.9.32",
     "@types/react-dom": "^16.9.6",
+    "@types/react-is": "^17.0.0",
     "@types/styled-components": "^5.0.1",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",

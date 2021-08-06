@@ -1,4 +1,4 @@
-import useLocalStorage from './use-local-storage'
+import useLocalStorageState from './use-local-storage-state'
 
 type HTMLELements = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement
 
@@ -8,7 +8,7 @@ const useFormInput = (
   initialValue: string,
   validate?: (value: string) => boolean
 ) => {
-  const [value, setValue] = useLocalStorage(localStorageKey, initialValue)
+  const [value, setValue] = useLocalStorageState(localStorageKey, initialValue)
 
   function onChange(e: React.ChangeEvent<HTMLELements>) {
     if (validate && !validate(e.target.value)) return

@@ -2,7 +2,7 @@ import React from 'react'
 
 type Return<T> = [T, React.Dispatch<React.SetStateAction<T>>]
 
-const useLocalStorage = <T>(key: string, initialValue: T): Return<T> => {
+const useLocalStorageState = <T>(key: string, initialValue: T): Return<T> => {
   const [storedValue, setStoredValue] = React.useState<T>(() => {
     const value = localStorage.getItem(key)
     // prettier-ignore
@@ -20,4 +20,4 @@ const useLocalStorage = <T>(key: string, initialValue: T): Return<T> => {
   return [storedValue, setStoredValue]
 }
 
-export default useLocalStorage
+export default useLocalStorageState

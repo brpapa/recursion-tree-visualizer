@@ -14,7 +14,7 @@ import {
 import templates from '../../config/templates'
 import useFormInput from '../../hooks/use-form-input'
 import useCarbonAds from '../../hooks/use-carbon-ads'
-import useLocalStorage from '../../hooks/use-local-storage'
+import useLocalStorageState from '../../hooks/use-local-storage-state'
 import {
   Template,
   ThemeType,
@@ -35,7 +35,7 @@ type Props = {
 }
 
 const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
-  const [lang, setLang] = useLocalStorage<Language>(
+  const [lang, setLang] = useLocalStorageState<Language>(
     'fn-lang',
     consts.DEFAULT_LANGUAGE
   )
@@ -44,14 +44,14 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     'fn()',
     buildFnCallValidator(lang)
   )
-  const [fnCode, setFnCode] = useLocalStorage('fn-code', consts.DEFAULT_FN_CODE)
-  const [fnGlobalVars, setFnGlobalVars] = useLocalStorage<GlobalVar[]>(
+  const [fnCode, setFnCode] = useLocalStorageState('fn-code', consts.DEFAULT_FN_CODE)
+  const [fnGlobalVars, setFnGlobalVars] = useLocalStorageState<GlobalVar[]>(
     'fn-global-vars',
     consts.DEFAULT_GLOBAL_VARS
   )
 
-  const [memoize, setMemoize] = useLocalStorage('memoize', false)
-  const [animate, setAnimate] = useLocalStorage('animate', true)
+  const [memoize, setMemoize] = useLocalStorageState('memoize', false)
+  const [animate, setAnimate] = useLocalStorageState('animate', true)
 
   const theme = useContext(ThemeContext)
 

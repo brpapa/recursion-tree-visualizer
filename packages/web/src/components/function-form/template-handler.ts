@@ -30,15 +30,16 @@ export const composeFnData = (
   lang: Language
 ): FunctionData => {
   const { body, paramsNames } = buildFnCodeDecomposer(lang)(fnCode)
-  const paramsValues = getParamsValues(fnCall)
-
-  if (paramsNames.length !== paramsValues.length)
-    throw new Error('Incorrect params values')
-
-  const params = paramsNames.map((paramName, i) => ({
-    name: paramName,
-    initialValue: paramsValues[i],
+  const paramsCallingValues = getParamsCallingValues(fnCall)
+  const paramsDefaultValues = getParamsDefaultValues(fnCode)
+  
+  const params = paramsNames.map((name, i) => ({
+    name,
+    initialValue: paramsCallingValues[i] ?? paramsDefaultValues[i] ?? null,
   }))
+
+  if (params.some(p => p.initialValue === null))
+    throw new Error('Incorrect params values')
 
   const globalVariables = fnGlobalVars.filter(
     ({ name, value }) => name !== '' && value !== ''
@@ -50,12 +51,10 @@ export const composeFnData = (
 export const buildFnCodeDecomposer = (lang: Language) => {
   switch (lang) {
     case 'node':
-      return (fnCode: string) => {
-        return ({
+      return (fnCode: string) => ({
           body: fnCode.substring(fnCode.indexOf('{') + 2, fnCode.lastIndexOf('}')),
-          paramsNames: getParamsNames(fnCode),
+          paramsNames: getParamsNames(fnCode)
         })
-      }
     case 'python':
       return (fnCode: string) => ({
         body: fnCode.slice(fnCode.indexOf(':\n') + 2),
@@ -74,10 +73,33 @@ export const buildFnCodeComposer = (lang: Language) => {
   }
 }
 
-const getParamsNames = (fnCode: string) => {
-  const namesDeclaration = fnCode.substring(fnCode.indexOf('(') + 1, fnCode.indexOf(')'))
-  const names = namesDeclaration === '' ? [] : namesDeclaration.split(/\s*,\s*/)
+const getParamsNames = (fnCode: string): string[] => {
+  const paramsDeclaration = getParamsDeclaration(fnCode)
+  const names = paramsDeclaration === ''
+    ? []
+    : paramsDeclaration
+      .split(/\s*,\s*/)
+      .map(s => s.split(/\s*=\s*/)[0])
+  
   return names
+}
+
+const getParamsDefaultValues = (fnCode: string): Array<string | null> => {
+  const paramsDeclaration = getParamsDeclaration(fnCode)
+  const defaultValues = paramsDeclaration === ''
+    ? []
+    : paramsDeclaration
+      .split(/\s*,\s*/)
+      .map(s => s.split(/\s*=\s*/)[1] ?? null)
+
+  return defaultValues
+}
+
+const getParamsDeclaration = (fnCode: string) => {
+  return fnCode.substring(
+    fnCode.indexOf('(') + 1,
+    fnCode.indexOf(')')
+  )
 }
 
 // TODO: unit tests
@@ -85,7 +107,7 @@ const getParamsNames = (fnCode: string) => {
 // 'fn([1,2],[1])' should return ['[1,2]', '[1]']
 // 'fn({1,2},1)' should return ['{1,2}', 1]
 // 'fn([1,[2,3]],1)' should return ['[1,[2,3]]', '1']
-const getParamsValues = (fnCall: string) => {
+const getParamsCallingValues = (fnCall: string) => {
   const valuesDeclaration = fnCall
     .substring(fnCall.indexOf('(') + 1, fnCall.lastIndexOf(')'))
     .replace(/\s*/g, '')
