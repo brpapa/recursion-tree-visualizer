@@ -10,6 +10,8 @@ import {
   buildFnCodeComposer,
   composeFnData,
   decomposeFnData,
+  getParams,
+  extractContentInsideFirstParentesis,
 } from './template-handler'
 import templates from '../../config/templates'
 import useFormInput from '../../hooks/use-form-input'
@@ -44,7 +46,10 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     'fn()',
     buildFnCallValidator(lang)
   )
-  const [fnCode, setFnCode] = useLocalStorageState('fn-code', consts.DEFAULT_FN_CODE)
+  const [fnCode, setFnCode] = useLocalStorageState(
+    'fn-code',
+    consts.DEFAULT_FN_CODE
+  )
   const [fnGlobalVars, setFnGlobalVars] = useLocalStorageState<GlobalVar[]>(
     'fn-global-vars',
     consts.DEFAULT_GLOBAL_VARS
@@ -83,10 +88,10 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     if (activeTemplate === null) {
       // keep only the previous params names (inside fnCode)
       setFnCode((prevFnCode) => {
-        const decomposeFnCode = buildFnCodeDecomposer(lang)
         const composeFnCode = buildFnCodeComposer(newLang)
 
-        const { paramsNames } = decomposeFnCode(prevFnCode)
+        const prevParamsDeclaration = extractContentInsideFirstParentesis(prevFnCode)
+        const paramsNames = getParams(prevParamsDeclaration).map((p) => p.name)
         return composeFnCode({ paramsNames })
       })
     } else {
@@ -168,7 +173,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
               right: '0',
               width: '80px',
               height: '22px',
-              fontSize: '14px'
+              fontSize: '14px',
             }}
           >
             {consts.LANGUAGES.map((lang) => (

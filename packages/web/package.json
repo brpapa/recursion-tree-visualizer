@@ -4,10 +4,15 @@
   "author": "Bruno Papa <bruno.papa@hotmail.com>",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": "14"
+  },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint 'src/**/*.ts'",
+    "test": "npx jest --config jest.config.js",
+    "test:cov": "npx jest --config jest.config.js --coverage",
     "typesync": "npx typesync"
   },
   "dependencies": {
@@ -33,6 +38,8 @@
     "eslint-plugin-react": "^7.23.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "react-scripts": "^4.0.3",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.4",
     "typescript": "^3.8.3"
   },
   "browserslist": {

@@ -1,4 +1,4 @@
-/* code shared between
+/* this code is duplicated in
   - lambda/src/utils/safe-json.ts
   - lambda/src/runner/operations/get-full-source-code.ts
   - web/src/utils/safe-json.ts
