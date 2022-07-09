@@ -4,6 +4,9 @@
   "author": "Bruno Papa <bruno.papa@hotmail.com>",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": "14"
+  },
   "scripts": {
     "build": "npx tsc",
     "test": "DEBUG='app:*,test:*' npx jest --config jest.config.js",

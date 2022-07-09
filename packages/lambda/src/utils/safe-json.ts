@@ -1,7 +1,8 @@
 import { debug } from 'debug'
+
 const log = debug('app:utils:safe-json')
 
-/* FIXME: code shared between (ESSA EH A FONTE DA VERDADE)
+/* FIXME: this code is duplicated in: (CONSIDERAR SEMPRE ESSA COMO A FONTE DA VERDADE)
   - lambda/src/utils/safe-json.ts
   - lambda/src/runner/operations/get-full-source-code.ts
   - web/src/utils/safe-json.ts

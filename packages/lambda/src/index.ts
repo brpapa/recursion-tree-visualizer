@@ -10,9 +10,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   log('Event received: %O', event)
 
   const validatedEvent = validateAPIGatewayProxyEvent(event)
-  if (validatedEvent.isError())
-    return badRequest(validatedEvent.value)
-  
+  if (validatedEvent.isError()) return badRequest(validatedEvent.value)
+
   const body = validatedEvent.value
 
   try {

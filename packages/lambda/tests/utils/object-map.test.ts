@@ -2,7 +2,7 @@ import { describe, it, expect } from '@jest/globals'
 import { objectMap } from '../../src/utils/object-map'
 
 describe('Object map', () => {
-  test('Should be handle with string key', () => {
+  it('Should be handle with string key', () => {
     const obj = { a: 1, b: 2 }
 
     const mapped1 = objectMap(obj, (v) => 2 * v)
@@ -12,7 +12,7 @@ describe('Object map', () => {
     const mapped2 = objectMap(obj, (v, k) => v + k)
     expect(mapped2).toEqual({ a: '1a', b: '2b' })
   })
-  // test('should be handle with number key', () => {
+  // it('should be handle with number key', () => {
   //   expect(objectMap({ 0: 1, 1: 2 }, (v) => 2 * v)).toEqual({ 0: 2, 1: 4 })
   // })
 })

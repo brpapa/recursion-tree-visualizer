@@ -57,7 +57,6 @@ export const buildFnCodeDecomposer = (lang: Language) => {
   switch (lang) {
     case 'node':
       return (fnCode: string) => ({
-        // todo: usar mesma logica do extractContentInsideFirstParentesis mas com {}
         body: fnCode.substring(
           fnCode.indexOf('{') + 2,
           fnCode.lastIndexOf('}')

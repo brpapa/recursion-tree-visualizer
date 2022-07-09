@@ -117,11 +117,28 @@ describe('template handler', () => {
             fnCall: 'fn(1)',
           },
           expected: {
-            body: 'return 1 ',
+            body: 'return 1',
             params: [
               { name: 'a', initialValue: '1' },
               { name: 'b', initialValue: '[0,1]' },
             ],
+          },
+        },
+      ],
+      [
+        {
+          args: {
+            lang: 'node',
+            fnCode: `
+              function fn() { 
+                function f() { return 1 }; return f();
+              }
+            `,
+            fnCall: 'fn()',
+          },
+          expected: {
+            body: 'function f() { return 1 }; return f();',
+            params: [],
           },
         },
       ],

@@ -67,7 +67,9 @@ The deployment of the Lambda function is automatized by the workflow `cd-lambda-
 
    - ECR repository to store your Docker images
 
-2. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+   - IAM user with the proper permissions
+
+2. Store the IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
 3. Change the workflow file `github/workflows/cd-lambda-function.yml`:
 
