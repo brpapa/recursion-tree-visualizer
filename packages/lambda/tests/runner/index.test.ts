@@ -445,7 +445,10 @@ describe('should return success', () => {
     })
 
     function registerTests(set: Record<SupportedLanguages, FunctionData>) {
-      const entries = Object.entries(set) as [SupportedLanguages, FunctionData][]
+      const entries = Object.entries(set) as [
+        SupportedLanguages,
+        FunctionData
+      ][]
 
       entries.forEach(([lang, fnData]) => {
         test(`and when lang is \`${lang}\``, async () => {
@@ -454,8 +457,8 @@ describe('should return success', () => {
           expect(actual.isSuccess()).toBeTruthy()
         })
       })
-      
-      for (let i = 0; i+1 < entries.length; i++) {
+
+      for (let i = 0; i + 1 < entries.length; i++) {
         const [langA, fnDataA] = entries[i]
         const [langB, fnDataB] = entries[i + 1]
 
@@ -474,68 +477,104 @@ describe('should return success', () => {
 })
 
 describe('should return error', () => {
-  describe('`TreeError.ExceededRecursiveCallsLimit`', () => {
-    describe('when there is not algebraic operation with function return value', () => {
-      test('and when lang is `python`', async () => {
-        const actual = await runPython({
-          body: 'return fn()',
-        })
-        expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
-          expect(actual.value.type).toEqual(
-            TreeError.ExceededRecursiveCallsLimit
-          )
-      })
-      test('and when lang is `node`', async () => {
-        const actual = await runNode({
-          body: 'return fn()',
-        })
-        expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
-          expect(actual.value.type).toEqual(
-            TreeError.ExceededRecursiveCallsLimit
-          )
-      })
-    })
-    describe('when there is some algebraic operation with function return value', () => {
-      test('and when lang is `python`', async () => {
-        const actual = await runPython({
-          body: 'return 1 + fn()',
-        })
-        expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
-          expect(actual.value.type).toEqual(
-            TreeError.ExceededRecursiveCallsLimit
-          )
-      })
-      test('and when lang is `node`', async () => {
-        const actual = await runNode({
-          body: 'return 1 + fn()',
-        })
-        expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
-          expect(actual.value.type).toEqual(
-            TreeError.ExceededRecursiveCallsLimit
-          )
-      })
-    })
-  })
   describe('`TreeError.EmptyTree`', () => {
     test('and when lang is `python`', async () => {
       const actual = await runPython({
         body: 'pass',
       })
       expect(actual.isError()).toBeTruthy()
-      if (actual.isError())
+      if (actual.isError()) {
         expect(actual.value.type).toEqual(TreeError.EmptyTree)
+        expect(actual.value.reason).toEqual('The recursion tree is empty')
+      }
     })
     test('and when lang is `node`', async () => {
       const actual = await runNode({
         body: '',
       })
       expect(actual.isError()).toBeTruthy()
-      if (actual.isError())
+      if (actual.isError()) {
         expect(actual.value.type).toEqual(TreeError.EmptyTree)
+        expect(actual.value.reason).toEqual('The recursion tree is empty')
+      }
+    })
+  })
+  describe('`TreeError.ExceededRecursiveCallsLimit`', () => {
+    describe('when there is not algebraic operation with function return value', () => {
+      test('and when lang is `python`', async () => {
+        const run = buildRunner('python', {
+          memoize: false,
+          maxRecursiveCalls: 5,
+        })
+        const actual = await run({
+          body: 'return fn()',
+        })
+        expect(actual.isError()).toBeTruthy()
+        if (actual.isError()) {
+          expect(actual.value.type).toEqual(
+            TreeError.ExceededRecursiveCallsLimit
+          )
+          expect(actual.value.reason).toEqual(
+            'The limit of 5 recursive calls was exceeded'
+          )
+        }
+      })
+      test('and when lang is `node`', async () => {
+        const run = buildRunner('node', {
+          memoize: false,
+          maxRecursiveCalls: 5,
+        })
+        const actual = await run({
+          body: 'return fn()',
+        })
+        expect(actual.isError()).toBeTruthy()
+        if (actual.isError()) {
+          expect(actual.value.type).toEqual(
+            TreeError.ExceededRecursiveCallsLimit
+          )
+          expect(actual.value.reason).toEqual(
+            'The limit of 5 recursive calls was exceeded'
+          )
+        }
+      })
+    })
+    describe('when there is some algebraic operation with function return value', () => {
+      test('and when lang is `python`', async () => {
+        const run = buildRunner('python', {
+          memoize: false,
+          maxRecursiveCalls: 5,
+        })
+        const actual = await run({
+          body: 'return 1 + fn()',
+        })
+        expect(actual.isError()).toBeTruthy()
+        if (actual.isError()) {
+          expect(actual.value.type).toEqual(
+            TreeError.ExceededRecursiveCallsLimit
+          )
+          expect(actual.value.reason).toEqual(
+            'The limit of 5 recursive calls was exceeded'
+          )
+        }
+      })
+      test('and when lang is `node`', async () => {
+        const run = buildRunner('node', {
+          memoize: false,
+          maxRecursiveCalls: 5,
+        })
+        const actual = await run({
+          body: 'return 1 + fn()',
+        })
+        expect(actual.isError()).toBeTruthy()
+        if (actual.isError()) {
+          expect(actual.value.type).toEqual(
+            TreeError.ExceededRecursiveCallsLimit
+          )
+          expect(actual.value.reason).toEqual(
+            'The limit of 5 recursive calls was exceeded'
+          )
+        }
+      })
     })
   })
   describe('`ChildProcessError.RuntimeError`', () => {
@@ -545,16 +584,24 @@ describe('should return error', () => {
           body: 'return notDefined',
         })
         expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
+        if (actual.isError()) {
           expect(actual.value.type).toEqual(ChildProcessError.RuntimeError)
+          expect(actual.value.reason).toEqual(
+            "Your code outputs the following NameError: name 'notDefined' is not defined"
+          )
+        }
       })
       test('and when lang is `node`', async () => {
         const actual = await runNode({
           body: 'return notDefined',
         })
         expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
+        if (actual.isError()) {
           expect(actual.value.type).toEqual(ChildProcessError.RuntimeError)
+          expect(actual.value.reason).toEqual(
+            'Your code outputs the following ReferenceError: notDefined is not defined'
+          )
+        }
       })
     })
     describe('when there is a not supported operation', () => {
@@ -564,27 +611,38 @@ describe('should return error', () => {
           body: ['if (n < 1): return True', "return '1' + fn(n-1)"].join('\n'),
         })
         expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
+        if (actual.isError()) {
           expect(actual.value.type).toEqual(ChildProcessError.RuntimeError)
+          expect(actual.value.reason).toEqual(
+            'Your code outputs the following TypeError: can only concatenate str (not "bool") to str'
+          )
+        }
       })
     })
-    // TODO
-    describe.skip('when there is a uncaught error', () => {
+    describe('when there is a uncaught error', () => {
       test('and when lang is `python`', async () => {
         const actual = await runPython({
-          body: "raise Exception('error msg')",
+          body: "raise Exception('any message')",
         })
         expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
+        if (actual.isError()) {
           expect(actual.value.type).toEqual(ChildProcessError.RuntimeError)
+          expect(actual.value.reason).toEqual(
+            'Your code outputs the following Exception: any message'
+          )
+        }
       })
       test('and when lang is `node`', async () => {
         const actual = await runNode({
-          body: "throw new Error('error msg')",
+          body: "throw new Error('any message')",
         })
         expect(actual.isError()).toBeTruthy()
-        if (actual.isError())
+        if (actual.isError()) {
           expect(actual.value.type).toEqual(ChildProcessError.RuntimeError)
+          expect(actual.value.reason).toEqual(
+            'Your code outputs the following Error: any message'
+          )
+        }
       })
     })
   })
@@ -595,8 +653,12 @@ describe('should return error', () => {
         body: ['a = 1', 'while (True): a += 1'].join('\n'),
       })
       expect(actual.isError()).toBeTruthy()
-      if (actual.isError())
+      if (actual.isError()) {
         expect(actual.value.type).toEqual(ChildProcessError.TimeoutError)
+        expect(actual.value.reason).toEqual(
+          'The execution time limit of 0.05s was exceeded'
+        )
+      }
     })
     test('and when lang is `node`', async () => {
       const run = buildRunner('node', { memoize: false, timeoutMs: 50 })
@@ -604,8 +666,12 @@ describe('should return error', () => {
         body: ['let a = 1', 'while (true) a++'].join('\n'),
       })
       expect(actual.isError()).toBeTruthy()
-      if (actual.isError())
+      if (actual.isError()) {
         expect(actual.value.type).toEqual(ChildProcessError.TimeoutError)
+        expect(actual.value.reason).toEqual(
+          'The execution time limit of 0.05s was exceeded'
+        )
+      }
     })
   })
 })

@@ -8,12 +8,13 @@ const log = debug('app:runner:source-code')
  */
 export default function getSourceCode(
   plainCode: string,
-  lang: SupportedLanguages
+  lang: SupportedLanguages,
+  maxRecursiveCalls: number
 ) {
   return [
     dependenciesCode[lang],
     plainCode,
-    recursionTrackerCode[lang]
+    recursionTrackerCode(maxRecursiveCalls)[lang],
   ].join('\n\n')
 }
 
@@ -46,9 +47,11 @@ def safeStringify(o):
 `,
 }
 
-const recursionTrackerCode: Record<SupportedLanguages, string> = {
+const recursionTrackerCode: (
+  maxRecursiveCalls: number
+) => Record<SupportedLanguages, string> = (maxRecursiveCalls: number) => ({
   node: `
-const MAX_RECURSIVE_CALLS = 222
+const MAX_RECURSIVE_CALLS = ${maxRecursiveCalls}
 
 const vertices = {}
 
@@ -107,7 +110,7 @@ console.log(safeStringify({
 }))
 `,
   python: `
-MAX_RECURSIVE_CALLS = 222
+MAX_RECURSIVE_CALLS = ${maxRecursiveCalls}
 
 vertices = {}
 
@@ -161,4 +164,4 @@ print(safeStringify({
   'errorValue': None 
 }))
 `,
-}
+})
