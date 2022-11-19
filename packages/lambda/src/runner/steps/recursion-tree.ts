@@ -1,30 +1,26 @@
 import childProcess from 'child_process'
 import util from 'util'
-import { RecursionTree, SupportedLanguages } from '../../types'
-import { Either, error, success } from '../../utils/either'
-import { Error } from '../../errors/common'
 import {
   ChildProcessError,
   runtimeError,
-  timeoutError,
+  timeoutError
 } from '../../errors/child-process'
+import { Error } from '../../errors/common'
 import {
-  TreeError,
   emptyTreeError,
-  exceededRecursiveCallsLimitError,
+  exceededRecursiveCallsLimitError, TreeError
 } from '../../errors/tree'
-import debug from 'debug'
+import { RecursionTree, SupportedLanguages } from '../../types'
+import { Either, error, success } from '../../utils/either'
 import { validateChildProcessStdout } from '../../validations/stdout'
 
-const log = debug('app:runner:recursion-tree')
 const exec = util.promisify(childProcess.exec)
-
-const CHILD_PROCESS_TIMEOUT_MS = 5000
 
 /** Starts a child process that evaluate the source code content and return the recursion tree. */
 export default async function generateRecursionTree(
   sourceCode: string,
-  lang: SupportedLanguages
+  lang: SupportedLanguages,
+  childProcessTimeoutMs: number
 ): Promise<
   Either<
     Error<
@@ -40,11 +36,12 @@ export default async function generateRecursionTree(
   const declare = buildDeclare(lang)
 
   try {
+    // `exec` throws exceptions if not outputs a stdout
     const { stdout: rawStdout } = await exec(
       declare.command(sourceCode), 
-      { timeout: CHILD_PROCESS_TIMEOUT_MS }
-    ) // throws exceptions if not output a stdout
-    // log(rawStdout)
+      { timeout: childProcessTimeoutMs }
+    )
+    // console.log(rawStdout)
 
     const validatedStdout = validateChildProcessStdout(rawStdout)
     if (validatedStdout.isError())
@@ -66,7 +63,7 @@ export default async function generateRecursionTree(
 
     return success(recursionTree)
   } catch (err) {
-    if (err?.killed) return error(timeoutError(CHILD_PROCESS_TIMEOUT_MS))
+    if (err?.killed) return error(timeoutError(childProcessTimeoutMs))
     if (err?.stderr) return error(runtimeError(err.stderr as string))
     throw err
   }

@@ -1,6 +1,4 @@
 import { Error } from './common'
-import { debug } from 'debug'
-const log = debug('app:errors:child-process')
 
 export enum ChildProcessError {
   CompilationError = 'Compilation Error',
@@ -11,7 +9,7 @@ export enum ChildProcessError {
 export const runtimeError = (
   stderr: string
 ): Error<ChildProcessError.RuntimeError> => {
-  // log(stderr)
+  // console.log(stderr)
 
   const matched = stderr.match(/([a-zA-Z]+Error:\s[^\n]+)/gm)
   if (matched === null) throw new Error(`Fail to parse the \`stderr\`:\n${stderr}`)
