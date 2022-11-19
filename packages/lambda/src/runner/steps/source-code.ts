@@ -39,6 +39,7 @@ const reviver = (_key, value) => {
   python: `
 import json
 import math
+import sys
 
 def safeStringify(o):
   return json.dumps(o, separators=(',', ':'), indent=None).replace(':Infinity', ':\\"Infinity\\"').replace(':-Infinity', ':\\"-Infinity\\"')
@@ -55,12 +56,13 @@ let currId = 0 // current vertex id
 const memoizedResults = {} // for each list of args
 const stack = [] // the current top is the parent id of the current vertex
 
-let errorValue = null
-
 function fn(...args) {
   if (currId > MAX_RECURSIVE_CALLS) {
-    errorValue = MAX_RECURSIVE_CALLS
-    return null
+    console.log(safeStringify({
+      successValue: null,
+      errorValue: MAX_RECURSIVE_CALLS
+    }))
+    process.exit(0)
   }
 
   vertices[currId] = {
@@ -96,13 +98,13 @@ function fn(...args) {
 
 const fnResult = fn(...fnParamsValues)
 
-const output = { successValue: null, errorValue: null }
-if (errorValue != null)
-  output.errorValue = errorValue
-else
-  output.successValue = { vertices, fnResult: fnResult === undefined? null : fnResult }
-
-console.log(safeStringify(output))
+console.log(safeStringify({
+  successValue: { 
+    vertices, 
+    fnResult: fnResult === undefined? null : fnResult 
+  },
+  errorValue: null
+}))
 `,
   python: `
 MAX_RECURSIVE_CALLS = 222
@@ -113,14 +115,15 @@ currId = 0  # current vertex id
 memoizedResults = {}  # for each list of args
 stack = []  # the current top is the parent id of the current vertex
 
-errorValue = None
-
 def fn(*args):
   global vertices, currId , memoizedResults, stack, errorValue, memoize
 
   if (currId > MAX_RECURSIVE_CALLS):
-    errorValue = MAX_RECURSIVE_CALLS
-    return None
+    print(safeStringify({
+      'successValue': None, 
+      'errorValue': MAX_RECURSIVE_CALLS
+    }))
+    sys.exit(0)
 
   vertices[currId] = {
     'argsList': list(args),
@@ -153,12 +156,9 @@ def fn(*args):
 
 fnResult = fn(*fnParamsValues)
 
-output = { 'successValue': None, 'errorValue': None }
-if (errorValue is not None):
-  output['errorValue'] = errorValue
-else:
-  output['successValue'] = { 'vertices': vertices, 'fnResult': fnResult }
-
-print(safeStringify(output))
+print(safeStringify({ 
+  'successValue': { 'vertices': vertices, 'fnResult': fnResult }, 
+  'errorValue': None 
+}))
 `,
 }

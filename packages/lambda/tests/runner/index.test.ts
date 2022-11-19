@@ -1,4 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
+import { TreeError } from '../../src/errors/tree'
 import buildRunner from '../../src/runner'
 import { FunctionData, SupportedLanguages } from '../../src/types'
 
@@ -6,36 +7,36 @@ describe('lang: `python`', () => {
   const run = buildRunner('python', { memoize: false })
 
   test('when user input contains single quotes', async () => {
-    const treeViewerData = await run({
+    const actual = await run({
       params: [{ name: 'str', initialValue: "'abc'" }],
       body: [
         "if str == '': return ''",
         'return fn(str[1:]) + str[0]',
       ].join('\n'),
     })
-    expect(treeViewerData.isSuccess()).toBeTruthy()
+    expect(actual.isSuccess()).toBeTruthy()
   })
 
   describe('when user input contains double quotes', () => {
     test('only on params.initialValue', async () => {
-      const treeViewerData = await run({
+      const actual = await run({
         params: [{ name: 'str', initialValue: '"abc"' }],
         body: [
           "if str == '': return ''",
           'return fn(str[1:]) + str[0]',
         ].join('\n'),
       })
-      expect(treeViewerData.isSuccess()).toBeTruthy()
+      expect(actual.isSuccess()).toBeTruthy()
     })
     test('only on body', async () => {
-      const treeViewerData = await run({
+      const actual = await run({
         params: [{ name: 'str', initialValue: "'abc'" }],
         body: [
           'if str == \'\': return \"\"',
           'return fn(str[1:]) + str[0]',
         ].join('\n'),
       })
-      expect(treeViewerData.isSuccess()).toBeTruthy()
+      expect(actual.isSuccess()).toBeTruthy()
     })
   })
 
@@ -55,7 +56,7 @@ describe('lang: `python`', () => {
   })
 
   test('when function return have multiple types', async () => {
-    const treeViewerData = await run({
+    const actual = await run({
       globalVariables: [
         { name: 'steps', value: '3' },
         { name: 'arrLen', value: '2' },
@@ -72,7 +73,28 @@ describe('lang: `python`', () => {
         'return (fn(idx - 1, step - 1) + fn(idx + 1, step - 1) + fn(idx, step - 1)) % 1000000007',
       ].join('\n'),
     })
-    expect(treeViewerData.isSuccess()).toBeTruthy()
+    expect(actual.isSuccess()).toBeTruthy()
+  })
+
+  describe('when exceed max recursive calls', () => {
+    test('and there is not algebraic operation with function return value', async () => {
+      const actual = await run({
+        body: 'return fn()',
+      })
+      expect(actual.isError()).toBeTruthy()
+      if (actual.isError())
+        expect(actual.value.type).toEqual(TreeError.ExceededRecursiveCallsLimit)
+    })
+
+
+    test('and there is some algebraic operation with function return value', async () => {
+      const actual = await run({
+        body: 'return 1 + fn()',
+      })
+      expect(actual.isError()).toBeTruthy()
+      if (actual.isError())
+        expect(actual.value.type).toEqual(TreeError.ExceededRecursiveCallsLimit)
+    })
   })
 })
 
@@ -80,36 +102,36 @@ describe('lang: `node`', () => {
   const run = buildRunner('node', { memoize: false })
 
   test('when user input contains single quotes', async () => {
-    const treeViewerData = await run({
+    const actual = await run({
       params: [{ name: 'str', initialValue: "'abc'" }],
       body: [
         "if (str === '') return ''",
         'return fn(str.substr(1, str.length)) + str[0]',
       ].join('\n'),
     })
-    expect(treeViewerData.isSuccess()).toBeTruthy()
+    expect(actual.isSuccess()).toBeTruthy()
   })
 
   describe('when user input contains double quotes', () => {
     test('only on params.initialValue', async () => {
-      const treeViewerData = await run({
+      const actual = await run({
         params: [{ name: 'str', initialValue: '"abc"' }],
         body: [
           "if (str === '') return ''",
           'return fn(str.substr(1, str.length)) + str[0]',
         ].join('\n'),
       })
-      expect(treeViewerData.isSuccess()).toBeTruthy()
+      expect(actual.isSuccess()).toBeTruthy()
     })
     test('only on body', async () => {
-      const treeViewerData = await run({
+      const actual = await run({
         params: [{ name: 'str', initialValue: "'abc'" }],
         body: [
           'if (str === \'\') return \"\"',
           'return fn(str.substr(1, str.length)) + str[0]',
         ].join('\n'),
       })
-      expect(treeViewerData.isSuccess()).toBeTruthy()
+      expect(actual.isSuccess()).toBeTruthy()
     })
   })
 
@@ -129,7 +151,7 @@ describe('lang: `node`', () => {
   })
 
   test('when function return can be `Infinity`', async () => {
-    const treeViewerData = await run({
+    const actual = await run({
       globalVariables: [{ name: 'coins', value: '[1,3,4,5]' }],
       params: [{ name: 'v', initialValue: '5' }],
       body: [
@@ -145,7 +167,27 @@ describe('lang: `node`', () => {
         'return ans',
       ].join('\n'),
     })
-    expect(treeViewerData.isSuccess()).toBeTruthy()
+    expect(actual.isSuccess()).toBeTruthy()
+  })
+
+  describe('when exceed max recursive calls', () => {
+    test('and there is not algebraic operation with function return value', async () => {
+      const actual = await run({
+        body: 'return fn()',
+      })
+      expect(actual.isError()).toBeTruthy()
+      if (actual.isError())
+        expect(actual.value.type).toEqual(TreeError.ExceededRecursiveCallsLimit)
+    })
+
+    test('and there is some algebraic operation with function return value', async () => {
+      const actual = await run({
+        body: 'return 1 + fn()',
+      })
+      expect(actual.isError()).toBeTruthy()
+      if (actual.isError())
+        expect(actual.value.type).toEqual(TreeError.ExceededRecursiveCallsLimit)
+    })
   })
 })
 
