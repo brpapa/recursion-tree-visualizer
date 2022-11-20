@@ -24,6 +24,12 @@ export type ChildProcessStdout = {
 /** [x,y] */
 export type Point = [number, number]
 
+export type RawTree = {
+  tree: RecursionTree
+  coords: Record<number, Point>,
+  bottomRight: Point
+}
+
 export type FunctionData = {
   body: string
   params?: { name: string; initialValue: string }[]
@@ -54,7 +60,7 @@ export type EdgesData = Record<
 >
 
 /** all that is necessary to render the tree */
-export type TreeViewerData = {
+export type TreeViewer = {
   /** amount of time steps */
   times: number
   edgesData: EdgesData
@@ -66,3 +72,4 @@ export type TreeViewerData = {
 }
 
 export type SupportedLanguages = 'node' | 'python'
+

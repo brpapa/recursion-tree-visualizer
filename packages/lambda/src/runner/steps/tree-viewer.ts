@@ -1,29 +1,17 @@
-import computeRawCoords from './raw-coords'
-import { objectMap } from '../../utils/object-map'
 import {
-  Point,
-  VerticesData,
-  EdgesData,
-  TreeViewerData,
-  RecursionTree,
-  Vertices,
+  EdgesData, Point, RawTree, TreeViewer,
+  Vertices, VerticesData
 } from '../../types'
-
-export default function computeTreeViewerData(tree: RecursionTree) {
-  const { rawCoords, rawBottomRight } = computeRawCoords(tree.vertices)
-  const treeViewerData = traverseTree(tree, rawCoords, rawBottomRight)
-  return treeViewerData
-}
+import { objectMap } from '../../utils/object-map'
 
 /** Traverse tree to adjust coords, populate logs, times, verticesData and edgesData */
-function traverseTree(
-  tree: RecursionTree,
-  rawCoords: Record<number, Point>,
-  rawBottomRight: Point
-): TreeViewerData {
+export function toTreeViewer(rawTree: RawTree): TreeViewer {
   const logs: string[] = []
-  const edgesData = initialEdgesData(tree.vertices)
-  const verticesData = initialVerticesData(rawCoords, tree.vertices)
+  const edgesData = initialEdgesData(rawTree.tree.vertices)
+  const verticesData = initialVerticesData(
+    rawTree.coords,
+    rawTree.tree.vertices
+  )
   const seen: boolean[] = []
   let time = 0
 
@@ -36,7 +24,8 @@ function traverseTree(
     logs.push(`fn(${verticesData[parentId].label}) starts running`)
 
     // para cada aresta parentId -w-> childId
-    for (const { childId: childId } of tree.vertices[parentId]?.adjList || []) {
+    for (const { childId: childId } of rawTree.tree.vertices[parentId]
+      ?.adjList || []) {
       if (!seen[childId]) {
         // parentId -> childId
         edgesData[edgeKey(parentId, childId)].timeRange[0] = time++
@@ -71,13 +60,15 @@ function traverseTree(
   })()
 
   logs.push(
-    `fn(${verticesData[0].label}) returns ${labelizeEdgeWeight(tree.fnResult)}`
+    `fn(${verticesData[0].label}) returns ${labelizeEdgeWeight(
+      rawTree.tree.fnResult
+    )}`
   )
 
   return {
     verticesData: verticesData,
     edgesData: edgesData,
-    svgBottomRight: coord(rawBottomRight, true),
+    svgBottomRight: coord(rawTree.bottomRight, true),
     times: time,
     logs,
   }

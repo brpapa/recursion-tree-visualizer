@@ -1,4 +1,4 @@
-import { Point, Vertices } from '../../types'
+import { Point, RawTree, RecursionTree, Vertices } from '../../types'
 
 type TreeNode = {
   /** Must be >= 0 */
@@ -13,12 +13,12 @@ type TreeNode = {
 }
 
 /** A partir da recursion tree, determina a melhores coordenadas (x,y) de cada vértice usando o Reingold-Tilford's algorithm */
-export default function computeRawCoords(vertices: Vertices, rootId = 0) {
+export function toRawTree(recursionTree: RecursionTree): RawTree {
   const rawCoords: Record<number, Point> = {} // rawCoords[u]: coordenada do vértice u
-  const rawTopLeft: Point = [0, 0]
   const rawBottomRight: Point = [0, 0]
+  const rootId = 0
 
-  if (Object.keys(vertices).length > 0) {
+  if (Object.keys(recursionTree.vertices).length > 0) {
     const root: TreeNode = {
       id: rootId,
       parent: null,
@@ -34,13 +34,13 @@ export default function computeRawCoords(vertices: Vertices, rootId = 0) {
     lastTraversal(root) // pre-order traversal
   }
 
-  return { rawCoords, rawTopLeft, rawBottomRight }
+  return { tree: recursionTree, coords: rawCoords, bottomRight: rawBottomRight }
 
   function initNodes(node: TreeNode, nodeId = rootId, nodeDepth = 0) {
-    if (vertices[nodeId]?.adjList === undefined) return
+    if (recursionTree.vertices[nodeId]?.adjList === undefined) return
 
     // for each child of node
-    for (const { childId } of vertices[nodeId].adjList) {
+    for (const { childId } of recursionTree.vertices[nodeId].adjList) {
       const child = {
         id: childId,
         parent: node,

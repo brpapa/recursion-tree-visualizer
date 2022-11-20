@@ -17,7 +17,7 @@ import { validateChildProcessStdout } from '../../validations/stdout'
 const exec = util.promisify(childProcess.exec)
 
 /** Starts a child process that evaluate the source code content and return the recursion tree. */
-export default async function generateRecursionTree(
+export async function toRecursionTree(
   sourceCode: string,
   lang: SupportedLanguages,
   childProcessTimeoutMs: number

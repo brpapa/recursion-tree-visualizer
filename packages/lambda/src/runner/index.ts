@@ -1,25 +1,31 @@
 import { flow } from 'fp-ts/function'
-import getSourceCode from './steps/source-code'
-import generateRecursionTree from './steps/recursion-tree'
-import translateToPlainCode from './steps/plain-code'
-import computeTreeViewerData from './steps/tree-viewer-data'
+import { toFullSourceCode } from './steps/source-code'
+import { toRecursionTree } from './steps/recursion-tree'
+import { toUserCode } from './steps/user-code'
+import { toTreeViewer } from './steps/tree-viewer'
 import { FunctionData, SupportedLanguages } from '../types'
-
-const DEFAULT_TIMEOUT_MS = 5000
-const DEFAULT_MAX_RECURSIVE_CALLS = 256
+import { DEFAULT_MAX_RECURSIVE_CALLS, DEFAULT_TIMEOUT_MS } from '../config'
+import { toRawTree } from './steps/raw-tree'
 
 /** Pipeline to input FuncionData and output TreeViewerData. */
 export default function buildRunner(
   lang: SupportedLanguages,
-  options: { memoize: boolean, timeoutMs?: number, maxRecursiveCalls?: number }
+  options?: {
+    memoize?: boolean
+    timeoutMs?: number
+    maxRecursiveCalls?: number
+  }
 ) {
-  const timeoutMs = options.timeoutMs || DEFAULT_TIMEOUT_MS
-  const maxRecursiveCalls = options.maxRecursiveCalls || DEFAULT_MAX_RECURSIVE_CALLS
+  const memoize = options?.memoize || false
+  const timeoutMs = options?.timeoutMs || DEFAULT_TIMEOUT_MS
+  const maxRecursiveCalls =
+    options?.maxRecursiveCalls || DEFAULT_MAX_RECURSIVE_CALLS
 
   return flow(
-    (fnData: FunctionData) => translateToPlainCode(fnData, lang, options),
-    (plainCode) => getSourceCode(plainCode, lang, maxRecursiveCalls),
-    (sourceCode) => generateRecursionTree(sourceCode, lang, timeoutMs),
-    async (tree) => (await tree).onSuccess(computeTreeViewerData)
+    (fnData: FunctionData) => toUserCode(fnData, lang, memoize),
+    (userCode) => toFullSourceCode(userCode, lang, maxRecursiveCalls),
+    (fullSourceCode) => toRecursionTree(fullSourceCode, lang, timeoutMs),
+    (recursionTree) => recursionTree.then((r) => r.onSuccess(toRawTree)),
+    (rawTree) => rawTree.then((r) => r.onSuccess(toTreeViewer))
   )
 }

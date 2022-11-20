@@ -4,8 +4,8 @@ import { TreeError } from '../../src/errors/tree'
 import buildRunner from '../../src/runner'
 import { FunctionData, SupportedLanguages } from '../../src/types'
 
-const runPython = buildRunner('python', { memoize: false })
-const runNode = buildRunner('node', { memoize: false })
+const runPython = buildRunner('python')
+const runNode = buildRunner('node')
 
 describe('should return success', () => {
   describe('when user input contains single quotes', () => {
@@ -107,7 +107,7 @@ describe('should return success', () => {
       fnData: FunctionData
     ) {
       const runWithMemo = buildRunner(lang, { memoize: true })
-      const runWithoutMemo = buildRunner(lang, { memoize: false })
+      const runWithoutMemo = buildRunner(lang)
 
       const resultWithMemoize = await runWithMemo(fnData)
       expect(resultWithMemoize.isSuccess()).toBeTruthy()
@@ -452,7 +452,7 @@ describe('should return success', () => {
 
       entries.forEach(([lang, fnData]) => {
         test(`and when lang is \`${lang}\``, async () => {
-          const run = buildRunner(lang, { memoize: false })
+          const run = buildRunner(lang)
           const actual = await run(fnData)
           expect(actual.isSuccess()).toBeTruthy()
         })
@@ -463,8 +463,8 @@ describe('should return success', () => {
         const [langB, fnDataB] = entries[i + 1]
 
         test(`and the generated trees for each language \`${langA}\` and \`${langB}\` should be the same`, async () => {
-          const runA = buildRunner(langA, { memoize: false })
-          const runB = buildRunner(langB, { memoize: false })
+          const runA = buildRunner(langA)
+          const runB = buildRunner(langB)
 
           const actualA = await runA(fnDataA)
           const actualB = await runB(fnDataB)
@@ -503,7 +503,6 @@ describe('should return error', () => {
     describe('when there is not algebraic operation with function return value', () => {
       test('and when lang is `python`', async () => {
         const run = buildRunner('python', {
-          memoize: false,
           maxRecursiveCalls: 5,
         })
         const actual = await run({
@@ -521,7 +520,6 @@ describe('should return error', () => {
       })
       test('and when lang is `node`', async () => {
         const run = buildRunner('node', {
-          memoize: false,
           maxRecursiveCalls: 5,
         })
         const actual = await run({
@@ -541,7 +539,6 @@ describe('should return error', () => {
     describe('when there is some algebraic operation with function return value', () => {
       test('and when lang is `python`', async () => {
         const run = buildRunner('python', {
-          memoize: false,
           maxRecursiveCalls: 5,
         })
         const actual = await run({
@@ -559,7 +556,6 @@ describe('should return error', () => {
       })
       test('and when lang is `node`', async () => {
         const run = buildRunner('node', {
-          memoize: false,
           maxRecursiveCalls: 5,
         })
         const actual = await run({
@@ -648,7 +644,7 @@ describe('should return error', () => {
   })
   describe('`TreeError.Timeout`', () => {
     test('and when lang is `python`', async () => {
-      const run = buildRunner('python', { memoize: false, timeoutMs: 50 })
+      const run = buildRunner('python', { timeoutMs: 50 })
       const actual = await run({
         body: ['a = 1', 'while (True): a += 1'].join('\n'),
       })
@@ -661,7 +657,7 @@ describe('should return error', () => {
       }
     })
     test('and when lang is `node`', async () => {
-      const run = buildRunner('node', { memoize: false, timeoutMs: 50 })
+      const run = buildRunner('node', { timeoutMs: 50 })
       const actual = await run({
         body: ['let a = 1', 'while (true) a++'].join('\n'),
       })

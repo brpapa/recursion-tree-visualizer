@@ -6,14 +6,14 @@ const log = debug('app:runner:source-code')
  * Get the full code string that will be passed via cli argument, so escape char ".
  * The code contains the user-defined code (function, global variables, initial params values and options) and the code responsible for generating the tree from running of the recursive user-defined function. And should outputs to stdout an JSON string.
  */
-export default function getSourceCode(
-  plainCode: string,
+export function toFullSourceCode(
+  userCode: string,
   lang: SupportedLanguages,
   maxRecursiveCalls: number
 ) {
   return [
     dependenciesCode[lang],
-    plainCode,
+    userCode,
     recursionTrackerCode(maxRecursiveCalls)[lang],
   ].join('\n\n')
 }

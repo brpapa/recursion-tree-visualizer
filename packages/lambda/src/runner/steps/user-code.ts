@@ -1,9 +1,9 @@
 import { FunctionData, SupportedLanguages } from '../../types'
 
-export default function translateToPlainCode(
+export function toUserCode(
   fnData: FunctionData,
   lang: SupportedLanguages,
-  options: { memoize: boolean }
+  memoize: boolean
 ) {
   const declare = buildDeclare(lang)
 
@@ -22,7 +22,7 @@ export default function translateToPlainCode(
     declare.function('_fn', paramsNames, scapeDoubleQuotes(fnData.body)),
     '',
     declare.variable('fnParamsValues', declare.array(paramsInitialValues)),
-    declare.variable('memoize', declare.boolean(options.memoize)),
+    declare.variable('memoize', declare.boolean(memoize)),
   ].join('\n')
 
   return plainCode

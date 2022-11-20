@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals'
 import { FunctionData, SupportedLanguages } from '../../src/types'
-import translateToPlainCode from '../../src/runner/steps/plain-code'
+import {toUserCode} from '../../src/runner/steps/user-code'
 import { debug } from 'debug'
 const log = debug('test:runner:plain-code')
 
@@ -38,10 +38,8 @@ const cases: Record<SupportedLanguages, FunctionData>[] = [
 describe('Getting plain code from function data', () => {
   describe('For `node` language', () => {
     it('Example 0', () => {
-      const plainCode = translateToPlainCode(cases[0].node, 'node', {
-        memoize: false,
-      })
-      expect(plainCode).toEqual(
+      const userCode = toUserCode(cases[0].node, 'node', false)
+      expect(userCode).toEqual(
         [
           'const arr = [1,3,4,5,2,10]',
           '',
@@ -61,10 +59,8 @@ describe('Getting plain code from function data', () => {
 
   describe('For `python` language', () => {
     it('Example 0', () => {
-      const plainCode = translateToPlainCode(cases[0].python, 'python', {
-        memoize: true,
-      })
-      expect(plainCode).toEqual(
+      const userCode = toUserCode(cases[0].python, 'python', true)
+      expect(userCode).toEqual(
         [
           'arr = [1,3,4,5,2,10]',
           '',

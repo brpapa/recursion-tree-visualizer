@@ -1,55 +1,71 @@
-import { describe, test, expect } from '@jest/globals'
+import { describe, expect, test } from '@jest/globals'
+import { toTreeViewer } from '../../src/runner/steps/tree-viewer'
 import { objectMap } from '../../src/utils/object-map'
-import { Vertices } from '../../src/types'
-import computeTreeViewerData from '../../src/runner/steps/tree-viewer-data'
-
-/*
-    0
-   / \
-  1   4
- / \
-2   3
-*/
-const vertices1: Vertices = {
-  0: {
-    adjList: [{ childId: 1 }, { childId: 4 }],
-    argsList: [],
-    memoized: false,
-  },
-  1: {
-    adjList: [{ childId: 2 }, { childId: 3 }],
-    argsList: [],
-    memoized: false,
-  },
-}
-/*
-For each time:
-00: 0
-01: 0->1
-02: 1
-03: 1->2
-04: 2
-05: 2->1
-06: 1
-07: 1->3
-08: 3
-09: 3->1
-10: 1
-11: 1->0
-12: 0
-13: 0->4
-14: 4
-15: 4->0
-16: 0
-*/
 
 describe('Getting tree viewer data from recursion tree', () => {
   describe('Example 1', () => {
-    const { verticesData, edgesData } = computeTreeViewerData({
-      vertices: vertices1,
-      fnResult: 0,
+    /*
+        0
+        / \
+      1   4
+      / \
+    2   3
+    */
+    const { verticesData, edgesData } = toTreeViewer({
+      tree: {
+        fnResult: 0,
+        vertices: {
+          0: {
+            adjList: [{ childId: 1 }, { childId: 4 }],
+            argsList: [],
+            memoized: false,
+          },
+          1: {
+            adjList: [{ childId: 2 }, { childId: 3 }],
+            argsList: [],
+            memoized: false,
+          },
+          2: {
+            adjList: [],
+            argsList: [],
+            memoized: false,
+          },
+          3: {
+            adjList: [],
+            argsList: [],
+            memoized: false,
+          },
+          4: {
+            adjList: [],
+            argsList: [],
+            memoized: false,
+          },
+        },
+      },
+      coords: { 0: [0, 0], 1: [0, 0], 2: [0, 0], 3: [0, 0], 4: [0, 0] },
+      bottomRight: [0, 0],
     })
 
+    /*
+      For each time:
+      00: 0
+      01: 0->1
+      02: 1
+      03: 1->2
+      04: 2
+      05: 2->1
+      06: 1
+      07: 1->3
+      08: 3
+      09: 3->1
+      10: 1
+      11: 1->0
+      12: 0
+      13: 0->4
+      14: 4
+      15: 4->0
+      16: 0
+    */
     test('Should compute the correct times for each vertice', () => {
       expect(
         objectMap(verticesData, (data) => ({
@@ -63,6 +79,7 @@ describe('Getting tree viewer data from recursion tree', () => {
         4: { times: [14] },
       })
     })
+
     test('Should compute the correct timeRange for each edge', () => {
       expect(
         objectMap(edgesData, (data) => ({

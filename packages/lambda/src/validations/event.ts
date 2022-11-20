@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent } from 'aws-lambda'
 import joi from 'joi'
-import { supportedLanguages } from '../settings'
+import { supportedLanguages } from '../config'
 import { EventBody } from '../types'
 import { Either, error, success } from '../utils/either'
 import { isJson, safeParse } from '../utils/safe-json'
