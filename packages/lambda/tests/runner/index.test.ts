@@ -4,10 +4,12 @@ import { TreeError } from '../../src/errors/tree'
 import buildRunner from '../../src/runner'
 import { FunctionData, SupportedLanguages } from '../../src/types'
 
-const runPython = buildRunner('python')
-const runNode = buildRunner('node')
+const baseOptions = { tmpDirPath: './_tmp' }
+const runPython = buildRunner('python', baseOptions)
+const runNode = buildRunner('node', baseOptions)
 
 describe('should return success', () => {
+  
   describe('when user input contains single quotes', () => {
     test('and when lang is `python`', async () => {
       const actual = await runPython({
@@ -29,6 +31,7 @@ describe('should return success', () => {
       expect(actual.isSuccess()).toBeTruthy()
     })
   })
+
   describe('when user input contains double quotes', () => {
     describe('only on `params.initialValue`', () => {
       test('and when lang is `python`', async () => {
@@ -74,6 +77,7 @@ describe('should return success', () => {
       })
     })
   })
+
   describe('when memoize is enabled', () => {
     test('and when lang is `python`', async () => {
       const fnData: FunctionData = {
@@ -106,8 +110,8 @@ describe('should return success', () => {
       lang: SupportedLanguages,
       fnData: FunctionData
     ) {
-      const runWithMemo = buildRunner(lang, { memoize: true })
-      const runWithoutMemo = buildRunner(lang)
+      const runWithMemo = buildRunner(lang, { ...baseOptions, memoize: true })
+      const runWithoutMemo = buildRunner(lang, baseOptions)
 
       const resultWithMemoize = await runWithMemo(fnData)
       expect(resultWithMemoize.isSuccess()).toBeTruthy()
@@ -121,6 +125,7 @@ describe('should return success', () => {
         )
     }
   })
+
   describe('when function return have multiple types', () => {
     test('and when lang is `python`', async () => {
       const actual = await runPython({
@@ -144,6 +149,7 @@ describe('should return success', () => {
     })
     test.todo('and when lang is `node`')
   })
+
   describe('when function return can be `Infinity`', () => {
     test.todo('and when lang is `python`')
     test('and when lang is `node`', async () => {
@@ -166,6 +172,7 @@ describe('should return success', () => {
       expect(actual.isSuccess()).toBeTruthy()
     })
   })
+  
   describe('when function is the template', () => {
     describe('subset sum', () => {
       registerTests({
@@ -452,7 +459,7 @@ describe('should return success', () => {
 
       entries.forEach(([lang, fnData]) => {
         test(`and when lang is \`${lang}\``, async () => {
-          const run = buildRunner(lang)
+          const run = buildRunner(lang, baseOptions)
           const actual = await run(fnData)
           expect(actual.isSuccess()).toBeTruthy()
         })
@@ -463,8 +470,8 @@ describe('should return success', () => {
         const [langB, fnDataB] = entries[i + 1]
 
         test(`and the generated trees for each language \`${langA}\` and \`${langB}\` should be the same`, async () => {
-          const runA = buildRunner(langA)
-          const runB = buildRunner(langB)
+          const runA = buildRunner(langA, baseOptions)
+          const runB = buildRunner(langB, baseOptions)
 
           const actualA = await runA(fnDataA)
           const actualB = await runB(fnDataB)
@@ -477,6 +484,7 @@ describe('should return success', () => {
 })
 
 describe('should return error', () => {
+  
   describe('`TreeError.EmptyTree`', () => {
     test('and when lang is `python`', async () => {
       const actual = await runPython({
@@ -499,10 +507,47 @@ describe('should return error', () => {
       }
     })
   })
+
+  describe('`TreeError.ExceededSourceCodeSizeLimit`', () => {
+    test('and when lang is `python`', async () => {
+      const run = buildRunner('python', {
+        ...baseOptions,
+        tmpFileMaxSizeBytes: 1000,
+      })
+      const actual = await run({
+        body: 'veryyyyyyy long body',
+      })
+      expect(actual.isError()).toBeTruthy()
+      if (actual.isError()) {
+        expect(actual.value.type).toEqual(TreeError.ExceededSourceCodeSizeLimit)
+        expect(actual.value.reason).toEqual(
+          'The source code size exceeded the limit of 1000 bytes'
+        )
+      }
+    })
+    test('and when lang is `node`', async () => {
+      const run = buildRunner('node', {
+        ...baseOptions,
+        tmpFileMaxSizeBytes: 1000,
+      })
+      const actual = await run({
+        body: 'veryyyyyyy long body',
+      })
+      expect(actual.isError()).toBeTruthy()
+      if (actual.isError()) {
+        expect(actual.value.type).toEqual(TreeError.ExceededSourceCodeSizeLimit)
+        expect(actual.value.reason).toEqual(
+          'The source code size exceeded the limit of 1000 bytes'
+        )
+      }
+    })
+  })
+
   describe('`TreeError.ExceededRecursiveCallsLimit`', () => {
     describe('when there is not algebraic operation with function return value', () => {
       test('and when lang is `python`', async () => {
         const run = buildRunner('python', {
+          ...baseOptions,
           maxRecursiveCalls: 5,
         })
         const actual = await run({
@@ -520,6 +565,7 @@ describe('should return error', () => {
       })
       test('and when lang is `node`', async () => {
         const run = buildRunner('node', {
+          ...baseOptions,
           maxRecursiveCalls: 5,
         })
         const actual = await run({
@@ -539,6 +585,7 @@ describe('should return error', () => {
     describe('when there is some algebraic operation with function return value', () => {
       test('and when lang is `python`', async () => {
         const run = buildRunner('python', {
+          ...baseOptions,
           maxRecursiveCalls: 5,
         })
         const actual = await run({
@@ -556,6 +603,7 @@ describe('should return error', () => {
       })
       test('and when lang is `node`', async () => {
         const run = buildRunner('node', {
+          ...baseOptions,
           maxRecursiveCalls: 5,
         })
         const actual = await run({
@@ -573,6 +621,7 @@ describe('should return error', () => {
       })
     })
   })
+
   describe('`ChildProcessError.RuntimeError`', () => {
     describe('when a not defined variable is called', () => {
       test('and when lang is `python`', async () => {
@@ -642,9 +691,10 @@ describe('should return error', () => {
       })
     })
   })
-  describe('`TreeError.Timeout`', () => {
+
+  describe('`ChildProcessError.Timeout`', () => {
     test('and when lang is `python`', async () => {
-      const run = buildRunner('python', { timeoutMs: 50 })
+      const run = buildRunner('python', { ...baseOptions, timeoutMs: 50 })
       const actual = await run({
         body: ['a = 1', 'while (True): a += 1'].join('\n'),
       })
@@ -657,7 +707,7 @@ describe('should return error', () => {
       }
     })
     test('and when lang is `node`', async () => {
-      const run = buildRunner('node', { timeoutMs: 50 })
+      const run = buildRunner('node', { ...baseOptions, timeoutMs: 50 })
       const actual = await run({
         body: ['let a = 1', 'while (true) a++'].join('\n'),
       })

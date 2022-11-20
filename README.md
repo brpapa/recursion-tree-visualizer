@@ -38,12 +38,12 @@ In the `packages/lambda` directory, run:
 
 ```bash
 # build your local image
-$ docker build --tag dev-image .
+$ docker build --tag rtv .
 
 # create and run a container using AWS RIE as executable to emulate a server for your lambda function
-$ docker run --rm -p 8080:8080 dev-image
+$ docker run --rm -p 8080:8080 rtv
 
-# make a http request to your function, passing event with the -d in body field (escaped json)
+# make a http request to your function, passing event with the -d in body field (escaped json), see examples in requests.http file
 $ curl -XPOST "http://localhost:8080/2015-03-31/functions/function/invocations" -d '{"body":"{}"}'
 ```
 

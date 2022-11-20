@@ -13,13 +13,13 @@ export function toUserCode(
 
   const paramsNames = (fnData.params || []).map((param) => param.name)
   const paramsInitialValues = (fnData.params || []).map(
-    (param) => scapeDoubleQuotes(param.initialValue)
+    (param) => param.initialValue
   )
 
   const plainCode = [
     ...globalVarLines,
     '',
-    declare.function('_fn', paramsNames, scapeDoubleQuotes(fnData.body)),
+    declare.function('_fn', paramsNames, fnData.body),
     '',
     declare.variable('fnParamsValues', declare.array(paramsInitialValues)),
     declare.variable('memoize', declare.boolean(memoize)),
@@ -64,5 +64,3 @@ const indent = (code: string) =>
     .split('\n')
     .map((line) => `  ${line}`)
     .join('\n')
-
-const scapeDoubleQuotes = (code: string) => code.replace(/"/g, '\\"')

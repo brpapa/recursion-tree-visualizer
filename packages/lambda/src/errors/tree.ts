@@ -3,6 +3,7 @@ import { Error } from './common'
 export enum TreeError {
   EmptyTree = 'Empty Tree Error',
   ExceededRecursiveCallsLimit = 'Exceeded Recursive Calls Limit Error',
+  ExceededSourceCodeSizeLimit = 'Exceeded Source Code Size Limit Error',
 }
 
 export const emptyTreeError = (): Error<TreeError.EmptyTree> => ({
@@ -15,4 +16,11 @@ export const exceededRecursiveCallsLimitError = (
 ): Error<TreeError.ExceededRecursiveCallsLimit> => ({
   type: TreeError.ExceededRecursiveCallsLimit,
   reason: `The limit of ${recursiveCallsLimit} recursive calls was exceeded`,
+})
+
+export const exceededSourceCodeSizeLimitError = (
+  sizeLimitBytes: number
+): Error<TreeError.ExceededSourceCodeSizeLimit> => ({
+  type: TreeError.ExceededSourceCodeSizeLimit,
+  reason: `The source code size exceeded the limit of ${sizeLimitBytes} bytes`,
 })

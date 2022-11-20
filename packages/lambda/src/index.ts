@@ -7,7 +7,7 @@ import { validateAPIGatewayProxyEvent } from './validations/event'
 const log = debug('app:handler')
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-  log('Event received: %O', event)
+  // log('Event received: %O', event)
 
   const validatedEvent = validateAPIGatewayProxyEvent(event)
   if (validatedEvent.isError()) return badRequest(validatedEvent.value)

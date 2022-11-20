@@ -9,8 +9,6 @@ export enum ChildProcessError {
 export const runtimeError = (
   stderr: string
 ): Error<ChildProcessError.RuntimeError> => {
-  // console.log({ stderr })
-
   const matched = stderr.match(/([a-zA-Z]*(Error|Exception):\s[^\n]+)/gm)
   if (matched === null) throw new Error(`Fail to parse the following stderr:\n${stderr}`)
 
