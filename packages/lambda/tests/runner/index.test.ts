@@ -77,6 +77,54 @@ describe('should return success', () => {
     })
   })
 
+  describe('when the function logs to stdout', () => {
+    registerTests({
+      python: {
+        params: [{ name: 'i', initialValue: '1' }],
+        body: [
+          'print("a log to stdout")',
+          'if i == 0: return 0',
+          'return fn(i-1)',
+        ].join('\n'),
+      },
+      node: {
+        params: [{ name: 'i', initialValue: '1' }],
+        body: [
+          'console.log("a log to stdout")',
+          'if (i == 0) return 0',
+          'return fn(i-1)',
+        ].join('\n'),
+      },
+      golang: {
+        params: [{ name: 'i', type: 'int', initialValue: '1' }],
+        returnType: 'int',
+        body: [
+          'fmt.Printf("a log to stdout")',
+          'if i == 0 { return 0 }',
+          'return fn(i-1)',
+        ].join('\n'),
+      },
+    })
+
+    function registerTests(set: Record<SupportedLanguages, FunctionData>) {
+      const entries = Object.entries(set) as [
+        SupportedLanguages,
+        FunctionData
+      ][]
+
+      entries.forEach(([lang, fnData]) => {
+        test(`and when lang is \`${lang}\``, async () => {
+          const run = buildRunner(lang, baseOptions)
+          const actual = await run(fnData)
+          expect(actual.isSuccess()).toBeTruthy()
+          if (actual.isSuccess()) {
+            expect(actual.value.logs).toContain('fn(1) returns 0')
+          }
+        })
+      })
+    }
+  })
+
   describe('when memoize is enabled', () => {
     test('and when lang is `python`', async () => {
       const fnData: FunctionData = {

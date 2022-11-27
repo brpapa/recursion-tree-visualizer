@@ -53,6 +53,7 @@ const stack = [] // the current top is the parent id of the current vertex
 
 function fn(...args) {
   if (currId > MAX_RECURSIVE_CALLS) {
+    console.log('\\n')
     console.log(safeStringify({
       successValue: null,
       errorValue: MAX_RECURSIVE_CALLS
@@ -95,6 +96,7 @@ const fnResult = fn(${(fnData.params || [])
       .map((p) => p.initialValue)
       .join(', ')})
 
+console.log('\\n')
 console.log(safeStringify({
   successValue: { 
     vertices, 
@@ -129,6 +131,7 @@ def fn(*args):
   global vertices, currId , memoizedResults, stack, errorValue, memoize
 
   if (currId > MAX_RECURSIVE_CALLS):
+    print('\\n')
     print(safeStringify({
       'successValue': None, 
       'errorValue': MAX_RECURSIVE_CALLS
@@ -166,6 +169,7 @@ def fn(*args):
 
 fnResult = fn(${(fnData.params || []).map((p) => p.initialValue).join(', ')})
 
+print('\\n')
 print(safeStringify({ 
   'successValue': { 'vertices': vertices, 'fnResult': fnResult }, 
   'errorValue': None 
@@ -250,6 +254,7 @@ func fn(${(fnData.params || [])
       .map((p) => p.name + ' ' + p.type)
       .join(', ')}) ${fnData.returnType} {
   if (currId > MAX_RECURSIVE_CALLS) {
+    fmt.Printf("\\n")
     fmt.Println(safeStringify(Output{
       SuccessValue: nil,
       ErrorValue: &MAX_RECURSIVE_CALLS,
@@ -309,6 +314,7 @@ func fn(${(fnData.params || [])
 func main() {
   fnResult := fn(${(fnData.params || []).map((p) => p.initialValue).join(', ')})
 
+  fmt.Printf("\\n")
   fmt.Println(safeStringify(Output{
     SuccessValue: &Success{
       Vertices: vertices,

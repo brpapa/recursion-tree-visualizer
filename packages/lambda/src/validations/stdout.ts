@@ -6,7 +6,9 @@ import { safeParse } from '../utils/safe-json'
 export const validateChildProcessStdout = (
   rawStdout: string
 ): ChildProcessStdout => {
-  const parsedStdout = safeParse(rawStdout) as ChildProcessStdout
+  const lines = rawStdout.split('\n')
+  const json = lines[lines.length-2]
+  const parsedStdout = safeParse(json) as ChildProcessStdout
 
   const stdoutSchema = joi
     .object({
