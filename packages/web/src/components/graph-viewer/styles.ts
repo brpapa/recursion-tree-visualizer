@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { ReactComponent as Logo } from './../../assets/icons/logo.svg'
+import { ReactComponent as Logo } from './../../static/icons/logo.svg'
 
 export const Container = styled.div`
   flex-grow: 1;

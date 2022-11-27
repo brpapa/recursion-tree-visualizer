@@ -1,26 +1,15 @@
 import React, { useState } from 'react'
+import { toast, Toaster } from 'react-hot-toast'
 import { ThemeProvider } from 'styled-components'
-import { Toaster, toast } from 'react-hot-toast'
+import { DEFAULT_THEME_TYPE } from '../../config/consts'
 import GlobalStyle from '../../styles/global'
-import theme from '../../styles/themes'
-import * as s from './styles'
+import { default as theme, default as themes } from '../../styles/themes'
+import { FunctionData, Language, ThemeType, TreeViewerData } from '../../types'
 import FunctionForm from '../function-form'
 import TreeViewer from '../graph-viewer'
+import { fetchTreeViewerData } from './../../config/api'
 import Footer from './footer'
-import themes from '../../styles/themes'
-import { TreeViewerData, ThemeType, FunctionData, Language } from '../../types'
-import { safeParse, safeStringify } from '../../utils/safe-json'
-import { url as apiUrl } from './../../config/api'
-import { DEFAULT_THEME_TYPE } from '../../config/consts'
-
-const fetchTreeViewerData = (requestBody: any) =>
-  fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: safeStringify(requestBody),
-  })
+import * as s from './styles'
 
 const App = () => {
   const [themeType, setThemeName] = useState<ThemeType>(DEFAULT_THEME_TYPE)
@@ -35,26 +24,17 @@ const App = () => {
   ) => {
     setIsLoading(true)
 
-    try {
-      const response = await fetchTreeViewerData({
-        lang,
-        functionData,
-        options: { memoize: options.memoize },
-      })
+    const result = await fetchTreeViewerData({
+      lang,
+      functionData,
+      options: { memoize: options.memoize },
+    })
 
-      const rawResponseBody = await response.text()
-
-      if (response.ok) {
-        const treeViewerData = safeParse(rawResponseBody) as TreeViewerData
-        setTreeViewerData(treeViewerData)
-        setTreeViewerOptions({ animate: options.animate })
-      } else {
-        const { reason } = safeParse(rawResponseBody) as { reason: string }
-        toast.error(reason || 'Internal server error')
-        setTreeViewerData(null)
-      }
-    } catch (e) {
-      toast.error('Unexpected client error')
+    if (result.isSuccess()) {
+      setTreeViewerData(result.value)
+      setTreeViewerOptions({ animate: options.animate })
+    } else if (result.isError()) {
+      toast.error(result.value)
       setTreeViewerData(null)
     }
 
@@ -73,7 +53,7 @@ const App = () => {
             background: theme[themeType].colors.foreground,
             border: `1px solid ${theme[themeType].colors.border}`,
             color: theme[themeType].colors.contrast,
-            boxShadow: 'none'
+            boxShadow: 'none',
           },
         }}
       />

@@ -1,13 +1,17 @@
 import joi from 'joi'
 import { ChildProcessStdout } from '../types'
-import { safeParse } from '../utils/safe-json'
+import { safeParse } from '../static/safe-json'
 
 /** Runtime valition of the stdout received by child process, returning the parsed stdout */
 export const validateChildProcessStdout = (
   rawStdout: string
 ): ChildProcessStdout => {
   const lines = rawStdout.split('\n')
-  const json = lines[lines.length-2]
+  const json = lines[lines.length - 2]
+  if (json === undefined) throw new Error(
+    `Output json not found on the following child process stdout:\n${rawStdout}`
+  )
+
   const parsedStdout = safeParse(json) as ChildProcessStdout
 
   const stdoutSchema = joi

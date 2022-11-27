@@ -60,22 +60,6 @@ describe('Lambda handler receiving an event object', () => {
       expect(result.statusCode).toEqual(200)
     }
   })
-
-  it.each([
-    [
-      {
-        body:
-          '{"lang": "node","functionData": {"globalVariables": [{"name": "arr","value": "[1,3,4,5,2,10]"}],"params": [{"name": "i","initialValue": "0"},{"name": "s","initialValue": "7"}],"body": "console.log(1); if (s == 0) return 1; if (i == arr.length || s < 0) return 0; return fn(i+1, s) + fn(i+1, s-arr[i])"},"options": {"memoize": false}}',
-      },
-    ],
-  ])('Should return 500, case %#', async (event: any) => {
-    const result = await handler(event, {} as any, () => {})
-    expect(result).toBeDefined()
-    if (result) {
-      // console.log('Parsed result body: %O', JSON.parse(result.body))
-      expect(result.statusCode).toEqual(500)
-    }
-  })
 })
 
 describe('Lambda handler receiving an mocked API Gateway payload', () => {

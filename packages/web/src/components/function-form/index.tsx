@@ -6,7 +6,6 @@ import * as s from './styles'
 import CodeEditor from './code-editor'
 import { buildFnCodeValidator, buildFnCallValidator } from './validators'
 import {
-  buildFnCodeDecomposer,
   buildFnCodeComposer,
   composeFnData,
   decomposeFnData,
@@ -201,15 +200,15 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
         <s.Title>Options</s.Title>
         <s.Option>
-          <span>Enable step-by-step animation</span>
+          <span>Step-by-step animation</span>
           <s.Switch checked={animate} onChange={() => setAnimate((p) => !p)} />
         </s.Option>
         <s.Option>
-          <span>Enable memoization</span>
+          <span>Memoization</span>
           <s.Switch checked={memoize} onChange={() => setMemoize((p) => !p)} />
         </s.Option>
         <s.Option>
-          <span>Enable dark mode</span>
+          <span>Dark mode</span>
           <s.Switch
             checked={theme.type === 'dark'}
             onChange={() =>

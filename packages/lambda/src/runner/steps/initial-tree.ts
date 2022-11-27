@@ -55,7 +55,7 @@ export async function toInitialTree(
     if (!fs.existsSync(tmpFolderPath))
       fs.mkdirSync(tmpFolderPath, { recursive: true })
   } catch (err) {
-    console.log(err)
+    console.error(err)
     throw err
   }
 
@@ -71,7 +71,7 @@ export async function toInitialTree(
       flag: 'w+',
     })
   } catch (err) {
-    console.log(err)
+    console.error(err)
     throw err
   }
 
@@ -93,13 +93,13 @@ export async function toInitialTree(
       Object.keys(recursionTree.vertices).length === 0 ||
       recursionTree.vertices[0].adjList.length === 0
 
-    if (recursionTreeIsEmpty)
-      return error(emptyTreeError())
+    if (recursionTreeIsEmpty) return error(emptyTreeError())
 
     return success(recursionTree)
   } catch (err) {
     if (err?.killed) return error(timeoutError(childProcessTimeoutMs))
-    if (err?.stderr) return error(runtimeError(lang, err.stderr as string))
+    if (typeof err?.stderr === 'string' && err?.stderr !== '')
+      return error(runtimeError(lang, err.stderr as string))
     throw err
   } finally {
     fs.rmSync(tmpFileFullPath)

@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { Container, Button, WrapperBar, Bar } from './styles'
-import { ReactComponent as FirstIcon } from './../../../assets/icons/first.svg'
-import { ReactComponent as LastIcon } from './../../../assets/icons/last.svg'
-import { ReactComponent as NextIcon } from './../../../assets/icons/next.svg'
-import { ReactComponent as PreviousIcon } from './../../../assets/icons/previous.svg'
+import { ReactComponent as FirstIcon } from './../../../static/icons/first.svg'
+import { ReactComponent as LastIcon } from './../../../static/icons/last.svg'
+import { ReactComponent as NextIcon } from './../../../static/icons/next.svg'
+import { ReactComponent as PreviousIcon } from './../../../static/icons/previous.svg'
 
 type Props = {
   value: number

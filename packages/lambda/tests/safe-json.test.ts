@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals'
-import { safeParse, safeStringify } from '../../src/utils/safe-json'
+import { safeParse, safeStringify } from '../src/static/safe-json'
 
 describe('Json issues when a function call return +/- Infinity number', () => {
   const obj = { a: NaN, b: -Infinity, c: Infinity }

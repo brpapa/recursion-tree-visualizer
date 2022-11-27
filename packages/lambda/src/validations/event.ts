@@ -3,7 +3,7 @@ import joi from 'joi'
 import { supportedLanguages } from '../config'
 import { EventBody } from '../types'
 import { Either, error, success } from '../utils/either'
-import { isJson, safeParse } from '../utils/safe-json'
+import { isJson, safeParse } from '../static/safe-json'
 
 /** Runtime valition of the event object received by API Gateway Proxy, returning the parsed event body */
 export const validateAPIGatewayProxyEvent = (
@@ -40,8 +40,10 @@ export const validateAPIGatewayProxyEvent = (
             joi.object({
               name: joi.string().required(),
               initialValue: joi.string().required(),
+              type: joi.string(),
             })
           ),
+          returnType: joi.string(),
           globalVariables: joi.array().items(
             joi.object({
               name: joi.string().required(),

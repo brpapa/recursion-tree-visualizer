@@ -1,22 +1,15 @@
-import { debug } from 'debug'
-
-const log = debug('app:utils:safe-json')
-
-/* FIXME: this code is duplicated in: (CONSIDERAR SEMPRE ESSA COMO A FONTE DA VERDADE)
-  - lambda/src/utils/safe-json.ts
-  - lambda/src/runner/steps/source-code.ts
-  - web/src/utils/safe-json.ts
-*/
+// THIS FILE IS SYMLINKED BETWEEN packages/lambda/src/static/safe-json.ts and packages/web/src/static/safe-json.ts, SO ANY CHANGES AFFECTS BOTH
 
 export const safeStringify = (obj: any) => JSON.stringify(obj, replacer)
-export const safeParse = (str: string) => isJson(str)? JSON.parse(sanitize(str), reviver) : {}
+export const safeParse = (str: string) =>
+  isJson(str) ? JSON.parse(sanitize(str), reviver) : {}
 
 export const isJson = (str: string) => {
   const sanitized = sanitize(str)
   try {
     JSON.parse(sanitized, reviver)
   } catch {
-    log('Error to parse: %O', sanitized)
+    console.info('It is not a parseable json: %O', sanitized)
     return false
   }
   return true
@@ -37,6 +30,4 @@ const reviver = (_key: string, value: any) => {
 }
 
 const sanitize = (jsonString: string) =>
-  jsonString
-    .replace(/,\s*]/g, ']')
-    .replace(/,\s*}/g, '}')
+  jsonString.replace(/,\s*]/g, ']').replace(/,\s*}/g, '}')

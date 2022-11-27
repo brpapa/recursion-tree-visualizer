@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda'
 import debug from 'debug'
 import buildRunner from './runner'
-import { safeStringify } from './utils/safe-json'
+import { safeStringify } from './static/safe-json'
 import { validateAPIGatewayProxyEvent } from './validations/event'
 
 const log = debug('app:handler')

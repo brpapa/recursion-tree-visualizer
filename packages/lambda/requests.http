@@ -1,7 +1,7 @@
-# local - lambda
+# local - lambda - node
 curl --request POST \
   --url http://localhost:8080/2015-03-31/functions/function/invocations \
-  --header 'content-type: application/json' \
+  --header 'Content-Type: application/json' \
   --data '
   {
     "body": "{
@@ -18,10 +18,30 @@ curl --request POST \
   }'
 ###
 
-# prod - api gateway
+# local - lambda - golang
+curl --request POST \
+  --url http://localhost:8080/2015-03-31/functions/function/invocations \
+  --header 'Content-Type: application/json' \
+  --data '
+  {
+    "body": "{
+      \"lang\": \"golang\",
+      \"functionData\": {
+        \"params\": [{\"name\": \"n\",\"type\": \"int\",\"initialValue\": \"5\"}],
+        \"returnType\": \"int\",
+        \"body\": \"if n == 0 || n == 1 { return n }\\nreturn fn(n-1) + fn(n-2)\"
+      },
+      \"options\": {
+        \"memoize\": false
+      }
+    }"
+  }'
+###
+
+# prod - api gateway - node
 curl --request POST \
   --url https://8j3kgh0303.execute-api.us-east-1.amazonaws.com/rtv-lambda \
-  --header 'content-type: application/json' \
+  --header 'Content-Type: application/json' \
   --data '
   {
     "lang": "node",
@@ -34,3 +54,24 @@ curl --request POST \
       "memoize": false
     }
   }'
+
+###
+
+# prod - api gateway - golang
+curl --request POST \
+  --url https://8j3kgh0303.execute-api.us-east-1.amazonaws.com/rtv-lambda \
+  --header 'Content-Type: application/json' \
+  --data '
+  {
+    "lang": "golang",
+    "functionData": {
+      "params": [{"name": "n","type": "int","initialValue": "5"}],
+      "returnType": "int",
+      "body": "if n == 0 || n == 1 { return n }\nreturn fn(n-1) + fn(n-2)"
+    },
+    "options": {
+      "memoize": false
+    }
+  }'
+
+###

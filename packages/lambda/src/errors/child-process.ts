@@ -27,7 +27,7 @@ export const runtimeError = (
       if (matched3rd !== null && matched3rd.length >= 1)
         return `Error: ${matched3rd[1]}`
     }
-    throw new Error(`Fail to parse the stderr:\n${stderr}`)
+    throw new Error(`Fail to parse the stderr of lang ${lang}:\n${stderr}`)
   })()
 
   return {

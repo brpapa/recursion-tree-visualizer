@@ -32,20 +32,20 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1 # equivalent to execute: aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
 
-      # - name: Delete the previous images of the ECR repository, if exists
-      #   run: |
-      #     IMAGES_TO_DELETE=$( \
-      #       aws ecr list-images \
-      #         --region $AWS_REGION \
-      #         --repository-name $AWS_ECR_REPOSITORY_NAME \
-      #         --query 'imageIds[*]' \
-      #         --output json \
-      #     )
-      #     aws ecr batch-delete-image \
-      #       --region $AWS_REGION \
-      #       --repository-name $AWS_ECR_REPOSITORY_NAME \
-      #       --image-ids "$IMAGES_TO_DELETE" \
-      #       || true
+      - name: Delete the previous images of the ECR repository, if exists
+        run: |
+          IMAGES_TO_DELETE=$( \
+            aws ecr list-images \
+              --region $AWS_REGION \
+              --repository-name $AWS_ECR_REPOSITORY_NAME \
+              --query 'imageIds[*]' \
+              --output json \
+          )
+          aws ecr batch-delete-image \
+            --region $AWS_REGION \
+            --repository-name $AWS_ECR_REPOSITORY_NAME \
+            --image-ids "$IMAGES_TO_DELETE" \
+            || true
 
       - name: Build, tag, and push docker image to ECR repository
         id: build-image
@@ -57,7 +57,7 @@ jobs:
           IMAGE_URI="$ECR_REGISTRY_URI/$AWS_ECR_REPOSITORY_NAME:$TAG"
           docker build --tag $IMAGE_URI .
           docker push $IMAGE_URI
-          echo "::set-output name=image-uri::$IMAGE_URI"
+          echo "image-uri=$IMAGE_URI" >> $GITHUB_OUTPUT
 
       - name: Update container image of the AWS Lambda
         run: |

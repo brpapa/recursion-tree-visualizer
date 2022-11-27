@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "npx tsc",
+    "local": "docker build -t rtv . && docker run --rm -p 8080:8080 rtv",
     "test": "DEBUG='app:*,test:*' npx jest --config jest.config.js",
     "test:cov": "npx jest --config jest.config.js --coverage",
     "typesync": "npx typesync"

@@ -8,7 +8,7 @@
     "node": "14"
   },
   "scripts": {
-    "start": "BROWSER=none react-scripts start",
+    "local": "BROWSER=none PORT=3000 react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint 'src/**/*.ts'",
     "test": "npx jest --config jest.config.js",
@@ -37,8 +37,8 @@
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.23.1",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "react-scripts": "^4.0.3",
     "jest": "^27.5.1",
+    "react-scripts": "^4.0.3",
     "ts-jest": "^27.1.4",
     "typescript": "^3.8.3"
   },

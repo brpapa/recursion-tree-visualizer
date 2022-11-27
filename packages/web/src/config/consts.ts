@@ -11,3 +11,5 @@ export const DEFAULT_GLOBAL_VARS: GlobalVar[] = [
 export const DEFAULT_FN_CODE = buildFnCodeComposer(DEFAULT_LANGUAGE)()
 
 export const LANGUAGES: Language[] = ['node', 'python']
+
+export const API_URL = 'https://8j3kgh0303.execute-api.us-east-1.amazonaws.com/rtv-lambda'

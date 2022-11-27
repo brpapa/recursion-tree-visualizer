@@ -9,7 +9,7 @@ import lightTheme from 'prism-react-renderer/themes/nightOwlLight'
 import darkTheme from 'prism-react-renderer/themes/nightOwl'
 
 import { ThemeContext } from 'styled-components'
-import { Language as Language, ThemeType } from '../../../types'
+import { Language, ThemeType } from '../../../types'
 import * as s from './styles'
 
 type Props = {
