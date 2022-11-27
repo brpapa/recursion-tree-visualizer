@@ -15,25 +15,35 @@ export type Vertices = Record<
   }
 >
 
-export type RecursionTree = { vertices: Vertices; fnResult: any }
+export type InitialTree = { vertices: Vertices; fnResult: any }
 export type ChildProcessStdout = {
-  successValue: RecursionTree | null
+  successValue: InitialTree | null
   errorValue: number | null
 }
 
 /** [x,y] */
 export type Point = [number, number]
 
-export type RawTree = {
-  tree: RecursionTree
-  coords: Record<number, Point>,
+export type IntermediateTree = {
+  tree: InitialTree
+  coords: Record<number, Point>
   bottomRight: Point
 }
 
+export type Param = {
+  name: string
+  type?: string
+  initialValue: string
+}
+export type GlobalVar = {
+  name: string
+  value: string
+}
 export type FunctionData = {
   body: string
-  params?: { name: string; initialValue: string }[]
-  globalVariables?: { name: string; value: string }[]
+  params?: Param[]
+  returnType?: string
+  globalVariables?: GlobalVar[]
 }
 
 /** key: vértice id */
@@ -60,7 +70,7 @@ export type EdgesData = Record<
 >
 
 /** all that is necessary to render the tree */
-export type TreeViewer = {
+export type FinalTree = {
   /** amount of time steps */
   times: number
   edgesData: EdgesData
@@ -71,5 +81,4 @@ export type TreeViewer = {
   logs: string[]
 }
 
-export type SupportedLanguages = 'node' | 'python'
-
+export type SupportedLanguages = 'node' | 'python' | 'golang'

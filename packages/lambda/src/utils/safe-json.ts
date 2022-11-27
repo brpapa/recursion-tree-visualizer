@@ -4,7 +4,7 @@ const log = debug('app:utils:safe-json')
 
 /* FIXME: this code is duplicated in: (CONSIDERAR SEMPRE ESSA COMO A FONTE DA VERDADE)
   - lambda/src/utils/safe-json.ts
-  - lambda/src/runner/operations/get-full-source-code.ts
+  - lambda/src/runner/steps/source-code.ts
   - web/src/utils/safe-json.ts
 */
 
@@ -16,7 +16,7 @@ export const isJson = (str: string) => {
   try {
     JSON.parse(sanitized, reviver)
   } catch {
-    // log('Error to parse: %O', sanitized)
+    log('Error to parse: %O', sanitized)
     return false
   }
   return true

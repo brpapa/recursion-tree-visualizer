@@ -1,4 +1,4 @@
-import { Point, RawTree, RecursionTree, Vertices } from '../../types'
+import { Point, IntermediateTree, InitialTree, Vertices } from '../../types'
 
 type TreeNode = {
   /** Must be >= 0 */
@@ -13,7 +13,7 @@ type TreeNode = {
 }
 
 /** A partir da recursion tree, determina a melhores coordenadas (x,y) de cada vértice usando o Reingold-Tilford's algorithm */
-export function toRawTree(recursionTree: RecursionTree): RawTree {
+export function toIntermediateTree(recursionTree: InitialTree): IntermediateTree {
   const rawCoords: Record<number, Point> = {} // rawCoords[u]: coordenada do vértice u
   const rawBottomRight: Point = [0, 0]
   const rootId = 0

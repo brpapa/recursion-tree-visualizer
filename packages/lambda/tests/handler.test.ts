@@ -1,7 +1,6 @@
 import { describe, it, expect } from '@jest/globals'
 import { handler } from '../src/index'
 import { debug } from 'debug'
-const log = debug('test:handler')
 
 describe('Lambda handler receiving an event object', () => {
   it.each([
@@ -14,7 +13,7 @@ describe('Lambda handler receiving an event object', () => {
     const result = await handler(event, {} as any, () => {})
     expect(result).toBeDefined()
     if (result) {
-      log('Parsed result body: %O', JSON.parse(result.body))
+      // console.log('Parsed result body: %O', JSON.parse(result.body))
       expect(result.statusCode).toEqual(400)
     }
   })
@@ -73,7 +72,7 @@ describe('Lambda handler receiving an event object', () => {
     const result = await handler(event, {} as any, () => {})
     expect(result).toBeDefined()
     if (result) {
-      log('Parsed result body: %O', JSON.parse(result.body))
+      // console.log('Parsed result body: %O', JSON.parse(result.body))
       expect(result.statusCode).toEqual(500)
     }
   })

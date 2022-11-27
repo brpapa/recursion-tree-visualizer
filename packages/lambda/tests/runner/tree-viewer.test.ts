@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { toTreeViewer } from '../../src/runner/steps/tree-viewer'
+import { toFinalTree } from '../../src/runner/steps/final-tree'
 import { objectMap } from '../../src/utils/object-map'
 
 describe('Getting tree viewer data from recursion tree', () => {
@@ -11,7 +11,7 @@ describe('Getting tree viewer data from recursion tree', () => {
       / \
     2   3
     */
-    const { verticesData, edgesData } = toTreeViewer({
+    const { verticesData, edgesData } = toFinalTree({
       tree: {
         fnResult: 0,
         vertices: {

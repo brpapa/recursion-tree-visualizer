@@ -14,7 +14,7 @@ import {
   exceededSourceCodeSizeLimitError,
   TreeError,
 } from '../../errors/tree'
-import { RecursionTree, SupportedLanguages } from '../../types'
+import { InitialTree, SupportedLanguages } from '../../types'
 import { Either, error, success } from '../../utils/either'
 import { validateChildProcessStdout } from '../../validations/stdout'
 
@@ -23,7 +23,7 @@ const exec = util.promisify(childProcess.exec)
 const ENCODING: BufferEncoding = 'utf-8'
 
 /** Starts a child process that evaluate the source code content and return the recursion tree. */
-export async function toRecursionTree(
+export async function toInitialTree(
   sourceCode: string,
   lang: SupportedLanguages,
   childProcessTimeoutMs: number,
@@ -39,7 +39,7 @@ export async function toRecursionTree(
       | TreeError.ExceededRecursiveCallsLimit
       | TreeError.ExceededSourceCodeSizeLimit
     >,
-    RecursionTree
+    InitialTree
   >
 > {
   const declare = buildDeclare(lang)
@@ -61,7 +61,7 @@ export async function toRecursionTree(
 
   const tmpFileName = `${crypto
     .randomBytes(16)
-    .toString('hex')}${declare.ext()}`
+    .toString('hex')}.${declare.ext()}`
   const tmpFileFullPath = `${tmpFolderPath}/${tmpFileName}`
 
   // escrever código fonte
@@ -82,15 +82,8 @@ export async function toRecursionTree(
     const { stdout: rawStdout } = await exec(declare.command(tmpFileFullPath), {
       timeout: childProcessTimeoutMs,
     })
-    // console.log(rawStdout)
 
-    const validatedStdout = validateChildProcessStdout(rawStdout)
-    if (validatedStdout.isError())
-      throw new Error(
-        `Fail to deserialize the \`rawStdout\` object:\n${validatedStdout.value}`
-      )
-
-    const stdout = validatedStdout.value
+    const stdout = validateChildProcessStdout(rawStdout)
     if (stdout.errorValue !== null)
       return error(exceededRecursiveCallsLimitError(stdout.errorValue))
 
@@ -106,10 +99,7 @@ export async function toRecursionTree(
     return success(recursionTree)
   } catch (err) {
     if (err?.killed) return error(timeoutError(childProcessTimeoutMs))
-    if (err?.stderr) {
-      // console.log(err.stderr)
-      return error(runtimeError(err.stderr as string))
-    }
+    if (err?.stderr) return error(runtimeError(lang, err.stderr as string))
     throw err
   } finally {
     fs.rmSync(tmpFileFullPath)
@@ -123,6 +113,8 @@ const buildDeclare = (lang: SupportedLanguages) => ({
         return `node "${path}"`
       case 'python':
         return `python3 "${path}"`
+      case 'golang':
+        return `go run "${path}"`
       default:
         throw new Error(`Unexpected lang, got ${lang}`)
     }
@@ -130,9 +122,11 @@ const buildDeclare = (lang: SupportedLanguages) => ({
   ext: () => {
     switch (lang) {
       case 'node':
-        return '.js'
+        return 'js'
       case 'python':
-        return '.py'
+        return 'py'
+      case 'golang':
+        return 'go'
       default:
         throw new Error(`Unexpected lang, got ${lang}`)
     }

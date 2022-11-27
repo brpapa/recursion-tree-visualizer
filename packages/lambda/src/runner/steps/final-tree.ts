@@ -1,11 +1,11 @@
 import {
-  EdgesData, Point, RawTree, TreeViewer,
+  EdgesData, Point, IntermediateTree, FinalTree,
   Vertices, VerticesData
 } from '../../types'
 import { objectMap } from '../../utils/object-map'
 
 /** Traverse tree to adjust coords, populate logs, times, verticesData and edgesData */
-export function toTreeViewer(rawTree: RawTree): TreeViewer {
+export function toFinalTree(rawTree: IntermediateTree): FinalTree {
   const logs: string[] = []
   const edgesData = initialEdgesData(rawTree.tree.vertices)
   const verticesData = initialVerticesData(

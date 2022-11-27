@@ -1,3 +1,4 @@
+import { SupportedLanguages } from '../types'
 import { Error } from './common'
 
 export enum ChildProcessError {
@@ -7,16 +8,31 @@ export enum ChildProcessError {
 }
 
 export const runtimeError = (
+  lang: SupportedLanguages,
   stderr: string
 ): Error<ChildProcessError.RuntimeError> => {
-  const matched = stderr.match(/([a-zA-Z]*(Error|Exception):\s[^\n]+)/gm)
-  if (matched === null) throw new Error(`Fail to parse the following stderr:\n${stderr}`)
+  
+  const errorMessage = ((): string => {
+    if (lang === 'python' || lang === 'node') {
+      const matched1st = /([a-zA-Z]*(Error|Exception):\s[^\n]+)/gm.exec(stderr)
+      if (matched1st !== null && matched1st?.length >= 1)
+        return matched1st[1]
+    }
+    if (lang === 'golang') {
+      const matched2nd = /panic:\s([^\n]+)/gm.exec(stderr)
+      if (matched2nd !== null && matched2nd.length >= 1)
+        return `Error: ${matched2nd[1]}`
 
-  const errorMessage = matched[0]
+      const matched3rd = /# command-line-arguments\n.*.go:\d+:\d+:\s([^\n]+)/gm.exec(stderr)
+      if (matched3rd !== null && matched3rd.length >= 1)
+        return `Error: ${matched3rd[1]}`
+    }
+    throw new Error(`Fail to parse the stderr:\n${stderr}`)
+  })()
 
   return {
     type: ChildProcessError.RuntimeError,
-    reason: `Your code outputs the following ${errorMessage}`,
+    reason: `Your code outputs the ${errorMessage}`,
   }
 }
 

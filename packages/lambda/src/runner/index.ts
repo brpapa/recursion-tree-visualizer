@@ -1,8 +1,7 @@
 import { flow } from 'fp-ts/function'
-import { toFullSourceCode } from './steps/source-code'
-import { toRecursionTree } from './steps/recursion-tree'
-import { toUserCode } from './steps/user-code'
-import { toTreeViewer } from './steps/tree-viewer'
+import { toSourceCode } from './steps/source-code'
+import { toInitialTree } from './steps/initial-tree'
+import { toFinalTree } from './steps/final-tree'
 import { FunctionData, SupportedLanguages } from '../types'
 import {
   DEFAULT_MAX_RECURSIVE_CALLS,
@@ -10,7 +9,7 @@ import {
   DEFAULT_TMP_DIR_PATH,
   DEFAULT_TMP_FILE_MAX_SIZE_BYTES,
 } from '../config'
-import { toRawTree } from './steps/raw-tree'
+import { toIntermediateTree } from './steps/intermediate-tree'
 
 /** Pipeline to input FuncionData and output TreeViewerData. */
 export default function buildRunner(
@@ -32,17 +31,16 @@ export default function buildRunner(
     options?.tmpFileMaxSizeBytes || DEFAULT_TMP_FILE_MAX_SIZE_BYTES
 
   return flow(
-    (fnData: FunctionData) => toUserCode(fnData, lang, memoize),
-    (userCode) => toFullSourceCode(userCode, lang, maxRecursiveCalls),
-    (fullSourceCode) =>
-      toRecursionTree(
-        fullSourceCode,
+    (fnData: FunctionData) => toSourceCode(fnData, lang, maxRecursiveCalls, memoize),
+    (sourceCode) =>
+      toInitialTree(
+        sourceCode,
         lang,
         timeoutMs,
         tmpDirPath,
         tmpFileMaxSizeBytes
       ),
-    (recursionTree) => recursionTree.then((r) => r.onSuccess(toRawTree)),
-    (rawTree) => rawTree.then((r) => r.onSuccess(toTreeViewer))
+    (tree) => tree.then((t) => t.onSuccess(toIntermediateTree)),
+    (tree) => tree.then((t) => t.onSuccess(toFinalTree))
   )
 }
