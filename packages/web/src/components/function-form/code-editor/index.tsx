@@ -83,6 +83,7 @@ export default CodeEditor
 const prismLanguage: Record<Language, PrismLanguage> = {
   node: 'javascript',
   python: 'python',
+  golang: 'go'
 }
 const prismTheme: Record<ThemeType, PrismTheme> = {
   light: lightTheme,

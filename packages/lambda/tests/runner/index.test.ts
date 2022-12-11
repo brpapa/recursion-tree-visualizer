@@ -259,7 +259,7 @@ describe('should return success', () => {
         'NaN'
       )
     })
-    describe('array<integer>', () => {
+    describe('array of integer', () => {
       registerTests(
         {
           python: createFnData('python', '[0,1,2,3]'),

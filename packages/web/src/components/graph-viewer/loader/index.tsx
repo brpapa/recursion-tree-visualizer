@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, {keyframes } from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 const skRotate = keyframes`
   100% {
@@ -37,7 +37,7 @@ const Dot1 = styled(Dot)`
 const Dot2 = styled(Dot)`
   top: auto;
   bottom: 0;
-  animation-delay: -1.0s;
+  animation-delay: -1s;
 `
 
 const Loader = () => {
@@ -49,5 +49,3 @@ const Loader = () => {
   )
 }
 export default Loader
-
-

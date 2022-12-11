@@ -2,7 +2,8 @@ import { flow } from 'fp-ts/function'
 import { toSourceCode } from './steps/source-code'
 import { toInitialTree } from './steps/initial-tree'
 import { toFinalTree } from './steps/final-tree'
-import { FunctionData, SupportedLanguages } from '../types'
+import { FunctionData } from './../static/types'
+import { SupportedLanguages } from '../types'
 import {
   DEFAULT_MAX_RECURSIVE_CALLS,
   DEFAULT_TIMEOUT_MS,
@@ -31,7 +32,8 @@ export default function buildRunner(
     options?.tmpFileMaxSizeBytes || DEFAULT_TMP_FILE_MAX_SIZE_BYTES
 
   return flow(
-    (fnData: FunctionData) => toSourceCode(fnData, lang, maxRecursiveCalls, memoize),
+    (fnData: FunctionData) =>
+      toSourceCode(fnData, lang, maxRecursiveCalls, memoize),
     (sourceCode) =>
       toInitialTree(
         sourceCode,

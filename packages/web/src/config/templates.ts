@@ -13,6 +13,9 @@ const templates: Record<Template, TemplateData> = {
       python: {
         body: '  # type your own code here',
       },
+      golang: {
+        body: '  // type your own code here',
+      },
     },
   },
   ...staticTemplates,

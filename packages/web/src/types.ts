@@ -1,5 +1,14 @@
+import type { GlobalVar } from './static/types'
+export type { FunctionData, Param, GlobalVar } from './static/types'
+
+export type DecomposedFunctionData = {
+  fnCode: string
+  fnCall: string
+  fnGlobalVars: GlobalVar[]
+}
+
 export type ThemeType = 'light' | 'dark'
-export type Language = 'node' | 'python'
+export type Language = 'node' | 'python' | 'golang'
 export type Template =
   | 'custom'
   | 'fibo'
@@ -13,14 +22,6 @@ export type Template =
 
 /** [x,y] */
 export type Point = [number, number]
-
-export type GlobalVar = { name: string; value: string }
-
-export type FunctionData = {
-  body: string
-  params?: { name: string; initialValue: string }[]
-  globalVariables?: { name: string; value: string }[]
-}
 
 /** key: vértice id */
 export type VerticesData = Record<

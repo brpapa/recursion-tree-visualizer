@@ -1,3 +1,7 @@
+import type { FunctionData } from './static/types'
+
+export type { FunctionData }
+
 export type EventBody = {
   lang: SupportedLanguages
   functionData: FunctionData
@@ -28,22 +32,6 @@ export type IntermediateTree = {
   tree: InitialTree
   coords: Record<number, Point>
   bottomRight: Point
-}
-
-export type Param = {
-  name: string
-  type?: string
-  initialValue: string
-}
-export type GlobalVar = {
-  name: string
-  value: string
-}
-export type FunctionData = {
-  body: string
-  params?: Param[]
-  returnType?: string
-  globalVariables?: GlobalVar[]
 }
 
 /** key: vértice id */

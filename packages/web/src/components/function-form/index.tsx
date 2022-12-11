@@ -1,30 +1,40 @@
 import React, { useContext, useState } from 'react'
-import { ThemeContext } from 'styled-components'
 import { toast } from 'react-hot-toast'
+import { ThemeContext } from 'styled-components'
 
-import * as s from './styles'
-import CodeEditor from './code-editor'
-import { buildFnCodeValidator, buildFnCallValidator } from './validators'
-import {
-  buildFnCodeComposer,
-  composeFnData,
-  decomposeFnData,
-  getParams,
-  extractContentInsideFirstParentesis,
-} from './template-handler'
+import * as consts from '../../config/consts'
 import templates from '../../config/templates'
-import useFormInput from '../../hooks/use-form-input'
 import useCarbonAds from '../../hooks/use-carbon-ads'
+import useFormInput from '../../hooks/use-form-input'
 import useLocalStorageState from '../../hooks/use-local-storage-state'
 import {
+  fnCallFormValidator,
+  fnCodeFormValidator,
+} from '../../logic/form-validators'
+import { composeFnData, decomposeFnData } from '../../logic/function-data'
+import {
+  FunctionData,
+  GlobalVar,
+  Language,
   Template,
   ThemeType,
-  FunctionData,
-  Language,
-  GlobalVar,
 } from '../../types'
 import './carbon-ads.css'
-import * as consts from '../../config/consts'
+import CodeEditor from './code-editor'
+import * as s from './styles'
+
+const DEFAULT_LANGUAGE: Language = 'python'
+
+const DEFAULT_FN_CODE: string = decomposeFnData(
+  {
+    body: '',
+  },
+  DEFAULT_LANGUAGE
+).fnCode
+
+const DEFAULT_GLOBAL_VARS: GlobalVar[] = []
+
+const DEFAULT_TEMPLATE: Template = 'custom'
 
 type Props = {
   onSubmit: (
@@ -38,22 +48,19 @@ type Props = {
 const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   const [lang, setLang] = useLocalStorageState<Language>(
     'fn-lang',
-    consts.DEFAULT_LANGUAGE
+    DEFAULT_LANGUAGE
   )
+  const [fnCode, setFnCode] = useLocalStorageState('fn-code', DEFAULT_FN_CODE)
+  const [fnGlobalVars, setFnGlobalVars] = useLocalStorageState<GlobalVar[]>(
+    'fn-global-vars',
+    DEFAULT_GLOBAL_VARS
+  )
+
   const [fnCall, setFnCall] = useFormInput(
     'fn-call',
     'fn()',
-    buildFnCallValidator(lang)
+    fnCallFormValidator()
   )
-  const [fnCode, setFnCode] = useLocalStorageState(
-    'fn-code',
-    consts.DEFAULT_FN_CODE
-  )
-  const [fnGlobalVars, setFnGlobalVars] = useLocalStorageState<GlobalVar[]>(
-    'fn-global-vars',
-    consts.DEFAULT_GLOBAL_VARS
-  )
-
   const [memoize, setMemoize] = useLocalStorageState('memoize', false)
   const [animate, setAnimate] = useLocalStorageState('animate', true)
 
@@ -61,7 +68,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
   // if null, user changed the default code that comes in with template
   const [activeTemplate, setActiveTemplate] = useState<Template | null>(
-    consts.DEFAULT_TEMPLATE
+    DEFAULT_TEMPLATE
   )
 
   const divRefAds = useCarbonAds()
@@ -75,7 +82,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     const res = decomposeFnData(templates[newTemplate].fnData[lang], lang)
     setFnCode(res.fnCode)
     setFnCall(res.fnCall)
-    setFnGlobalVars(res.fnGlobalVars)
+    setFnGlobalVars(toRenderableGlobalVars(res.fnGlobalVars))
   }
 
   const handleSelectLanguageChange = (
@@ -86,12 +93,15 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 
     if (activeTemplate === null) {
       // keep only the previous params names (inside fnCode)
-      setFnCode((prevFnCode) => {
-        const composeFnCode = buildFnCodeComposer(newLang)
+      setFnCode(() => {
+        const newest = decomposeFnData(
+          {
+            body: '',
+          },
+          newLang
+        )
 
-        const prevParamsDeclaration = extractContentInsideFirstParentesis(prevFnCode)
-        const paramsNames = getParams(prevParamsDeclaration).map((p) => p.name)
-        return composeFnCode({ paramsNames })
+        return newest.fnCode
       })
     } else {
       const { fnCode, fnCall, fnGlobalVars } = decomposeFnData(
@@ -100,7 +110,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
       )
       setFnCode(fnCode)
       setFnCall(fnCall)
-      setFnGlobalVars(fnGlobalVars)
+      setFnGlobalVars(toRenderableGlobalVars(fnGlobalVars))
     }
   }
 
@@ -108,9 +118,12 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     e.preventDefault()
 
     // client-side validation
-    // TODO: remover try/catch
+    // TODO: remove try/catch
     try {
-      const fnData = composeFnData(fnCode, fnCall.value, fnGlobalVars, lang) // throw error
+      const fnData = composeFnData(
+        { fnCode, fnCall: fnCall.value, fnGlobalVars },
+        lang
+      ) // throw error
       onSubmit(lang, fnData, { memoize, animate })
     } catch (error) {
       toast.error(error.message)
@@ -135,11 +148,11 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
         </s.Select>
 
         <s.Title>Global variables</s.Title>
-        {fnGlobalVars.map(({ name, value }, i) => (
+        {toRenderableGlobalVars(fnGlobalVars).map((globalVar, i) => (
           <s.VariableContainer key={i}>
             <CodeEditor
               lang={lang}
-              value={name}
+              value={globalVar.name}
               onValueChange={(value) => {
                 setFnGlobalVars((v) => {
                   if (v[i]) v[i].name = value
@@ -150,7 +163,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
             <span style={{ margin: '0 0.3em' }}>=</span>
             <CodeEditor
               lang={lang}
-              value={value}
+              value={globalVar.value}
               onValueChange={(value) => {
                 setFnGlobalVars((v) => {
                   if (v[i]) v[i].value = value
@@ -184,7 +197,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
           <CodeEditor
             lang={lang}
             value={fnCode}
-            shouldValueChange={buildFnCodeValidator(lang)}
+            shouldValueChange={fnCodeFormValidator(lang)}
             onValueChange={(newValue) => {
               setFnCode((prevValue) => {
                 if (prevValue !== newValue) setActiveTemplate(null)
@@ -192,8 +205,8 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
               })
             }}
             onValueReset={() => {
-              const composeFnCode = buildFnCodeComposer(lang)
-              setFnCode(composeFnCode())
+              const { fnCode } = decomposeFnData({ body: '' }, lang)
+              setFnCode(fnCode)
             }}
           />
         </div>
@@ -227,3 +240,13 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
 }
 
 export default FunctionForm
+
+// para apresentacao em tela, tamanho do array é sempre 2
+function toRenderableGlobalVars(globalVars: GlobalVar[]): GlobalVar[] {
+  return Array(2)
+    .fill(undefined)
+    .map((_, i) => ({
+      name: globalVars[i]?.name || '',
+      value: globalVars[i]?.value || '',
+    }))
+}

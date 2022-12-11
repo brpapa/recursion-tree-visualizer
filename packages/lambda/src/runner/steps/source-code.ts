@@ -1,4 +1,5 @@
-import { FunctionData, SupportedLanguages } from '../../types'
+import { SupportedLanguages } from '../../types'
+import { FunctionData } from '../../static/types'
 
 /**
  * Get the full code string that will be passed via cli argument, so escape char ".
