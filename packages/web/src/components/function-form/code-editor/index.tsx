@@ -1,16 +1,14 @@
 import React, { useCallback, useContext } from 'react'
 import Editor from 'react-simple-code-editor'
 import Highlight, { defaultProps } from 'prism-react-renderer'
-import type {
-  Language as PrismLanguage,
-  PrismTheme,
-} from 'prism-react-renderer'
+import type { PrismTheme } from 'prism-react-renderer'
 import lightTheme from 'prism-react-renderer/themes/nightOwlLight'
 import darkTheme from 'prism-react-renderer/themes/nightOwl'
 
 import { ThemeContext } from 'styled-components'
 import { Language, ThemeType } from '../../../types'
 import * as s from './styles'
+import { LanguageHandler } from '../../../logic/language-handler'
 
 type Props = {
   lang: Language
@@ -35,7 +33,7 @@ const CodeEditor = ({
         onValueReset()
         return
       }
-      
+
       if (!shouldValueChange || shouldValueChange(newCode))
         onValueChange(newCode)
     },
@@ -48,7 +46,7 @@ const CodeEditor = ({
         {...defaultProps}
         code={code}
         theme={prismTheme[theme.type]}
-        language={prismLanguage[lang]}
+        language={LanguageHandler.for(lang).prismLanguage()}
       >
         {({ tokens, getLineProps, getTokenProps }) => (
           <>
@@ -80,11 +78,6 @@ const CodeEditor = ({
 
 export default CodeEditor
 
-const prismLanguage: Record<Language, PrismLanguage> = {
-  node: 'javascript',
-  python: 'python',
-  golang: 'go'
-}
 const prismTheme: Record<ThemeType, PrismTheme> = {
   light: lightTheme,
   dark: darkTheme,

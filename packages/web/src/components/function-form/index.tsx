@@ -7,11 +7,7 @@ import templates from '../../config/templates'
 import useCarbonAds from '../../hooks/use-carbon-ads'
 import useFormInput from '../../hooks/use-form-input'
 import useLocalStorageState from '../../hooks/use-local-storage-state'
-import {
-  fnCallFormValidator,
-  fnCodeFormValidator,
-} from '../../logic/form-validators'
-import { composeFnData, decomposeFnData } from '../../logic/function-data'
+import { LanguageHandler } from '../../logic/language-handler'
 import {
   FunctionData,
   GlobalVar,
@@ -25,12 +21,11 @@ import * as s from './styles'
 
 const DEFAULT_LANGUAGE: Language = 'python'
 
-const DEFAULT_FN_CODE: string = decomposeFnData(
-  {
-    body: '',
-  },
+const DEFAULT_FN_CODE: string = LanguageHandler.for(
   DEFAULT_LANGUAGE
-).fnCode
+).unparseFunctionData({
+  body: '',
+}).fnCode
 
 const DEFAULT_GLOBAL_VARS: GlobalVar[] = []
 
@@ -59,7 +54,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   const [fnCall, setFnCall] = useFormInput(
     'fn-call',
     'fn()',
-    fnCallFormValidator()
+    LanguageHandler.validateFunctionCall
   )
   const [memoize, setMemoize] = useLocalStorageState('memoize', false)
   const [animate, setAnimate] = useLocalStorageState('animate', true)
@@ -79,7 +74,9 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     const newTemplate = e.target.value as Template
     setActiveTemplate(newTemplate)
 
-    const res = decomposeFnData(templates[newTemplate].fnData[lang], lang)
+    const res = LanguageHandler.for(lang).unparseFunctionData(
+      templates[newTemplate].fnData[lang]
+    )
     setFnCode(res.fnCode)
     setFnCall(res.fnCall)
     setFnGlobalVars(toRenderableGlobalVars(res.fnGlobalVars))
@@ -94,20 +91,16 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     if (activeTemplate === null) {
       // keep only the previous params names (inside fnCode)
       setFnCode(() => {
-        const newest = decomposeFnData(
-          {
-            body: '',
-          },
-          newLang
-        )
+        const newest = LanguageHandler.for(newLang).unparseFunctionData({
+          body: '',
+        })
 
         return newest.fnCode
       })
     } else {
-      const { fnCode, fnCall, fnGlobalVars } = decomposeFnData(
-        templates[activeTemplate].fnData[newLang],
+      const { fnCode, fnCall, fnGlobalVars } = LanguageHandler.for(
         newLang
-      )
+      ).unparseFunctionData(templates[activeTemplate].fnData[newLang])
       setFnCode(fnCode)
       setFnCall(fnCall)
       setFnGlobalVars(toRenderableGlobalVars(fnGlobalVars))
@@ -120,10 +113,11 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
     // client-side validation
     // TODO: remove try/catch
     try {
-      const fnData = composeFnData(
-        { fnCode, fnCall: fnCall.value, fnGlobalVars },
-        lang
-      ) // throw error
+      const fnData = LanguageHandler.for(lang).parseFunctionData({
+        fnCode,
+        fnCall: fnCall.value,
+        fnGlobalVars,
+      }) // throw error
       onSubmit(lang, fnData, { memoize, animate })
     } catch (error) {
       toast.error(error.message)
@@ -197,7 +191,9 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
           <CodeEditor
             lang={lang}
             value={fnCode}
-            shouldValueChange={fnCodeFormValidator(lang)}
+            shouldValueChange={(prevFnCode) => {
+              return LanguageHandler.for(lang).validateFunctionCode(prevFnCode)
+            }}
             onValueChange={(newValue) => {
               setFnCode((prevValue) => {
                 if (prevValue !== newValue) setActiveTemplate(null)
@@ -205,7 +201,9 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
               })
             }}
             onValueReset={() => {
-              const { fnCode } = decomposeFnData({ body: '' }, lang)
+              const { fnCode } = LanguageHandler.for(lang).unparseFunctionData({
+                body: '',
+              })
               setFnCode(fnCode)
             }}
           />

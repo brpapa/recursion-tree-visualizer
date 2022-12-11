@@ -1,7 +1,7 @@
 import type { GlobalVar } from './static/types'
 export type { FunctionData, Param, GlobalVar } from './static/types'
 
-export type DecomposedFunctionData = {
+export type UnparsedFunctionData = {
   fnCode: string
   fnCall: string
   fnGlobalVars: GlobalVar[]
