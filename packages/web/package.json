@@ -5,7 +5,7 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "14"
+    "node": "20.x"
   },
   "scripts": {
     "local": "BROWSER=none PORT=3000 react-scripts start",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@types/eslint": "^6.8.1",
+    "@types/jest": "^27.5.2",
     "@types/node": "^14.6.4",
     "@types/prismjs": "^1.16.1",
     "@types/react": "^16.9.32",
