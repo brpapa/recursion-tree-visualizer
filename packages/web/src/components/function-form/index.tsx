@@ -59,7 +59,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   const [memoize, setMemoize] = useLocalStorageState('memoize', false)
   const [animate, setAnimate] = useLocalStorageState('animate', true)
 
-  const theme = useContext(ThemeContext)
+  const theme = useContext(ThemeContext)!
 
   // if null, user changed the default code that comes in with template
   const [activeTemplate, setActiveTemplate] = useState<Template | null>(
@@ -119,7 +119,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
         fnGlobalVars,
       }) // throw error
       onSubmit(lang, fnData, { memoize, animate })
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message)
     }
   }

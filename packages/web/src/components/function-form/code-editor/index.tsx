@@ -1,9 +1,7 @@
 import React, { useCallback, useContext } from 'react'
 import Editor from 'react-simple-code-editor'
-import Highlight, { defaultProps } from 'prism-react-renderer'
 import type { PrismTheme } from 'prism-react-renderer'
-import lightTheme from 'prism-react-renderer/themes/nightOwlLight'
-import darkTheme from 'prism-react-renderer/themes/nightOwl'
+import { Highlight, themes } from 'prism-react-renderer'
 
 import { ThemeContext } from 'styled-components'
 import { Language, ThemeType } from '../../../types'
@@ -25,7 +23,7 @@ const CodeEditor = ({
   onValueReset,
   shouldValueChange,
 }: Props) => {
-  const theme = useContext(ThemeContext)
+  const theme = useContext(ThemeContext)!
 
   const onCodeChange = useCallback(
     (newCode: string) => {
@@ -43,7 +41,6 @@ const CodeEditor = ({
   const highlight = useCallback(
     (code: string) => (
       <Highlight
-        {...defaultProps}
         code={code}
         theme={prismTheme[theme.type]}
         language={LanguageHandler.for(lang).prismLanguage()}
@@ -79,6 +76,6 @@ const CodeEditor = ({
 export default CodeEditor
 
 const prismTheme: Record<ThemeType, PrismTheme> = {
-  light: lightTheme,
-  dark: darkTheme,
+  light: themes.nightOwlLight,
+  dark: themes.nightOwl,
 }

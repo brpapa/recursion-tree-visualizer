@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { ReactComponent as Logo } from './../../static/icons/logo.svg'
+import { LogoIcon as LogoIconBase } from './../../icons/logo'
 
 export const Container = styled.div`
   flex-grow: 1;
@@ -14,7 +14,7 @@ export const Container = styled.div`
   flex-direction: column;
 `
 
-export const LogoIcon = styled(Logo)`
+export const LogoIcon = styled(LogoIconBase)`
   width: 100%;
   height: 100%;
   padding: 5em;

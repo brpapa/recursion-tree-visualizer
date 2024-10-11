@@ -7,7 +7,7 @@
     "build"
   ],
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "strict": true,
     "noEmit": true,
     "sourceMap": true,

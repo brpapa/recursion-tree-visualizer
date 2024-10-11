@@ -26,7 +26,7 @@ In the `packages/web` directory, run:
 # to install all dependencies
 $ npm install
 
-# to run the app on http://localhost:3000
+# to run the app on http://localhost:3003
 $ npm run start
 ```
 
