@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { LogoIcon as LogoIconBase } from './../../icons/logo'
+import { LogoIcon as LogoIconBase } from '../../icons/logo'
 
 export const Container = styled.div`
   flex-grow: 1;

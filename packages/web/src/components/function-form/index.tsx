@@ -13,11 +13,11 @@ import {
   GlobalVar,
   Language,
   Template,
-  ThemeType,
 } from '../../types'
 import './carbon-ads.css'
 import CodeEditor from './code-editor'
 import * as s from './styles'
+import { ThemeType } from '../../styles/themes'
 
 const DEFAULT_LANGUAGE: Language = 'python'
 

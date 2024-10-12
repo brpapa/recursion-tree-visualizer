@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { Container, Button, WrapperBar, Bar } from './styles'
-import { FirstIcon } from './../../../icons/first'
-import { LastIcon } from './../../../icons/last'
+import { FirstIcon } from '../../../icons/first'
+import { LastIcon } from '../../../icons/last'
 import { NextIcon } from '../../../icons/next'
-import { PreviousIcon } from './../../../icons/previous'
+import { PreviousIcon } from '../../../icons/previous'
 
 type Props = {
   value: number

@@ -4,9 +4,10 @@ import type { PrismTheme } from 'prism-react-renderer'
 import { Highlight, themes } from 'prism-react-renderer'
 
 import { ThemeContext } from 'styled-components'
-import { Language, ThemeType } from '../../../types'
+import { Language } from '../../../types'
 import * as s from './styles'
 import { LanguageHandler } from '../../../logic/language-handler'
+import { ThemeType } from '../../../styles/themes'
 
 type Props = {
   lang: Language

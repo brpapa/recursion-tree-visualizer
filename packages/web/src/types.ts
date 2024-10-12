@@ -7,7 +7,6 @@ export type UnparsedFunctionData = {
   fnGlobalVars: GlobalVar[]
 }
 
-export type ThemeType = 'light' | 'dark'
 export type Language = 'node' | 'python' | 'golang'
 export type Template =
   | 'custom'

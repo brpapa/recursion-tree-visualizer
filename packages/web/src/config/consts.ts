@@ -1,4 +1,5 @@
-import { Language, ThemeType } from '../types'
+import { ThemeType } from '../styles/themes'
+import { Language } from '../types'
 
 export const DEFAULT_THEME_TYPE: ThemeType = 'light'
 
