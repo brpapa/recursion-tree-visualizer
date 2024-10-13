@@ -1,23 +1,18 @@
+'use client'
 import React, { useContext, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { ThemeContext } from 'styled-components'
 
 import * as consts from '../../config/consts'
 import templates from '../../config/templates'
-import useCarbonAds from '../../hooks/use-carbon-ads'
 import useFormInput from '../../hooks/use-form-input'
 import useLocalStorageState from '../../hooks/use-local-storage-state'
 import { LanguageHandler } from '../../logic/language-handler'
-import {
-  FunctionData,
-  GlobalVar,
-  Language,
-  Template,
-} from '../../types'
-import './carbon-ads.css'
+import { ThemeName } from '../../styles/themes'
+import { FunctionData, GlobalVar, Language, Template } from '../../types'
+import { CarbonAds } from '../carbon-ads'
 import CodeEditor from './code-editor'
 import * as s from './styles'
-import { ThemeType } from '../../styles/themes'
 
 const DEFAULT_LANGUAGE: Language = 'python'
 
@@ -37,7 +32,7 @@ type Props = {
     fnData: FunctionData,
     options: { memoize: boolean; animate: boolean }
   ) => void
-  onThemeChange: (themeType: ThemeType) => void
+  onThemeChange: (themeName: ThemeName) => void
 }
 
 const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
@@ -65,8 +60,6 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   const [activeTemplate, setActiveTemplate] = useState<Template | null>(
     DEFAULT_TEMPLATE
   )
-
-  const divRefAds = useCarbonAds()
 
   const handleSelectTemplateChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -127,7 +120,7 @@ const FunctionForm = ({ onSubmit, onThemeChange }: Props) => {
   return (
     <s.FormContainer onSubmit={handleFormSubmit}>
       <s.FormContent>
-        <div ref={divRefAds} />
+        <CarbonAds />
 
         <s.Title>Pre-defined templates</s.Title>
         <s.Select

@@ -1,18 +1,16 @@
-import React, { useState } from 'react'
-import { toast, Toaster } from 'react-hot-toast'
-import { ThemeProvider } from 'styled-components'
-import { DEFAULT_THEME_TYPE } from '../../config/consts'
-import GlobalStyle from '../../styles/global'
-import { default as theme, default as themes, ThemeType } from '../../styles/themes'
+'use client'
+import { useContext, useState } from 'react'
+import { toast } from 'react-hot-toast'
+import { ThemeContext } from 'styled-components'
+import { ThemeName } from '../../styles/themes'
 import { FunctionData, Language, TreeViewerData } from '../../types'
 import FunctionForm from '../function-form'
-import TreeViewer from '../tree-viewer'
+import GraphViewer from '../graph-viewer'
 import { fetchTreeViewerData } from './../../config/api'
 import Footer from './footer'
-import * as s from './styles'
+import styled from 'styled-components'
 
-const App = () => {
-  const [themeType, setThemeName] = useState<ThemeType>(DEFAULT_THEME_TYPE)
+const App = (props: { onThemeChange: (themeName: ThemeName) => void }) => {
   const [treeViewerData, setTreeViewerData] = useState<TreeViewerData>(null)
   const [treeViewerOptions, setTreeViewerOptions] = useState({ animate: false })
   const [isLoading, setIsLoading] = useState(false)
@@ -42,39 +40,48 @@ const App = () => {
   }
 
   return (
-    <ThemeProvider theme={themes[themeType]}>
-      <GlobalStyle />
-      <Toaster
-        position='top-left'
-        reverseOrder={false}
-        toastOptions={{
-          duration: 5000,
-          style: {
-            background: theme[themeType].colors.foreground,
-            border: `1px solid ${theme[themeType].colors.border}`,
-            color: theme[themeType].colors.contrast,
-            boxShadow: 'none',
-          },
-        }}
-      />
-      <s.AppContainer>
-        <s.Sidebar>
-          <FunctionForm
-            onSubmit={handleFunctionFormSubmit}
-            onThemeChange={setThemeName}
-          />
-        </s.Sidebar>
-        <s.Main>
-          <TreeViewer
-            isLoading={isLoading}
-            data={treeViewerData}
-            options={treeViewerOptions}
-          />
-          <Footer />
-        </s.Main>
-      </s.AppContainer>
-    </ThemeProvider>
+    <AppContainer>
+      <Sidebar>
+        <FunctionForm
+          onSubmit={handleFunctionFormSubmit}
+          onThemeChange={props.onThemeChange}
+        />
+      </Sidebar>
+      <Main>
+        <GraphViewer
+          isLoading={isLoading}
+          data={treeViewerData}
+          options={treeViewerOptions}
+        />
+        <Footer />
+      </Main>
+    </AppContainer>
   )
 }
 
 export default App
+
+export const AppContainer = styled.div`
+  background-color: ${({ theme }) => theme.colors.background};
+  display: flex;
+
+  flex-direction: column;
+  ${({ theme }) => theme.devices.desktop} {
+    flex-direction: row;
+  }
+`
+export const Sidebar = styled.div`
+  height: 100vh;
+
+  width: 100%;
+  ${({ theme }) => theme.devices.desktop} {
+    width: 390px;
+  }
+`
+export const Main = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.8em;
+  height: 100vh;
+`

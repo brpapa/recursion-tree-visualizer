@@ -8,6 +8,7 @@ export type UnparsedFunctionData = {
 }
 
 export type Language = 'node' | 'python' | 'golang'
+
 export type Template =
   | 'custom'
   | 'fibo'

@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 export const Line = styled.line`
   stroke-width: 5px;
 `
+
 export const Text = styled.text`
   font-size: 25px;
   font-weight: bold;
@@ -14,6 +15,7 @@ export const Text = styled.text`
   stroke-linecap: round;
   stroke-linejoin: round;
 `
+
 export const Container = styled.g<{ highlight: boolean }>`
   ${({ highlight, theme }) => {
     const color = highlight ? theme.colors.primary : theme.colors.contrast

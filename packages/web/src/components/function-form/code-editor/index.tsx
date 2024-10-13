@@ -1,3 +1,4 @@
+'use client'
 import React, { useCallback, useContext } from 'react'
 import Editor from 'react-simple-code-editor'
 import type { PrismTheme } from 'prism-react-renderer'
@@ -7,7 +8,12 @@ import { ThemeContext } from 'styled-components'
 import { Language } from '../../../types'
 import * as s from './styles'
 import { LanguageHandler } from '../../../logic/language-handler'
-import { ThemeType } from '../../../styles/themes'
+import { ThemeName } from '../../../styles/themes'
+
+const prismTheme: Record<ThemeName, PrismTheme> = {
+  light: themes.nightOwlLight,
+  dark: themes.nightOwl,
+}
 
 type Props = {
   lang: Language
@@ -75,8 +81,3 @@ const CodeEditor = ({
 }
 
 export default CodeEditor
-
-const prismTheme: Record<ThemeType, PrismTheme> = {
-  light: themes.nightOwlLight,
-  dark: themes.nightOwl,
-}

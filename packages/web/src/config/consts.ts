@@ -1,7 +1,7 @@
-import { ThemeType } from '../styles/themes'
+import { ThemeName } from '../styles/themes'
 import { Language } from '../types'
 
-export const DEFAULT_THEME_TYPE: ThemeType = 'light'
+export const DEFAULT_THEME_TYPE: ThemeName = 'light'
 
 export const LANGUAGES: Language[] = ['node', 'python', 'golang']
 

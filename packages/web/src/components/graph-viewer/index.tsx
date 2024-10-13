@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from 'react'
 
 import * as s from './styles'
@@ -16,7 +17,7 @@ type Props = {
   options: { animate?: boolean }
 }
 
-const TreeViewer = ({
+const GraphViewer = ({
   data,
   isLoading,
   options: { animate = false },
@@ -85,4 +86,4 @@ const TreeViewer = ({
   )
 }
 
-export default TreeViewer
+export default GraphViewer

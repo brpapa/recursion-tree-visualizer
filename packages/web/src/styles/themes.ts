@@ -1,25 +1,18 @@
-export type ThemeType = 'light' | 'dark'
+export type ThemeName = 'light' | 'dark'
 
 const common = {
   fonts: {
     body: "'Inter', -apple-system, system-ui, 'Helvetica Neue', sans-serif",
     mono: "'Menlo', 'SF Mono', monospace",
   },
-  // breakpoints: {
-  //   sm: '576px',
-  //   md: '768px',
-  //   lg: '992px',
-  //   xl: '1200px',
-  // },
   devices: {
-    // mobile-first
     desktop: '@media only screen and (min-width: 666px)',
   },
 }
 
 const light = {
   ...common,
-  type: 'light' as ThemeType,
+  type: 'light' as ThemeName,
   colors: {
     contrast: '#000',
     background: '#f0f0f0',
@@ -37,7 +30,7 @@ const light = {
 
 const dark = {
   ...common,
-  type: 'dark' as ThemeType,
+  type: 'dark' as ThemeName,
   colors: {
     contrast: '#fff',
     background: '#151616',
@@ -54,4 +47,4 @@ const dark = {
 }
 
 export type Theme = typeof light
-export default { light, dark } as Record<ThemeType, Theme>
+export default { light, dark } as Record<ThemeName, Theme>

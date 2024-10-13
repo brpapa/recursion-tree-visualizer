@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Line, Text } from './styles'
 import { pointOnLine, centralPoint } from './utils'
-import { VERTEX_RADIUS } from '../constants'
+import { VERTICE_RADIUS } from '../vertice'
 import { Point } from '../../../../types'
 
 type Props = {
@@ -13,8 +13,8 @@ type Props = {
 
 const DirectedEdge = ({ start, end, label, highlight = false }: Props) => {
   // renderiza uma aresta direcionada de P à Q
-  const P = pointOnLine(end, start, VERTEX_RADIUS)
-  const Q = pointOnLine(start, end, VERTEX_RADIUS + 10) //! hardcode
+  const P = pointOnLine(end, start, VERTICE_RADIUS)
+  const Q = pointOnLine(start, end, VERTICE_RADIUS + 10) //! hardcode
   const C = centralPoint(P, Q)
 
   const animateRef1 = React.useRef<SVGAnimateElement>(null)
@@ -22,11 +22,7 @@ const DirectedEdge = ({ start, end, label, highlight = false }: Props) => {
 
   // FIXME: gambiarra fudida
   React.useEffect(() => {
-    if (
-      animateRef1.current === null ||
-      animateRef2.current === null
-    )
-      return
+    if (animateRef1.current === null || animateRef2.current === null) return
 
     // reinicia a SMIL animation
 
@@ -34,12 +30,10 @@ const DirectedEdge = ({ start, end, label, highlight = false }: Props) => {
     animateRef1.current.beginElement()
     // @ts-ignore
     animateRef2.current.beginElement()
-
   }, [start, end])
 
   return (
     <Container highlight={highlight}>
-      {/* FIXME: defs é renderizado várias vezes desnecessariamente, teria outra forma de fazer a arrowhead? */}
       <defs>
         <marker
           id={`arrowhead-${start}${end}`}
