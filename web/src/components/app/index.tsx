@@ -21,17 +21,23 @@ const App = (props: { onThemeChange: (themeName: ThemeName) => void }) => {
   ) => {
     setIsLoading(true)
 
-    const result = await runFunction({
-      lang,
-      functionData,
-      options: { memoize: options.memoize },
-    })
+    try {
+      const result = await runFunction({
+        lang,
+        functionData,
+        options: { memoize: options.memoize },
+      })
 
-    if (result.ok) {
-      setTreeViewerData(result.value)
-      setTreeViewerOptions({ animate: options.animate })
-    } else {
-      toast.error(result.value)
+      if (result.ok) {
+        setTreeViewerData(result.value)
+        setTreeViewerOptions({ animate: options.animate })
+      } else {
+        toast.error(result.value)
+        setTreeViewerData(null)
+      }
+    } catch (e) {
+      console.error(e)
+      toast.error('Internal error')
       setTreeViewerData(null)
     }
 
