@@ -12,15 +12,14 @@ Stop drawing recursion trees by hand. Watch the [demo video](https://youtu.be/1f
 
 ### Folders structure
 
-- `packages/web`: react user interface.
-- `packages/lambda`: serverless lambda function to execute user-defined code remotely.
-<!-- - `packages/common`: shared code between web and lambda -->
+- `web`: react user interface.
+- `lambda`: serverless lambda function to execute user-defined code remotely.
 
 ## Local development
 
 ### Web
 
-In the `packages/web` directory, run:
+In the `web` directory, run:
 
 ```bash
 # to install all dependencies
@@ -34,7 +33,7 @@ $ npm run start
 
 You can use the Amazon Runtime Interface Emulator (RIE), already contained in the docker image, to test the Lambda function.
 
-In the `packages/lambda` directory, run:
+In the `lambda` directory, run:
 
 ```bash
 # build your local image
@@ -49,36 +48,19 @@ $ curl -XPOST "http://localhost:8080/2015-03-31/functions/function/invocations" 
 
 ## Deploy to production
 
-### Web
-
-Set your API Gateway endpoint in `packages/web/src/config/api.ts`.
-
-Ships `packages/web` on Vercel.
-
 ### Lambda
 
-The deployment of the Lambda function is automatized by the workflow `cd-lambda-function`. You will need to complete the following set-up steps to use it:
+In `terraform` folder:
 
-1. Create the following **AWS resources**:
+- create terraform.tfvars file
+- run `terraform init`
+- run `terraform validate`
+- run `terraform plan`
+- run `terraform apply`
 
-   - Lambda function defined as a container image
+### Web
 
-   - API Gateway to trigger the lambda function with CORS support
-
-   - ECR repository to store your Docker images
-
-   - IAM user with the proper permissions
-
-2. Store the IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-
-3. Change the workflow file `github/workflows/cd-lambda-function.yml`:
-
-   - Replace the value of the `AWS_REGION` env with the region of all your AWS resources.
-
-   - Replace the value of the `AWS_ECR_REPOSITORY_NAME` env with your repository's name.
-
-   - Replace the value of the `AWS_LAMBDA_FUNCTION_NAME` env with your function's name.
-
+Ships `web` on Vercel, setup environment variables.
 
 ## Acknowledgements
 

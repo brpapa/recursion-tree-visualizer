@@ -1,6 +1,0 @@
-**/.aws-sam
-
-# tmp
-Dockerfile.custom
-template.yaml
-_tmp/**
