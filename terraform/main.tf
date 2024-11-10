@@ -1,6 +1,6 @@
 terraform {
   required_providers {
-    aws    = { source = "hashicorp/aws", version = ">= 5.0" }
+    aws = { source = "hashicorp/aws", version = ">= 5.0" }
   }
 
   required_version = ">= 1.0.0"
@@ -95,7 +95,8 @@ resource "aws_lambda_function" "this" {
   package_type  = "Image"
   image_uri     = "${aws_ecr_repository.this.repository_url}@${data.aws_ecr_image.latest.image_digest}" # include the current image digest of latest tag to force lambda update if a new image was pushed
   role          = aws_iam_role.lambda_execution.arn
-  timeout       = 30
+  timeout       = 45
+  memory_size   = 512
 }
 
 
@@ -118,7 +119,7 @@ resource "aws_iam_role" "lambda_execution" {
 }
 
 resource "aws_iam_policy" "lambda_policy" {
-  name = "${var.function_name}_lambda_policy"
+  name        = "${var.function_name}_lambda_policy"
   description = "Policy for Lambda to write logs to CloudWatch"
 
   policy = jsonencode({

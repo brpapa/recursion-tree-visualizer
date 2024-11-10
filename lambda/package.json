@@ -5,7 +5,7 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "20.x"
+    "node": "14.x"
   },
   "packageManager": "npm@10.9.0",
   "scripts": {
