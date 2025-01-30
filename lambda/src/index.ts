@@ -7,6 +7,9 @@ import { validateAPIGatewayProxyEvent } from './validations/event'
 const log = debug('app:handler')
 
 export const handler: APIGatewayProxyHandler = async (event) => {
+  // handle the preflight request (OPTIONS method withot req body) automatically sent by the browser before making a CORS request (e.g., POST)
+  if (event.httpMethod === 'OPTIONS') return ok({})
+
   const validatedEvent = validateAPIGatewayProxyEvent(event)
   if (validatedEvent.isError()) return badRequest(validatedEvent.value)
 
@@ -34,4 +37,9 @@ const internalServerError = (reason: string) => result(500, { reason })
 const result = (statusCode: number, body: Record<string, any>) => ({
   statusCode,
   body: safeStringify(body),
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "OPTIONS,GET,POST,PUT,DELETE",
+    "Access-Control-Allow-Headers": "Content-Type",
+  },
 })

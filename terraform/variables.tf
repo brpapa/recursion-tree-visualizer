@@ -28,3 +28,7 @@ variable "image_name" {
 variable "function_name" {
   type = string
 }
+
+variable "api_name" {
+  type = string
+}

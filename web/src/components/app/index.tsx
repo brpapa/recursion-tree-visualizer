@@ -1,13 +1,13 @@
 'use client'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import styled from 'styled-components'
-import runFunction from '../../action/run-function'
 import { ThemeName } from '../../styles/themes'
 import { FunctionData, Language, TreeViewerData } from '../../types'
 import FunctionForm from '../function-form'
 import GraphViewer from '../graph-viewer'
 import Footer from './footer'
+import { runFunction } from '../../api'
 
 const App = (props: { onThemeChange: (themeName: ThemeName) => void }) => {
   const [treeViewerData, setTreeViewerData] = useState<TreeViewerData>(null)
@@ -28,7 +28,7 @@ const App = (props: { onThemeChange: (themeName: ThemeName) => void }) => {
         options: { memoize: options.memoize },
       })
 
-      if (result.ok) {
+      if (result.isSuccess()) {
         setTreeViewerData(result.value)
         setTreeViewerOptions({ animate: options.animate })
       } else {
